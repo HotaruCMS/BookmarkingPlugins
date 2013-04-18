@@ -8,6 +8,27 @@ These packs are designed as a *quick start* downloads for new Hotaru users and w
 Social Bookmarking Plugin Pack
 Download: bookmarking-pack.zip
 Last Updated: 2010/11/19
-Contents: bookmarking, categories, category_manager, comment_manager, comments, cron, gravatar, post_manager, post_rss, posts_widget, recaptcha, search, stop_spam, submit, tags, user_manager, user_signin, users, vote, widgets
+
+Contents: 
+bookmarking,
+categories,
+category_manager,
+comment_manager,
+comments,
+cron,
+gravatar,
+post_manager,
+post_rss,
+posts_widget,
+recaptcha,
+search,
+stop_spam,
+submit,
+tags,
+user_manager,
+user_signin,
+users,
+vote,
+widgets
 
 More plugin packs for different kinds of websites will become available when ready. 
