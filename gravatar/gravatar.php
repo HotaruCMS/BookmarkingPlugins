@@ -72,6 +72,7 @@ class Gravatar
         $h->vars['avatar_user_id'] = $vars['user_id'];
         $h->vars['avatar_user_name'] = $vars['user_name'];
         $h->vars['avatar_user_email'] = $vars['user_email'];
+        $h->vars['avatar_img_class'] = $vars['img_class'];
     }
     
     
@@ -99,7 +100,7 @@ class Gravatar
     public function avatar_get_avatar($h)
     {
         $grav_url = $this->buildGravatarUrl($h, $h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
-        $img_url = $this->buildGravatarImage($grav_url, $h->vars['avatar_size']);
+        $img_url = $this->buildGravatarImage($grav_url, $h->vars['avatar_size'], $h->vars['avatar_img_class']);
         return $img_url;
     }
     
@@ -154,13 +155,14 @@ class Gravatar
      * @param string $rating - g, pg, r or x
      * @return string - html for image
      */
-    public function buildGravatarImage($grav_url = '', $size = 32)
+    public function buildGravatarImage($grav_url = '', $size = 32, $class = '')
     {
         if (!$grav_url) { return false; }
         
         $resized = "style='height: " . $size . "px; width: " . $size . "px'";
                 
-        $img_url = "<img class='avatar' src='" . $grav_url . "' " . $resized  ." alt='' />";
+        if ($class) $class = ' ' . $class;
+        $img_url = "<img class='avatar" . $class . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
         return $img_url;
     }
 
