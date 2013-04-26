@@ -2,12 +2,12 @@
 /**
  * name: StopSpam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.4
+ * version: 0.5
  * folder: stop_spam
  * class: StopSpam
  * type: antispam
  * requires: users 1.1
- * hooks: install_plugin, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, user_signin_register_check_blocked, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -46,6 +46,14 @@ class StopSpam
         if (!$h->getSetting('stop_spam_type')) { $h->updateSetting('stop_spam_type', 'go_pending'); }
     }
     
+    
+    /**
+     * Included to cover old versions with old hook
+     */
+    public function user_signin_register_check_blocked($h)
+    {
+        $this->user_register_check_blocked($h);
+    }
     
     /**
      * Checks user against the StopForumSpam.com blacklist
