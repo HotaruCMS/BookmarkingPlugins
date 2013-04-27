@@ -2,7 +2,7 @@
 /**
  * name: Sitemap
  * description: Produces a Sitemap for your site.
- * version: 0.9
+ * version: 1.0
  * folder:sitemap
  * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, sitemap_runcron
  * class: Sitemap
@@ -96,7 +96,7 @@ class Sitemap
 
 		//Retrieve categories from the database
 		if ($sitemap_settings['sitemap_include_cats'] == 'checked') {
-		    $sql = "SELECT category_name, category_updatedts FROM ". TABLE_CATEGORIES;
+		    $sql = "SELECT category_safe_name, category_updatedts FROM ". TABLE_CATEGORIES;
 		    $maps_cat = $h->db->get_results($sql);
 		}
 
@@ -164,7 +164,7 @@ class Sitemap
 			    $datetime_cat = date("c", strtotime($cat->category_updatedts));
 			    if($count < 49998 && strlen($sitemap[$sitemapNum]) < 10484000) {
 				$sitemap[$sitemapNum] .='<url>';
-				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_name)) ) . '</loc>';
+				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
 				$sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
 				$sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
 				$sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
@@ -176,7 +176,7 @@ class Sitemap
 				$sitemap[$sitemapNum] = '<?xml version="1.0" encoding="UTF-8"?>';
 				$sitemap[$sitemapNum] .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 				$sitemap[$sitemapNum] .='<url>';
-				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_name)) ) . '</loc>';
+				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
 				$sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
 				$sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
 				$sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
@@ -203,7 +203,7 @@ class Sitemap
 				$sitemap[$sitemapNum] = '<?xml version="1.0" encoding="UTF-8"?>';
 				$sitemap[$sitemapNum] .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 				$sitemap[$sitemapNum] .='<url>';
-				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_name)) ) . '</loc>';
+				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
 				$sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
 				$sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
 				$sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
@@ -303,7 +303,7 @@ class Sitemap
 
 	public function pingSites($h) {
 	    $sitemap_settings = $h->getSerializedSettings();
-	    $ext = $sitemap_settings['sitemap_compress'] == 'checked' ? 'gz' : xml;
+	    $ext = $sitemap_settings['sitemap_compress'] == 'checked' ? 'gz' : 'xml';
 	    $sitemap = 'sitemap.' . $ext;
 	    $this->pingGoogle($h, $sitemap_settings, $sitemap);
 	    $this->pingBing($h, $sitemap_settings, $sitemap);
@@ -317,10 +317,10 @@ class Sitemap
 		$pingres = $this->getWebPage($pingUrl);
 		
 		if ($pingres['content'] == NULL || $pingres['content'] === false) {
-		    $h->messages["Failed to ping Google: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red';
+		    $h->messages["Failed to ping Google: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red alert-error';
 		} else {		
 		    $result = "success";
-		    $h->messages['Google ' . $h->lang["sitemap_ping_success"]] = 'green';
+		    $h->messages['Google ' . $h->lang["sitemap_ping_success"]] = 'green alert-success';
 		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
 		}
 	    }
@@ -329,16 +329,16 @@ class Sitemap
 
 	//Ping Bing
 	public function pingBing($h, $sitemap_settings = array(), $sitemap = 'sitemap.xml') {
-	    if ($sitemap_settings['sitemap_ping_bing']) {		
-		$pingUrl = "http://www.bing.com/webmaster/ping.aspx?siteMap=" . urlencode($sitemap_settings['sitemap_location'] . $sitemap);
+	    if ($sitemap_settings['sitemap_ping_bing']) {                
+		$pingUrl = "http://www.bing.com/ping?sitemap=" . urlencode($sitemap_settings['sitemap_location'] . $sitemap);
 
 		$pingres = $this->getWebPage($pingUrl);
 
-		if ($pingres['content'] == NULL || $pingres['content'] === false || strpos($pingres['content'], "Thanks for submitting your sitemap") === false) {
-		    $h->messages["Failed to ping Bing: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red';
+		if ($pingres['content'] == NULL || $pingres['content'] === false || strpos($pingres['content'], "Thanks for submitting your Sitemap") === false) {
+		    $h->messages["Failed to ping Bing: " . htmlspecialchars(strip_tags($pingres['content']))] = 'red alert-error';                    
 		} else {		
 		    $result = "success";
-		    $h->messages['Bing ' . $h->lang["sitemap_ping_success"]] = 'green';
+		    $h->messages['Bing ' . $h->lang["sitemap_ping_success"]] = 'green alert-success';
 		    $sitemap_settings['sitemap_last_pinged'] = date("F j, Y, g:i:s a");
 		}
 	    }

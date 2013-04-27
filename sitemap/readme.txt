@@ -1,32 +1,16 @@
- * LICENSE: Hotaru CMS is free software: you can redistribute it and/or 
- * modify it under the terms of the GNU General Public License as 
- * published by the Free Software Foundation, either version 3 of 
- * the License, or (at your option) any later version. 
- *
- * Hotaru CMS is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE. 
- *
- * You should have received a copy of the GNU General Public License along 
- * with Hotaru CMS. If not, see http://www.gnu.org/licenses/.
- * 
- * @category  Content Management System
- * @package   Sitemap
- * @version   0.2
- * @author    Justin Tiearney <admin@obzerver.com>
- * @copyright Copyright (c) 2010
- * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link      http://www.obzerver.com
+User Manager Plugin for Hotaru CMS
+--------------------------------------
+Created by: Justin Tiearney
 
+Description
+-----------
+Generate a sitemap for your Hotaru site.
 
-Installation
-**************
-To install this sitemap please do the following:
-1. Unpack the plugin
-2. Copy the sitemap folder to your "content/plugins" directory
-3. Login to your Hotaru CMS and access the Admin section
-4. Choose the Plugin Management section
-5. Click the install button
+Instructions
+------------
+1. Upload the "sitemap" folder to your plugins folder.
+2. Install it from Plugin Management in Admin.
+3. Configure Sitemap in Admin -> Plugin Settings -> Sitemap
 
 
 How to Use
@@ -47,10 +31,11 @@ http://hotarucms.org/forumdisplay.php?7-Plugins-and-Hacks
 
 Revision History
 *****************
-v.0.9 2010/06/19 - Alan - Allow selecting of posts,tags or categories. Add display count of items in admin settings
-v.0.8 2010/06/18 - Alan - updated to allow large sitemap files for tags and categories as well
-v.0.7 2010/06/10 - Alan - Added admin setting to choose whether to include categories and tags as well as posts pages
-v.0.6 2010/04/23 - Alan - Added pinging of Google and Bing, manually and as part of Cron job
+v.1.0 2013/04/27 - shibuya246 - Fix saving of settings options. Fix Bing submission. Check adding to cron list of Cron Plugin
+v.0.9 2010/06/19 - shibuya246 - Allow selecting of posts,tags or categories. Add display count of items in admin settings
+v.0.8 2010/06/18 - shibuya246 - updated to allow large sitemap files for tags and categories as well
+v.0.7 2010/06/10 - shibuya246 - Added admin setting to choose whether to include categories and tags as well as posts pages
+v.0.6 2010/04/23 - shibuya246 - Added pinging of Google and Bing, manually and as part of Cron job
 v.0.5 2010/04/09 - Nick - Fix for admin CSS bug, plus support for the Cron plugin
 v.0.4 2010/03/11 - williamd - Category urls added, plus priority settings for base url, categories and posts
 v.0.3 2010/03/03 - obzerver - Updated to support cron jobs

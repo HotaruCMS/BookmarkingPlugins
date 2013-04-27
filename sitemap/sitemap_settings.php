@@ -31,17 +31,17 @@ class SitemapSettings extends Sitemap
 		if ($h->cage->post->getAlpha('submitted') == 'true') { 
 			$this->saveSettings($h);
 			$h->message = $h->lang["sitemap_settings_saved"];
-			$h->messageType = "green";
+			$h->messageType = "green alert-success";
 			$h->showMessage();
 		}else if($h->cage->post->getAlpha('generate') == 'true') {
 			$this->createSitemap($h);
 			$h->message = $h->lang["sitemap_generated"];
-			$h->messageType = "green";
+			$h->messageType = "green alert-success";
 			$h->showMessage();
 		}else if($h->cage->post->getAlpha('newpass') == 'true') {
 			$this->newPassword($h);
 			$h->message = $h->lang["sitemap_password_generated"];
-			$h->messageType = "green";
+			$h->messageType = "green alert-success";
 			$h->showMessage();
 		}else if ($h->cage->post->getAlpha('ping') == 'true') {
 			$this->pingSites($h);						
@@ -51,6 +51,9 @@ class SitemapSettings extends Sitemap
 		//Get settings from database
 		$sitemap_settings = $h->getSerializedSettings();
 
+                // TODO
+                // Call these as functions in hotaru not raw SQL
+                
 		//Retrieve the links and last update time from the database
 		$sql = "SELECT COUNT(post_id) FROM ". TABLE_POSTS;
 		$maps = $h->db->get_var($sql);
@@ -63,14 +66,14 @@ class SitemapSettings extends Sitemap
 		$sql = "SELECT COUNT(tags_word) FROM ". TABLE_TAGS;
 		$maps_tag = $h->db->get_var($sql);
 		
-	// show header
-	echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
+                // show header
+                echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
 
 		echo "<h3>" . $h->lang['sitemap_configure_sitemap'] . "</h3>\n";
 		
 		echo '<form name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
-		
-		echo $h->lang['sitemap_compress'].'<input type="checkbox" name ="sitemap_compress" value="sitemap_compress" '.$sitemap_settings['sitemap_compress'].'"> <br />';
+		print $sitemap_settings['sitemap_compress'];
+		echo $h->lang['sitemap_compress'].'<input type="checkbox" name ="sitemap_compress" value="sitemap_compress" ' . $sitemap_settings['sitemap_compress'] . '> <br />';
 		echo $h->lang['sitemap_frequency'].'<select name ="sitemap_frequency">
 			<option selected="yes">'.$sitemap_settings['sitemap_frequency'].'</option>
 				<option>hourly</option><option>daily</option><option>weekly</option>
@@ -96,14 +99,14 @@ class SitemapSettings extends Sitemap
 			echo '</select> <br />';
 		}
 		echo "<br />";
-		echo '<input type="checkbox" name ="sitemap_include_posts" value="sitemap_include_posts" '.$sitemap_settings['sitemap_include_posts'].'">&nbsp;'.$h->lang['sitemap_include_posts'].' (' . $maps . ')<br />';
-		echo '<input type="checkbox" name ="sitemap_include_cats" value="sitemap_include_cats" '.$sitemap_settings['sitemap_include_cats'].'">&nbsp;'.$h->lang['sitemap_include_cats'].' (' . $maps_cat . ')<br />';
-		echo '<input type="checkbox" name ="sitemap_include_tags" value="sitemap_include_tags" '.$sitemap_settings['sitemap_include_tags'].'">&nbsp;'.$h->lang['sitemap_include_tags'].' (' . $maps_tag . ')<br />';
+		echo '<input type="checkbox" name ="sitemap_include_posts" value="sitemap_include_posts" '.$sitemap_settings['sitemap_include_posts'].'>&nbsp;'.$h->lang['sitemap_include_posts'].' (' . $maps . ')<br />';
+		echo '<input type="checkbox" name ="sitemap_include_cats" value="sitemap_include_cats" '.$sitemap_settings['sitemap_include_cats'].'>&nbsp;'.$h->lang['sitemap_include_cats'].' (' . $maps_cat . ')<br />';
+		echo '<input type="checkbox" name ="sitemap_include_tags" value="sitemap_include_tags" '.$sitemap_settings['sitemap_include_tags'].'>&nbsp;'.$h->lang['sitemap_include_tags'].' (' . $maps_tag . ')<br />';
 		echo "<br />";
 
-		echo '<input type="checkbox" name ="sitemap_cron" value="sitemap_cron" '.$sitemap_settings['sitemap_use_cron'].'">&nbsp;'.$h->lang['sitemap_use_cron'].' <br />';
-		echo '<input type="checkbox" name ="sitemap_ping_google" value="sitemap_ping_goolge" '.$sitemap_settings['sitemap_ping_google'].'">&nbsp;'.$h->lang['sitemap_ping_google'].' <br />';
-		echo '<input type="checkbox" name ="sitemap_ping_bing" value="sitemap_ping_bing" '.$sitemap_settings['sitemap_ping_bing'].'">&nbsp;'.$h->lang['sitemap_ping_bing'].' <br />';
+		echo '<input type="checkbox" name ="sitemap_cron" value="sitemap_cron" '.$sitemap_settings['sitemap_use_cron'].'>&nbsp;'.$h->lang['sitemap_use_cron'].' <br />';
+		echo '<input type="checkbox" name ="sitemap_ping_google" value="sitemap_ping_goolge" '.$sitemap_settings['sitemap_ping_google'].'>&nbsp;'.$h->lang['sitemap_ping_google'].' <br />';
+		echo '<input type="checkbox" name ="sitemap_ping_bing" value="sitemap_ping_bing" '.$sitemap_settings['sitemap_ping_bing'].'>&nbsp;'.$h->lang['sitemap_ping_bing'].' <br />';
 		echo "<br />";
 		
 		echo '<input type="hidden" name="submitted" value="true">';
@@ -175,10 +178,10 @@ class SitemapSettings extends Sitemap
 	{
 		//Get settings from database
 		$sitemap_settings = $h->getSerializedSettings();
-		
+                
 		//Change the compression of the sitemap
 		$sitemap_settings['sitemap_compress'] = $h->cage->post->keyExists('sitemap_compress') ? 'checked' : '';
-		
+
 		//Change the frequency of page updates
 		if($h->cage->post->keyExists('sitemap_frequency'))
 		{
@@ -233,10 +236,8 @@ class SitemapSettings extends Sitemap
 	public function newPassword($h)
 	{
 		//Get settings from database
-		$sitemap_settings = $h->getSerializedSettings();
-		
+		$sitemap_settings = $h->getSerializedSettings();		
 		$sitemap_settings['sitemap_password'] = md5(rand());
-		
 		$h->updateSetting('sitemap_settings', serialize($sitemap_settings));
 	}
 	
