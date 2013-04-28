@@ -3,7 +3,8 @@
 	require_once(PLUGINS . 'autoreader/helper/form.helper.php' );
 	require_once(PLUGINS . 'autoreader/helper/tag.helper.php' );
 
-	AutoReaderFuncs::getSettings($h);
+        $arFuncs = New AutoReaderFuncs();
+	$arFuncs->getSettings($h); 
 ?>
 
       
@@ -35,7 +36,7 @@
 				<h3>WebCron-ready URL:</h3>
 				<div id="cron_command" class="command"><?php echo $this->cron_url ?></div>
 
-				<p class="note"><?php echo 'Cron is set up to handle fetching if you are familiar with manually setting cron jobs on your server.'; ?> <?php if ($h->vars['autoreader_settings']['wpo_help']) { ?><a href="<?php echo AutoReaderFuncs::helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
+				<p class="note"><?php echo 'Cron is set up to handle fetching if you are familiar with manually setting cron jobs on your server.'; ?> <?php if ($h->vars['autoreader_settings']['wpo_help']) { ?><a href="<?php echo $arFuncs->helpurl ?>cron" class="help_link"><?php echo 'More'; ?></a><?php } ?></p>
 			<?php } ?>
 
 			<p class="note">For those not familiar with cron jobs or for shared servers where you cannot access them, you may install the "cron" plugin for hotaru which emulates the function of server cron jobs. This is recommended for most users.</p>

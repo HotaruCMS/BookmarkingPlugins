@@ -1,4 +1,7 @@
-<?php $campaigns = AutoReaderFuncs::getCampaigns($h); ?>
+<?php 
+        $arFunc = New AutoReaderFuncs();
+        $campaigns = $arFunc->getCampaigns($h); 
+?>
 
 <div class="wrap">
 	<h2>Campaigns</h2>     

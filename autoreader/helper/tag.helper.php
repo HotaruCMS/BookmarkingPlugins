@@ -83,7 +83,8 @@ return $html;
 
 function _parse_attributes($string)
 {
-return is_array($string) ? $string : WPOTools::stringToArray($string);
+    $wpo = new WPOTools();
+    return is_array($string) ? $string : $wpo->stringToArray($string);
 }
 
 function _get_option(&$options, $name, $default = null)

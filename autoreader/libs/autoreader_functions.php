@@ -7,7 +7,9 @@ class AutoReaderFuncs
 {
 	public function getSettings($h)
 	{
-		$h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
+                $arFuncs = new AutoreaderFuncs();
+		
+                $h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
 
 		// Table names init
 		$this->db = array(
@@ -23,7 +25,7 @@ class AutoReaderFuncs
 
 		# Cron command / url
 		$this->cron_url = BASEURL . 'admin_index.php?page=plugin_settings&plugin=autoreader&template=cron&code=' .   $h->vars['autoreader_settings']['wpo_croncode'];
-		$this->cron_command = '*/20 * * * * '. AutoReaderFuncs::getCommand() . ' ' . $this->cron_url;
+		$this->cron_command = '*/20 * * * * '. $arFuncs->getCommand() . ' ' . $this->cron_url;
 	}
 
 	/*
@@ -31,15 +33,29 @@ class AutoReaderFuncs
 	*/
 	public function getCampaigns($h, $args = '')
 	{
-		extract(WPOTools::getQueryArgs($args, array('fields' => '*',
-																	'search' => '',
-																	'orderby' => 'created_on',
-																	'ordertype' => 'DESC',
-																	'where' => '',
-																	'unparsed' => false,
-																	'limit' => null)));
-
-		if(! empty($search))
+                $wpo = new WPOTools();
+		
+//		extract($wpo->getQueryArgs($args, array('fields' => '*',
+//                                                        'search' => '',
+//                                                        'orderby' => 'created_on',
+//                                                        'ordertype' => 'DESC',
+//                                                        'limit' => null,
+//                                                        'page' => null,
+//                                                        'perpage' => null)));
+                
+                extract($wpo->getQueryArgs($args, array('fields' => '*',
+                                                            'search' => '',
+                                                            'orderby' => 'created_on',
+                                                            'ordertype' => 'DESC',
+                                                            'where' => '',
+                                                            'unparsed' => false,
+                                                            'limit' => null,
+                                                            'page' => null,
+                                                            'perpage' => null
+                                                        )));
+                
+                
+		if(!is_null($page))
 		$where .= " AND title LIKE '%{$search}%' ";
 
 	//  	if($unparsed)
@@ -79,14 +95,14 @@ class AutoReaderFuncs
 	*/
 	public function addCampaignFeed($h, $id, $feed)
 	{
-
+                $wpo = new WPOTools();
 		$simplepie = $this->fetchFeed($feed, true);
 		$url = $h->db->escape($simplepie->subscribe_url());
 
 		// If it already exists, ignore it
 		if(! $h->db->get_var("SELECT id FROM " . DB_PREFIX . "autoreader_campaign_feed WHERE campaign_id = $id AND url = '$url' "))
 		{
-			$h->db->query(WPOTools::insertQuery(DB_PREFIX . 'autoreader_campaign_feed',
+			$h->db->query($wpo->insertQuery(DB_PREFIX . 'autoreader_campaign_feed',
 			array('url' => $url,
 					'title' => $h->db->escape($simplepie->get_title()),
 					'description' => $h->db->escape($simplepie->get_description()),
@@ -201,12 +217,13 @@ class AutoReaderFuncs
 	* Resets a campaign (sets post count to 0, forgets last parsed post)
 	*/
 	public function adminReset($h)
-	{
+	{       $wpo = new WPOTools();
+        
 		$id = $h->cage->post->testInt('id');
 		if(!$id) die("Can't be called directly");
 
 		// Reset count and lasactive
-		$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign', array(
+		$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign', array(
 			'count' => 0,
 			'lastactive' => 0
 		), "id = $id"));
@@ -214,7 +231,7 @@ class AutoReaderFuncs
 		// Reset feeds hashes, count, and lasactive
 		foreach($this->getCampaignFeeds($h, $id) as $feed)
 		{
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array(
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array(
 			'count' => 0,
 			'lastactive' => 0,
 			'hash' => ''
@@ -298,15 +315,16 @@ class AutoReaderFuncs
 	* @return string command
 	**/
 	public function getCommand()
-	{
+	{       $wpo = new WPOTools();
+        
 		$commands = array(
-			@WPOTools::getBinaryPath('curl'),
-			@WPOTools::getBinaryPath('wget'),
-			@WPOTools::getBinaryPath('lynx', ' -dump'),
-			@WPOTools::getBinaryPath('ftp')
+			@$wpo->getBinaryPath('curl'),
+			@$wpo->getBinaryPath('wget'),
+			@$wpo->getBinaryPath('lynx', ' -dump'),
+			@$wpo->getBinaryPath('ftp')
 		);
 
-		return WPOTools::pick($commands[0], $commands[1], $commands[2], $commands[3], '<em>{wget or similar command here}</em>');
+		return $wpo->pick($commands[0], $commands[1], $commands[2], $commands[3], '<em>{wget or similar command here}</em>');
 	}
 
 	/**
@@ -359,6 +377,8 @@ class AutoReaderFuncs
 	*/
 	public function processCampaign($h, $campaign)
 	{
+                $wpo = new WPOTools();
+                
 		@set_time_limit(0);
 		ob_implicit_flush();
 
@@ -380,7 +400,7 @@ class AutoReaderFuncs
 				$count += $this->processFeed($h, $campaign, $feed);
 			}
 
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign', array(
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign', array(
 				'count' => $campaign->count + $count,
 				'lastactive' => current_time('mysql', true)
 			), "id = {$campaign->id}"));
@@ -398,7 +418,7 @@ class AutoReaderFuncs
 	*/
 	public function processFeed($h, &$campaign, &$feed)
 	{
-
+                $wpo = new WPOTools();
 		@set_time_limit(0);
 
 		// Log
@@ -445,7 +465,7 @@ class AutoReaderFuncs
 		// If we have added items, let's update the hash
 		if($count)
 		{
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array(
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array(
 			'count' => $count,
 			'lastactive' => time(),//current_time('mysql', true),
 			'hash' => $lasthash
@@ -478,6 +498,7 @@ class AutoReaderFuncs
 	*/
 	public function processItem($h, &$campaign, &$feed, &$item)
 	{
+                $wpo = new WPOTools();
 		$this->log($h, 'Processing item');
 
 		// Item content
@@ -539,7 +560,7 @@ class AutoReaderFuncs
 	*/
 
 		// Save post to log database
-		$h->db->query(WPOTools::insertQuery(DB_PREFIX . 'autoreader_campaign_post', array(
+		$h->db->query($wpo->insertQuery(DB_PREFIX . 'autoreader_campaign_post', array(
 			'campaign_id' => $campaign->id,
 			'feed_id' => $feed->id,
 			'post_id' => $postid,
@@ -919,8 +940,10 @@ class AutoReaderFuncs
 	*/
 	public function adminProcessAdd($h)
 	{
+                $wpo = new WPOTools();
+                
 		// Insert a campaign with dumb data
-		$h->db->query(WPOTools::insertQuery(DB_PREFIX . 'autoreader_campaign', array('lastactive' => 0, 'count' => 0)));
+		$h->db->query($wpo->insertQuery(DB_PREFIX . 'autoreader_campaign', array('lastactive' => 0, 'count' => 0)));
 		$cid = $h->db->insert_id;
 
 		// Process the edit
@@ -936,6 +959,7 @@ class AutoReaderFuncs
 	*/
 	public function adminProcessEdit($h,$id)
 	{
+                $wpo = new WPOTools();
 		// If we need to execute a tool action we stop here
 		//if($this->adminProcessTools($h)) return;
 
@@ -959,7 +983,7 @@ class AutoReaderFuncs
 		foreach($this->campaign_data['categories'] as $category)
 		{
 			// Insert
-			$h->db->query(WPOTools::insertQuery(DB_PREFIX . 'autoreader_campaign_category',
+			$h->db->query($wpo->insertQuery(DB_PREFIX . 'autoreader_campaign_category',
 			array('category_id' => $category,
 					'campaign_id' => $id)
 			));
@@ -983,7 +1007,7 @@ class AutoReaderFuncs
 		// Process words
 		foreach($this->campaign_data['rewrites'] as $rewrite)
 		{
-			$h->db->query(WPOTools::insertQuery(DB_PREFIX . 'autoreader_campaign_word',
+			$h->db->query($wpo->insertQuery(DB_PREFIX . 'autoreader_campaign_word',
 			array('word' => $rewrite['origin']['search'],
 					'regex' => $rewrite['origin']['regex'],
 					'rewrite' => isset($rewrite['rewrite']),
@@ -1006,7 +1030,7 @@ class AutoReaderFuncs
 		unset($main['author']);
 
 		// Query
-		$query = WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign', $main, 'id = ' . intval($id));
+		$query = $wpo->updateQuery(DB_PREFIX . 'autoreader_campaign', $main, 'id = ' . intval($id));
 		$h->db->query($query);
 
 		if ($this->campaign_data['main']['active'])
@@ -1045,6 +1069,8 @@ class AutoReaderFuncs
 	*/
 	public function adminProcessTools($h)
 	{
+                $wpo = new WPOTools();
+                
 		$id = $h->cage->post->testInt('id');
 		$count = 0;
 
@@ -1066,8 +1092,8 @@ class AutoReaderFuncs
 			$h->db->query("DELETE FROM " . DB_PREFIX . "autoreader_campaign_post WHERE campaign_id = {$id} ");
 
 			// Update feed and campaign posts count
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign', array('count' => 0), "id = {$id}"));
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array('hash' => 0, 'count' => 0), "campaign_id = {$id}"));
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign', array('count' => 0), "id = {$id}"));
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'autoreader_campaign_feed', array('hash' => 0, 'count' => 0), "campaign_id = {$id}"));
 
 			$this->tool_success = 'All posts removed';
 			$result = array('result' => $count . ' posts were succesfully deleted.');
@@ -1121,10 +1147,12 @@ class AutoReaderFuncs
 
 	public function adminUpdateCampaignPosts($h,$id, $properties)
 	{
+                $wpo = new WPOTools();
+                
 		$posts = $this->getCampaignPosts($h, $id);
 
 		foreach($posts as $post)
-			$h->db->query(WPOTools::updateQuery(DB_PREFIX . 'posts', $properties, "post_id = $post->post_id"));
+			$h->db->query($wpo->updateQuery(DB_PREFIX . 'posts', $properties, "post_id = $post->post_id"));
 	}
 
 	/**
@@ -1360,7 +1388,8 @@ class AutoReaderFuncs
 	*/
 	public function getLogs($h, $args = '')
 	{
-		extract(WPOTools::getQueryArgs($args, array('orderby' => 'created_on',
+                $wpo = new WPOTools();
+		extract($wpo->getQueryArgs($args, array('orderby' => 'created_on',
 																	'ordertype' => 'DESC',
 																	'limit' => null,
 																	'page' => null,

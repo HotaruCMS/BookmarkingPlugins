@@ -20,6 +20,7 @@ This plugin currently will not work in any version of IE
 
 Changelog
 ---------
+v.1.1 2013/04/28 - shibuya246 - update for PHP deprecated functions and static calls
 v.1.0.1 2011/04/21 - mabujo - another fix for ampersand bug and slight makeTitleFriendly method improvement.
 v.1.0 2011/04/20 - mabujo - added new makeTitleFriendly method to contain all the title utf-8 encoding fixes.
 Fixed problem with ampersand/&/&amp; character, and a fix for a latin extended set character found in certain yahoo feeds.

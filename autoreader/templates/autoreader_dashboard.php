@@ -4,11 +4,14 @@
 	//AutoReaderFuncs::getSettings($h);
 
 	//$logging = get_option('wpo_log');
-	$logs = AutoReaderFuncs::getLogs($h, 'limit=7');
-	$nextcampaigns = AutoReaderFuncs::getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5' .
+        $arFunc = new AutoreaderFuncs();
+        $wpo = new WPOTools();
+        
+	$logs = $arFunc->getLogs($h, 'limit=7');
+	$nextcampaigns = $arFunc->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5' .
 					'&where=active=1&orderby=UNIX_TIMESTAMP(lastactive)%2Bfrequency&ordertype=ASC');
-	$lastcampaigns = AutoReaderFuncs::getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5&where=UNIX_TIMESTAMP(lastactive)>0&orderby=lastactive');
-	$campaigns = AutoReaderFuncs::getCampaigns($h,'fields=id,title,count&limit=5&orderby=count');
+	$lastcampaigns = $arFunc->getCampaigns($h,'fields=id,title,lastactive,frequency&limit=5&where=UNIX_TIMESTAMP(lastactive)>0&orderby=lastactive');
+	$campaigns = $arFunc->getCampaigns($h,'fields=id,title,count&limit=5&orderby=count');
 ?>
 <div class="wrap">
 	<h2>Dashboard</h2>
@@ -22,7 +25,7 @@
 		<?php else: ?>
 		<ul id="logs">
 			<?php foreach($logs as $log): ?>
-			<li><?php echo WPOTools::timezoneMysql('F j, g:i a', $log->created_on) . ' &mdash; <strong>' . $log->message ?></strong></li>
+			<li><?php echo $wpo->timezoneMysql('F j, g:i a', $log->created_on) . ' &mdash; <strong>' . $log->message ?></strong></li>
 			<?php endforeach; ?>
 		</ul>
 		<?php endif; ?>
@@ -43,8 +46,8 @@
 		<ol class="campaignlist">
 			<?php foreach($nextcampaigns as $campaign):
 				print_r($campaign);
-				$cl = AutoReaderFuncs::getCampaignRemaining($h, $campaign);
-				$cl = WPOTools::calcTime($cl, 0, 'd', false);
+				$cl = $arFuncs->getCampaignRemaining($h, $campaign);
+				$cl = $wpo->calcTime($cl, 0, 'd', false);
 				$timestr = '';
 				if($cl['days']) $timestr .= $cl['days'] . 'd ';
 				if($cl['hours']) $timestr .= $cl['hours'] . 'h ';
@@ -67,7 +70,7 @@
 		<ol class="campaignlist">
 			<?php foreach($lastcampaigns as $campaign): ?>
 			<li>
-				<span class="details"><?php echo WPOTools::timezoneMysql('F j, g:i a', $campaign->lastactive) ?></span>
+				<span class="details"><?php echo $wpo->timezoneMysql('F j, g:i a', $campaign->lastactive) ?></span>
 				<a href="/admin_index.php?page=plugin_settings&plugin=autoreader"><?php echo $campaign->title ?></a></li>
 			<?php endforeach; ?>
 		</ol>

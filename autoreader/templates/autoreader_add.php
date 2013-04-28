@@ -3,6 +3,8 @@
 	require_once(PLUGINS . 'autoreader/helper/edit.helper.php' );
 	require_once(PLUGINS . 'autoreader/helper/form.helper.php' );
 	require_once(PLUGINS . 'autoreader/helper/tag.helper.php' );
+        
+        $arFuncs = new AutoreaderFuncs();
 ?>
 
 <div class="wrap">
@@ -110,7 +112,7 @@
 			<p>Please select one.</p>
 
 			<ul id="categories">
-				<?php  AutoReaderFuncs::adminEditCategories($h, $data) ?>
+				<?php  $arFuncs->adminEditCategories($h, $data) ?>
 	     
 				<?php if(isset($data['categories']['new'])): ?>
 				<?php foreach($data['categories']['new'] as $i => $catname): ?>
@@ -194,7 +196,7 @@
 		<div class="section" id="section_options">
 			<?php if(isset($campaign_edit)): ?>
 			<div class="section_warn">
-				<img src="<?php echo AutoReaderFuncs::tplpath ?>/images/icon_alert.gif" alt="Warning" class="icon" />
+				<img src="<?php echo $arFuncs->tplpath ?>/images/icon_alert.gif" alt="Warning" class="icon" />
 				<h3>Note</h3>
 				<p>Changing these options only affects the creation of posts after the next time feeds are parsed.</p>
 				<p>If you need to edit existing posts, you can do so by using the options under the Tools tab</p>
@@ -218,7 +220,7 @@
 							</p>
 						</div>
 
-						<p class="note">Read about <a href="<?php echo AutoReaderFuncs::helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo AutoReaderFuncs::helpurl; ?>" class="help_link">examples</a> ?></p>
+						<p class="note">Read about <a href="<?php echo $arFuncs->helpurl; ?>" class="help_link">post templates</a>, or check some <a href="<?php echo $arFuncs->helpurl; ?>" class="help_link">examples</a> ?></p>
 						</div>
 			<?php } ?>
 			<div class="multipletext">
@@ -226,7 +228,8 @@
 				$f = _data_value($data['main'], 'frequency');
 
 				if($f) {
-					$frequency = WPOTools::calcTime($f);
+                                        $wpo = new WPOTools();
+					$frequency = $wpo->calcTime($f);
 				}
 				else
 					$frequency = array();

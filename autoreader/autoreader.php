@@ -2,7 +2,7 @@
 /**
 * name: RSS Autoreader
 * description: Enables reading of RSS feeds and populating database
-* version: 1.0.1
+* version: 1.1
 * folder: autoreader
 * class: Autoreader
 * type: autoreader
@@ -218,7 +218,10 @@ class Autoreader
 	public function activate($h, $force_install = false)
 	{
 
-	AutoReaderFuncs::getSettings($h);
+            $wpo = new WPOTools();
+            $arFuncs = new AutoReaderFuncs();
+            
+            $arFuncs->getSettings($h);
 
 	// only re-install if there is new version or plugin has been uninstalled
 	if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
@@ -338,10 +341,10 @@ class Autoreader
 
 
 				# Options
-				WPOTools::addMissingOptions(array(
+				$wpo->addMissingOptions(array(
 				'wpo_log'          => array(1, 'Log WP-o-Matic actions'),
 				'wpo_log_stdout'   => array(0, 'Output logs to browser while a campaign is being processed'),
-				'wpo_unixcron'     => array(WPOTools::isUnix(), 'Use unix-style cron'),
+				'wpo_unixcron'     => array($wpo->isUnix(), 'Use unix-style cron'),
 				'wpo_croncode'     => array(substr(md5(time()), 0, 8), 'Cron job password.'),
 				'wpo_cacheimages'  => array(0, 'Cache all images. Overrides campaign options'),
 				'wpo_cachepath'    => array('cache', 'Cache path relative to wpomatic directory')

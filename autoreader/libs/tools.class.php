@@ -94,8 +94,10 @@ function getBinaryPath($program, $append = '', $fallback = null)
 }
 
 function getQueryArgs($args, $defaults = array())
-{                                   
-	$r = WPOTools::getOptions($args);  		
+{                       
+        $wpo = new WPOTools();
+        
+	$r = $wpo->getOptions($args);  		
 	$ret = array_merge($defaults, $r);
 		
 	if(isset($ret['page']) && $ret['page'] && isset($ret['perpage']) && $ret['perpage'])
@@ -245,6 +247,8 @@ function calcTime($t, $sT = 0, $sel = 'Y', $includenull = true) {
 
 function stringToArray($string)
 {
+        $wpo = new WPOTools();
+        
 	preg_match_all('/
 		\s*(\w+)              # key                               \\1
 		\s*=\s*               # =
@@ -259,7 +263,7 @@ function stringToArray($string)
 	$attributes = array();
 	foreach ($matches as $val)
 	{
-		$attributes[$val[1]] = WPOTools::literalize($val[3]);
+		$attributes[$val[1]] = $wpo->literalize($val[3]);
 	}
 
 	return $attributes;
