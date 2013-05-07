@@ -242,8 +242,11 @@ class Submit
             $submitted_data = $funcs->loadSubmitData($h, $key);
             
             // merge defaults from "checkSubmitted" with $submitted_data...
-            $merged_data = array_merge($h->vars['submitted_data'], $submitted_data);
-            $h->vars['submitted_data'] = $merged_data;
+            if (!is_array($submitted_data)) {
+                $h->vars['submitted_data'] = $submitted_data;
+            } else {
+                $h->vars['submitted_data'] = array_merge($h->vars['submitted_data'], $submitted_data);
+            }  
             
             // not sure if this is completely necessary, but it's worth having...
             if ($h->vars['submitted_data']['submit_id']) {

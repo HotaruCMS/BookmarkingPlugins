@@ -116,6 +116,7 @@ $h->pluginHook('submit_2_assign');
     <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
     </table>
     </form>
+    <?php $h->pluginHook('image_upload'); ?>
     
     <?php if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { ?>
         <a class='bold_red' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">

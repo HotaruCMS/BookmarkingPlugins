@@ -251,8 +251,7 @@ class SubmitFunctions
 
         // save submitted data...
         $key = $this->saveSubmitData($h);
-        return $key;
-        break;
+        return $key;        
     }
     
     

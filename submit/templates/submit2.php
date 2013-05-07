@@ -93,5 +93,6 @@ $h->pluginHook('submit_2_assign');
     <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
     </table>
     </form>
+    <?php $h->pluginHook('image_upload'); ?>
 
 </div>
