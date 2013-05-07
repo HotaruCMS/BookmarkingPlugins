@@ -444,7 +444,7 @@ class Comments
 			// Show "Access Comment Manager" link if not submit3 and permissions allow
 			if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes')
 			{
-				echo "<li id='comment_manager_link'><a href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>" . $h->lang['comments_access_comment_manager'] . "</a></li>";
+				echo "<li id='comment_manager_link'><a class='btn btn-info' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>&nbsp;" . $h->lang['comments_access_comment_manager'] . " </a></li>";
 			}
 	
 			$h->pluginHook('comments_post_last_form');
