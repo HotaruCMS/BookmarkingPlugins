@@ -166,11 +166,12 @@ class Tags
         
         if (!$raw) {
             echo "<div class='show_tags'>\n";
-            echo "<ul><li>Tagged:</li>";
+            echo "<ul>";
+            echo "<li>Tagged:</li>";
         }
         
         foreach ($tags as $tag) {
-            echo "<li><a href='" . $h->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a></li>";
+            echo "<li><a class='label' href='" . $h->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a></li>";
         }
         
         if (!$raw) {
