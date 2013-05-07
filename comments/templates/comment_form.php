@@ -34,7 +34,7 @@
     
 <?php } // JavaScript changes this form! See comments.js ?>
 
-    <form name='comment_form' action='<?php echo $h->url(array('page' => $h->post->id)); ?>' method='post' onsubmit="document.getElementById('comment_submit_<?php echo $h->comment->id; ?>').disabled = true; return true;">
+    <form class='form' name='comment_form' action='<?php echo $h->url(array('page' => $h->post->id)); ?>' method='post' onsubmit="document.getElementById('comment_submit_<?php echo $h->comment->id; ?>').disabled = true; return true;">
         <textarea name="comment_content" id="comment_content_<?php echo $h->comment->id; ?>" rows="6" cols="50"></textarea><br />
         <div class="comment_instructions"><small><?php echo $h->lang['comments_form_allowable_tags']; ?><?php echo htmlentities($h->comment->allowableTags); ?></small></div>
         <div class="comment_subscribe"><input id="comment_subscribe" name="comment_subscribe" type="checkbox" <?php echo $h->vars['subscribe']; ?> /> <?php echo $h->lang['comments_form_subscribe']; ?><?php if ($h->vars['subscribe']) { echo " <small>(" . $h->lang['comments_form_unsubscribe'] . ")</small>"; } ?></div>
@@ -44,7 +44,7 @@
                     echo $h->lang['comments_form_moderation_on']; } ?>
         </div>
         
-        <input type="submit" name="submit" id="comment_submit_<?php echo $h->comment->id; ?>" value="<?php echo $h->lang['comments_form_submit']; ?>" class="submit" />
+        <input type="submit" name="submit" id="comment_submit_<?php echo $h->comment->id; ?>" value="<?php echo $h->lang['comments_form_submit']; ?>" class="submit btn" />
         <input type="hidden" name="comment_process" id="comment_process_<?php echo $h->comment->id; ?>" value="newcomment" />
         <input type="hidden" name="comment_parent" value="<?php echo $h->comment->id; ?>" />
         <input type="hidden" name="comment_post_id" value="<?php echo $h->post->id; ?>" />
