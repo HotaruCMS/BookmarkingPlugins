@@ -281,9 +281,9 @@ class PostsWidget
             
             // show vote if enabled in Vote settings
             if ($widget_votes == 'checked') {
-                $output .= "<div class='posts_widget_vote vote_color_" . $item->post_status . "'>";
+                $output .= "<div class='span2'><div class='badge posts_widget_vote vote_color_" . $item->post_status . "'>";
                 $output .= $item->post_votes_up;
-                $output .= "</div>\n";
+                $output .= "</div></div>\n";
                 
                 $output .= "<div class='posts_widget_link posts_widget_indent'>\n";
             } else {

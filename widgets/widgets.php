@@ -91,33 +91,42 @@ class Widgets
 		
 		/*  include the plugin class if not already. This is usually done in the pluginHook
 		    function, but if no other functions are used, we need to include it here: */
-		require_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php");
-		$h->includeLanguage($details['plugin']);  // same for language
-		
-		echo "<div class='widget'>\n";
-		if ($details['class'] && method_exists($details['class'], $function_name)) 
-		{   
-			// must be a class object with a method that matches!
-			$class = new $details['class']($widget);
-			$class->$function_name($h, $details['args']);
-		} 
-		else 
-		{
-			/* For multiple instances of widgets, we need to strip the id off the end and use the argument as the identifier.
-			   E.g. CHANGE widget_rss_show_1(1); 
-			        TO     widget_rss_show(1); */
-			
-			$function_name_array = explode('_', $function_name);
-			array_pop($function_name_array); 
-			$function_name = implode('_', $function_name_array);
-			if ($details['class'])
-			{
-				// must be a class object!
-				$class = new $details['class']($widget);
-				$class->$function_name($h, $details['args']);
-			}
-		}
-		echo "</div>\n";
+		/**
+                 * Note we are testing for file availability and suppressing error report
+                 * Also we are using include_once since if not found we are sidestepping it, therefore not using require_once in this case
+                 */
+                if(!@include_once(PLUGINS . $details['plugin'] . "/" . $details['plugin'] . ".php") ) {
+                    echo "<div class='widget'>\n";
+                    echo ucfirst($details['plugin']) . ' plugin file not found';
+                    echo "</div>\n";
+                } else {  
+                    $h->includeLanguage($details['plugin']);  // same for language
+
+                    echo "<div class='widget'>\n";
+                    if ($details['class'] && method_exists($details['class'], $function_name)) 
+                    {   
+                            // must be a class object with a method that matches!
+                            $class = new $details['class']($widget);
+                            $class->$function_name($h, $details['args']);
+                    } 
+                    else 
+                    {
+                            /* For multiple instances of widgets, we need to strip the id off the end and use the argument as the identifier.
+                               E.g. CHANGE widget_rss_show_1(1); 
+                                    TO     widget_rss_show(1); */
+
+                            $function_name_array = explode('_', $function_name);
+                            array_pop($function_name_array); 
+                            $function_name = implode('_', $function_name_array);
+                            if ($details['class'])
+                            {
+                                    // must be a class object!
+                                    $class = new $details['class']($widget);
+                                    $class->$function_name($h, $details['args']);
+                            }
+                    }
+                    echo "</div>\n";
+                }
 	}
 
 

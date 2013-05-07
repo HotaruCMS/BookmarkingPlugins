@@ -29,14 +29,17 @@ if ($h->cage->get->keyExists('search')) { $current_search = $h->vars['orig_searc
 ?>
 
 <!-- <h2 class="widget_head"><?php echo $h->lang['search_title']; ?></h2> -->
+<?php $search_text = $h->lang['search_text']; ?>
 <div class="widget_body search_box">
-    <form name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'> 
-        <input id="search_input" type="text" value="<?php echo $current_search;  ?>" name="search" 
-            onfocus="if (this.value == '<?php echo $h->lang['search_text']; ?>') {this.value = '';}"
+    <form name='search_form' clas='form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'> 
+        <input id="search_input" type="text" class="searchfield" value="<?php echo $h->lang['search_text'];  ?>" name="search" 
+            onfocus="if(this.value == '<?php echo $search_text; ?>') {this.value = '';}" onblur="if (this.value == '') {this.value = '<?php echo $search_text ; ?>';}"
         />
         <input type="hidden" id="dosearch" />
-        <input id="search_button" type="submit" value="<?php echo $h->lang['search_submit']; ?>" <?php echo $disabled; ?> />
+        <input id="search_button" type="submit" class="btn btn-primary" value="<?php echo $h->lang['search_submit']; ?>" <?php echo $disabled; ?> />
     </form>
 </div>
+
+
 
 
