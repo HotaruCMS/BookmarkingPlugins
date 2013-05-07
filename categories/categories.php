@@ -125,8 +125,9 @@ class Categories
         // no key or no value? exit...
         if (!$key || !$value) { return false; }
 
-        $sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-        $exists = $h->db->get_var($h->db->prepare($sql, urlencode($key)));
+        $exists = $h->getCatId(urlencode($key));
+        //$sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
+        //$exists = $h->db->get_var($h->db->prepare($sql, urlencode($key)));
         
         // no category? exit...
         if (!$exists) { return false; }
