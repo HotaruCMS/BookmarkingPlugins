@@ -2,7 +2,7 @@
 /**
  * name: Who Voted
  * description: Show a list of who voted
- * version: 0.2
+ * version: 0.3
  * folder: who_voted
  * class: WhoVoted
  * hooks: install_plugin, header_include, show_post_middle, admin_plugin_settings, admin_sidebar_plugin_settings
@@ -43,6 +43,7 @@ class WhoVoted
         if (!isset($who_voted_settings['who_voted_num'])) { $who_voted_settings['who_voted_num'] = 0; }
         if (!isset($who_voted_settings['who_voted_avatars'])) { $who_voted_settings['who_voted_avatars'] = ''; }
         if (!isset($who_voted_settings['who_voted_avatar_size'])) { $who_voted_settings['who_voted_avatar_size'] = '16'; }
+        if (!isset($who_voted_settings['who_voted_avatar_shape'])) { $who_voted_settings['who_voted_avatar_shape'] = 'square'; }
         if (!isset($who_voted_settings['who_voted_names'])) { $who_voted_settings['who_voted_names'] = 'checked'; }
         if (!isset($who_voted_settings['who_voted_widget_title'])) { $who_voted_settings['who_voted_widget_title'] = 'checked'; }
         
@@ -70,6 +71,7 @@ class WhoVoted
         $limit = $who_voted_settings['who_voted_num'];
         $avatars = $who_voted_settings['who_voted_avatars'];
         $avatar_size = $who_voted_settings['who_voted_avatar_size'];
+        $avatar_shape = $who_voted_settings['who_voted_avatar_shape'];
         $names = $who_voted_settings['who_voted_names'];
         $show_title = $who_voted_settings['who_voted_widget_title'];
         
@@ -86,7 +88,7 @@ class WhoVoted
         
             $output .= "<div id='who_voted_content'>\n";
             foreach ($results as $item) {
-                $h->setAvatar($item->user_id, $avatar_size);
+                $h->setAvatar($item->user_id, $avatar_size, 'g', 'img-' . $avatar_shape);
                 if ($avatars) {
                     $output .= $h->linkAvatar(); 
                 }

@@ -33,7 +33,14 @@ $lang["who_voted_settings_note"] = "Customize how you want to display users that
 $lang["who_voted_settings_num_visitors"] = "Maximum number of members to show <small>(0 for all voters)</small>";
 $lang["who_voted_settings_avatars"] = "Show user avatars <small>(Requires an avatar plugin)</small>";
 $lang["who_voted_settings_avatar_size"] = "Size (pixels):";
+$lang["who_voted_settings_avatar_shape"] = "Shape";
 $lang["who_voted_settings_names"] = "Show user names";
 $lang["who_voted_settings_show_widget_title"] = "Show title <small>(Default: \"Who Voted\". You can edit it in who_voted_language.php)</small>";
 
+$lang["who_voted_settings_avatar_shape_square"] = "Square";
+$lang["who_voted_settings_avatar_shape_circle"] = "Circle";
+$lang["who_voted_settings_avatar_shape_rounded"] = "Rounded";
+$lang["who_voted_settings_avatar_shape_polaroid"] = "Polaroid";
+
+$lang["who_voted_settings_theme_caution"] = "requires theme that can handle image shapes e.g. bootstrap";
 ?>

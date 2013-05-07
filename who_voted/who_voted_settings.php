@@ -37,7 +37,7 @@ class WhoVotedSettings
             $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $h->lang["who_voted_settings_header"] . "</h1>\n";
+        //echo "<h1>" . $h->lang["who_voted_settings_header"] . "</h1>\n";
         echo "<p>" . $h->lang["who_voted_settings_note"] . "</p>";
           
         // Get settings from database if they exist...
@@ -45,6 +45,7 @@ class WhoVotedSettings
         $limit = $who_voted_settings['who_voted_num'];
         $avatars = $who_voted_settings['who_voted_avatars'];
         $avatar_size = $who_voted_settings['who_voted_avatar_size'];
+        $avatar_shape = $who_voted_settings['who_voted_avatar_shape'];
         $names = $who_voted_settings['who_voted_names'];
         $show_title = $who_voted_settings['who_voted_widget_title'];
         
@@ -62,6 +63,19 @@ class WhoVotedSettings
             echo $h->lang["who_voted_settings_avatars"] . "&nbsp;&nbsp; ";
             echo $h->lang["who_voted_settings_avatar_size"];
             echo " <input type='text' size=5 name='avatar_size' value='" . $avatar_size . "'></p>\n";
+            
+            echo $h->lang["who_voted_settings_avatar_shape"] . "<br />\n"; 
+            ?>
+            <select name='avatar_shape'>                      
+                <option value="square" <?php if ($avatar_shape=='square') echo 'selected="selected"';?>><?php echo $h->lang["who_voted_settings_avatar_shape_square"]; ?></options>
+                <option value="rounded" <?php if ($avatar_shape=='rounded') echo 'selected="selected"';?>><?php echo $h->lang["who_voted_settings_avatar_shape_rounded"]; ?></options>
+                <option value="circle" <?php if ($avatar_shape=='circle') echo 'selected="selected"';?>><?php echo $h->lang["who_voted_settings_avatar_shape_circle"]; ?></options>
+                <option value="polaroid" <?php if ($avatar_shape=='polaroid') echo 'selected="selected"';?>><?php echo $h->lang["who_voted_settings_avatar_shape_polaroid"]; ?></options>                       
+            </select>
+            <?php
+            
+            echo $h->lang["who_voted_settings_theme_caution"];
+       
             
         echo "<p><input type='checkbox' name='names' value='names' " . $names . ">&nbsp;&nbsp;";
             echo $h->lang["who_voted_settings_names"] . "</p>\n";
@@ -117,6 +131,11 @@ class WhoVotedSettings
             $avatar_size = $who_voted_settings['who_voted_avatar_size']; // existing setting
         }
         
+        // avatar shape
+        $avatar_shape = $h->cage->post->testAlnumLines('avatar_shape');        
+        if (!$avatar_shape) {
+            $avatar_shape = $who_voted_settings['who_voted_avatar_shape'];
+        }
         
         // show names:
         if ($h->cage->post->keyExists('names')) { 
@@ -134,6 +153,7 @@ class WhoVotedSettings
             $who_voted_settings['who_voted_widget_title'] = $show_title;
             $who_voted_settings['who_voted_avatars'] = $avatars;
             $who_voted_settings['who_voted_avatar_size'] = $avatar_size;
+            $who_voted_settings['who_voted_avatar_shape'] = $avatar_shape;
             $who_voted_settings['who_voted_names'] = $names;
             $h->updateSetting('who_voted_settings', serialize($who_voted_settings));
             
