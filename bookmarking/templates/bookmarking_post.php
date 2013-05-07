@@ -32,7 +32,7 @@ $user->getUserBasic($h, $h->post->author);
 <?php $h->pluginHook('pre_show_post'); ?>
 
 <!-- POST -->
-<div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
+<div class="show_post vote_button_space media" id="show_post_<?php echo $h->post->id ?>" >
 
     <?php $h->pluginHook('show_post_pre_title'); ?>
 
@@ -43,7 +43,8 @@ $user->getUserBasic($h, $h->post->author);
         }
     ?>
         
-    <div class="show_post_title">
+    <div class="media-body">
+        <div class="show_post_title media-heading">
         <?php if (!$h->vars['editorial']) { ?> 
             <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
         <?php } else { ?>
@@ -52,7 +53,7 @@ $user->getUserBasic($h, $h->post->author);
         <?php $h->pluginHook('show_post_title'); ?>
     </div>
 
-    <div class="show_post_author_date">
+        <div class="show_post_author_date">
         <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
 
 		<?php 
@@ -77,18 +78,20 @@ $user->getUserBasic($h, $h->post->author);
         ?> 
     </div>
         
-    <?php if ($h->vars['use_content']) { ?>
-        <div class="show_post_content">
-            <?php echo nl2br($h->post->content); ?>
-            <?php $h->pluginHook('show_post_content_post'); ?>
         </div>
-    <?php } ?>
     
-    <div class="show_post_extra_fields">
-        <ul>
-            <?php $h->pluginHook('show_post_extra_fields'); ?>
-        </ul>
-    </div>
+        <?php if ($h->vars['use_content']) { ?>
+            <div class="show_post_content">
+                <?php echo nl2br($h->post->content); ?>
+                <?php $h->pluginHook('show_post_content_post'); ?>
+            </div>
+        <?php } ?>
+
+        <div class="show_post_extra_fields">
+            <ul>
+                <?php $h->pluginHook('show_post_extra_fields'); ?>
+            </ul>
+        </div>
     
 	<div class="clear"></div>
         

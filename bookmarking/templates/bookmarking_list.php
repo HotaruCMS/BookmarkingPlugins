@@ -33,8 +33,8 @@ foreach ($h->vars['pagedResults']->items as $post) {
 <!-- POST -->
 <?php $h->pluginHook('pre_show_post'); ?>
 
-    <div class="show_post vote_button_space" id="show_post_<?php echo $h->post->id ?>" >
-    
+    <div class="show_post vote_button_space media" id="show_post_<?php echo $h->post->id ?>" >
+            
         <?php $h->pluginHook('show_post_pre_title'); ?>
         
         <?php   // Show avatars if enabled (requires an avatars plugin)
@@ -44,38 +44,40 @@ foreach ($h->vars['pagedResults']->items as $post) {
             }
         ?>
         
-        <div class="show_post_title">
-            <?php if ($h->vars['link_action'] == 'source') { 
-                echo "<a href=' ". $h->post->origUrl ."' " . $h->vars['target'] ." class='click_to_source' rel='nofollow'>" . $h->post->title . "</a>";
-             } else { 
-                echo "<a href='" . $h->url(array('page'=>$h->post->id)) ."' " . $h->vars['target'] . " class='click_to_post'>" . $h->post->title . "</a>";
-             } 
-            $h->pluginHook('show_post_title');
-	    ?>
-        </div> 
-    
-        <div class="show_post_author_date">    
-            <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
+        <div class="media-body">
+            <div class="show_post_title media-heading">
+                <?php if ($h->vars['link_action'] == 'source') { 
+                    echo "<a href=' ". $h->post->origUrl ."' " . $h->vars['target'] ." class='click_to_source' rel='nofollow'>" . $h->post->title . "</a>";
+                 } else { 
+                    echo "<a href='" . $h->url(array('page'=>$h->post->id)) ."' " . $h->vars['target'] . " class='click_to_post'>" . $h->post->title . "</a>";
+                 } 
+                $h->pluginHook('show_post_title');
+                ?>
+            </div> 
 
-			<?php 
-			if ($user->name)
-			{
-				echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
-			}
-			else
-			{
-				echo $h->lang['main_anonymous'];
-			}
-			?>
+            <div class="show_post_author_date">    
+                <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
 
-            <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
-            <?php $h->pluginHook('show_post_author_date'); ?>
-            <?php 
-                if (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
-                    || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
-                    echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
-                }
-            ?> 
+                            <?php 
+                            if ($user->name)
+                            {
+                                    echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
+                            }
+                            else
+                            {
+                                    echo $h->lang['main_anonymous'];
+                            }
+                            ?>
+
+                <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
+                <?php $h->pluginHook('show_post_author_date'); ?>
+                <?php 
+                    if (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
+                        || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
+                        echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
+                    }
+                ?> 
+            </div>
         </div>
             
         <?php if ($h->vars['use_content']) { ?>
