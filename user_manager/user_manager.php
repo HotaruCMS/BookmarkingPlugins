@@ -6,7 +6,7 @@
  * folder: user_manager
  * class: UserManager
  * requires: users 1.1, user_signin 0.5
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, post_manager_user_name, comment_manager_user_name, submit_edit_end
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_sidebar_users, post_manager_user_name, comment_manager_user_name, submit_edit_end
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -72,6 +72,23 @@ class UserManager
         $username = $h->getUserNameFromId($vars['userid']);
         
         echo "<p class='user_man_find_user'><a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>" . $h->lang['user_man_find_user'] . "</a></p>";
+    }
+    
+    
+    /**
+     * Add link to user at bottom of Submit Edit Post
+     */
+    public function admin_sidebar_users($h)
+    {
+        echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang["admin_theme_users"];
+            echo '<div id="admin_users_list" class="collapse out">';  
+                echo '<ul id="users_list">';
+                    echo "<li><a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=add_user'>Add User</a></li>";
+                    echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&plugin=user_manager'>List Users</a></li>";
+                echo '</ul>';
+            echo '</div>';
+        echo '</li>';
+	echo '<hr style="margin:10px 0;"/>';
     }
 }
 

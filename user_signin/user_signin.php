@@ -530,7 +530,7 @@ class UserSignin
             return true;
         }
         
-        $h->pluginHook('user_signin_register_check_blocked');  // Stop Spam is one plugin that uses this
+        $h->pluginHook('user_register_check_blocked');  // Stop Spam is one plugin that uses this
         if (isset($h->vars['block']) && $h->vars['block'] == true) { return true; }
 
         return false;   // not blocked

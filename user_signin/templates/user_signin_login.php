@@ -41,13 +41,25 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     <div class='user_login_reg'>
     <?php //echo $h->lang["user_signin_login_instructions"]; ?>
     
-        <form name='login_form' action='<?php echo BASEURL; ?>index.php' method='post'>
-        <table>
-            <tr><td><?php echo $h->lang["user_signin_login_form_submit_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' /></td></tr>
-            <tr><td><?php echo $h->lang["user_signin_login_form_submit_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' /></td></tr>
-            <tr><td><?php echo $h->lang["user_signin_login_form_submit_remember"]; ?> </td><td><input type='checkbox' name='remember' value='1' <?php echo $remember_check; ?> /></td></tr>
-            <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['user_signin_login_form_submit']; ?>' /></td></tr>
-        </table>
+        <form name='login_form' class='form-signin' action='<?php echo BASEURL; ?>index.php' method='post'>
+            
+                <input id="prependedInput" type="text" name="username" placeholder="<?php echo $h->lang["user_signin_login_form_submit_username"]; ?>" value="<?php echo $username_check; ?>">
+            <br/>
+                <input  id="prependedInput" type="password" name="password" placeholder="<?php echo $h->lang["user_signin_login_form_submit_password"]; ?>" value="<?php echo $password_check; ?>">
+            
+            <label class="checkbox">
+                <input type="checkbox" name="remember" value="1" <?php echo $remember_check; ?>/> <?php echo $h->lang["user_signin_login_form_submit_remember"]; ?>
+            </label>
+       
+           
+           
+       
+            
+            <div class="form-actions">
+  <button type="submit" class="btn btn-large btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
+
+</div>
+            
         <input type='hidden' name='page' value='login'>
         <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />

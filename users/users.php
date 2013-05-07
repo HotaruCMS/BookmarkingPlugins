@@ -473,7 +473,7 @@ class Users
 						}
 						
 						$lang_name = 'users_admin_stats_' . $stat_type;
-						echo "<li>";
+						echo '<li data-bind="text: userCount">';
 						if ($link) { echo "<a href='" . $link . "'>"; }
 						echo $h->lang[$lang_name] . ": " . $user_count;
 						if ($link) { echo "</a>"; }
