@@ -496,7 +496,7 @@ class Submit
         if (isset($h->vars['submission_closed']) && $h->vars['submission_closed'] == true) { return false; }
         
         // highlight "Submit" as active tab
-        if ($h->pageType == 'submit') { $status = "id='navigation_active'"; } else { $status = ""; }
+        if ($h->pageType == 'submit') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
         
         // display the link in the navigation bar
         echo "<li " . $status . "><a href='" . $h->url(array('page'=>'submit')) . "'>" . $h->lang['submit_submit_a_story'] . "</a></li>";
