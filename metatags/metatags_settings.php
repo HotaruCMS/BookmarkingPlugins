@@ -36,8 +36,6 @@ class MetatagsSettings
         if ($h->cage->post->getAlpha('submitted') == 'true') { 
             $this->saveSettings($h); 
         }
-        
-        echo "<h1>" . $h->lang["metatags_settings_header"] . "</h1>\n";
           
         // Get settings from database if they exist...
         $metatags_description = $h->getSetting('metatags_description');
@@ -77,7 +75,7 @@ class MetatagsSettings
         
         // test the description input
         if ($h->cage->post->keyExists('metatags_description')) { 
-            $metatags_description = $h->cage->post->testAlnumLines('metatags_description');
+            $metatags_description = $h->cage->post->getHtmLawed('metatags_description');
         } else {
             $metatags_description = '';            
         }
@@ -85,7 +83,7 @@ class MetatagsSettings
     
         // test the keywords input
         if ($h->cage->post->keyExists('metatags_keywords')) { 
-            $metatags_keywords = $h->cage->post->testAlnumLines('metatags_keywords');
+            $metatags_keywords = $h->cage->post->getHtmLawed('metatags_keywords');
         } else {
             $metatags_keywords = ''; 
         }
