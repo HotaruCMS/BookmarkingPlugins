@@ -27,8 +27,8 @@
 
 //$json_array = array('result'=>'test_okay');
 //echo json_encode($json_array); exit;
-
-require_once('../../../hotaru_settings.php');
+if ($h->version > '1.4.2') $settingsFile = '../../../config/settings.php'; else $settingsFile = '../../../hotaru-settings.php';
+require_once($settingsFolder);
 require_once('../../../Hotaru.php');    // Not the cleanest way of getting to the root...
 
 $h = new Hotaru();
