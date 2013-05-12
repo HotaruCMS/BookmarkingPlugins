@@ -715,7 +715,7 @@ class Comments
         if ($h->subPage == 'user') {
             $user = $h->cage->get->testUsername('user');
             $userlink = "<a href='" . $h->url(array('user'=>$user)) . "'>";
-            $userlink .= $user . "</a> &raquo ";
+            $userlink .= $user . "</a> / ";
             $rss = "<a href='" . $h->url(array('page'=>'rss_comments', 'user'=>$h->cage->get->testUsername('user'))) . "'> ";
             $crumbs = $userlink . $h->lang['comments'] . $rss;
         } else {
