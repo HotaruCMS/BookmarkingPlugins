@@ -43,7 +43,8 @@ class Bookmarking
 		$bookmarking_settings = $h->getSerializedSettings();
 		if (!isset($bookmarking_settings['posts_per_page'])) { $bookmarking_settings['posts_per_page'] = 10; }
 		if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }
-		if (!isset($bookmarking_settings['default_type'])) { $bookmarking_settings['default_type'] = 'news'; }
+		if (!isset($bookmarking_settings['sort_bar_dropdown'])) { $bookmarking_settings['sort_bar_dropdown'] = ''; }		
+                if (!isset($bookmarking_settings['default_type'])) { $bookmarking_settings['default_type'] = 'news'; }
 		if (!isset($bookmarking_settings['default_page'])) { $bookmarking_settings['default_page'] = 'popular'; }
 		if (!isset($bookmarking_settings['archive'])) { $bookmarking_settings['archive'] = "no_archive"; }
 		$h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
@@ -291,14 +292,14 @@ class Bookmarking
 	{
 		if ($h->home != 'popular') {
 			// highlight "Top Stories" as active tab
-			if ($h->pageName == 'popular') { $status = "id='navigation_active'"; } else { $status = ""; }
+			if ($h->pageName == 'popular') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
 			
 			// display the link in the navigation bar
 			echo "<li " . $status . "><a href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["bookmarking_top"] . "</a></li>";
 		}
 		
 		// highlight "Latest" as active tab
-		if ($h->pageName == 'latest') { $status = "id='navigation_active'"; } else { $status = ""; }
+		if ($h->pageName == 'latest') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
 		
 		// display the link in the navigation bar
 		echo "<li " . $status . "><a href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["bookmarking_latest"] . "</a></li>";

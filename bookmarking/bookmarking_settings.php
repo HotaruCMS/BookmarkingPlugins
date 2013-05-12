@@ -36,7 +36,7 @@ class BookmarkingSettings
             $this->saveSettings($h); 
         }    
         
-        echo "<h1>" . $h->lang["bookmarking_settings_header"] . "</h1>\n";
+        //echo "<h1>" . $h->lang["bookmarking_settings_header"] . "</h1>\n";
         
         $h->showMessage(); // Saved / Error message
         
@@ -45,6 +45,7 @@ class BookmarkingSettings
         
         $posts_per_page = $bookmarking_settings['posts_per_page'];
         $rss_redirect = $bookmarking_settings['rss_redirect'];
+        $sort_bar_dropdown = $bookmarking_settings['sort_bar_dropdown'];
 	$default_type = $bookmarking_settings['default_type'];
 	$default_page = $bookmarking_settings['default_page'];
         $archive = $bookmarking_settings['archive'];
@@ -54,6 +55,7 @@ class BookmarkingSettings
         //...otherwise set to blank:
         if (!$posts_per_page) { $posts_per_page = 10; }
         if (!$rss_redirect) { $rss_redirect = ''; }
+        if (!$sort_bar_dropdown) { $sort_bar_dropdown = ''; }        
 	if (!$default_type) { $default_type = 'news'; }
         if (!$archive) { $archive = 'no_archive'; }
         
@@ -92,6 +94,9 @@ class BookmarkingSettings
         // rss redirecting?
         echo "<p><input type='checkbox' name='rss_redirect' value='rss_redirect' " . $rss_redirect . " >&nbsp;&nbsp;" . $h->lang["bookmarking_settings_rss_redirect"] . "<br />\n"; 
     
+        // display of sort bar?
+        echo "<p><input type='checkbox' name='sort_bar_dropdown' value='sort_bar_dropdown' " . $sort_bar_dropdown . " >&nbsp;&nbsp;" . $h->lang["bookmarking_settings_sort_bar_dropdown"] . "<br />\n"; 
+            
         $h->pluginHook('bookmarking_settings_form');
     
         echo "<br />\n";
@@ -124,6 +129,13 @@ class BookmarkingSettings
         } else { 
             $rss_redirect = ''; 
         }
+        
+        // Dropdown display
+        if ($h->cage->post->keyExists('sort_bar_dropdown')) { 
+            $sort_bar_dropdown = 'checked'; 
+        } else { 
+            $sort_bar_dropdown = ''; 
+        }
 	
 	// default type
 	if ($h->cage->post->testAlnumLines('default_type')) {
@@ -145,6 +157,7 @@ class BookmarkingSettings
         
         $bookmarking_settings['posts_per_page'] = $posts_per_page;
         $bookmarking_settings['rss_redirect'] = $rss_redirect;
+        $bookmarking_settings['sort_bar_dropdown'] = $sort_bar_dropdown;        
 	$bookmarking_settings['default_type'] = $default_type;
 	$bookmarking_settings['default_page'] = $default_page;
     
