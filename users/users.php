@@ -265,8 +265,8 @@ class Users
     {
         if ($h->pageType != 'user') { return false; }
 
-		// if user doesn't exist
-		if (!$h->vars['user']->name) { return false; }
+        // if user doesn't exist
+        if (!$h->vars['user']->name) { return false; }
         if ($h->userExists(0, $h->vars['user']->name) == 'no') { return false; }
         
         // determine permissions
