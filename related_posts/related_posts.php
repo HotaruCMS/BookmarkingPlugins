@@ -214,13 +214,13 @@ class relatedPosts
 		$output .= "<ul class='related_posts'>\n";
 		foreach ($results as $item) {
 				$h->readPost(0, $item); // needed for the url function
-				$output .= "<li class='related_posts_item'>\n";
+				$output .= "<li class='related_posts_item'>\n<div class='related_posts_item_block'>";
 			$indent = '';
 			if ($h->isActive('vote')) {
 					if (!isset($item->post_votes_up)) { $item->post_votes_up = '&nbsp;'; }
-					$output .= "<div class='related_posts_vote vote_color_" . $item->post_status . "'>";
+					$output .= "<span class='related_posts_vote vote_color_" . $item->post_status . "'>";
 					$output .= $item->post_votes_up;
-					$output .= "</div>\n";
+					$output .= "</span>\n";
 				$indent = "related_posts_indent";
 			}
 			if($h->isActive('post_images'))
@@ -233,22 +233,22 @@ class relatedPosts
 							if (substr($h->post->vars['img'],0,32) != 'http://images.sitethumbshot.com/')
 								{	
 									// We have an image for this post and it is not a site thumbnail so use the image and prepend path to folder
-									$output .= "<div class=\"related_posts_image\"><a href=\"" . $h->url(array('page'=>$item->post_id)) . "\"> <img src=\"" . BASEURL . "content/images/post_images/" . $h->post->vars['img'] . "\" alt=\"" . stripslashes(urldecode($item->post_title)) . "\" /></a></div>";
+									$output .= "<span class=\"related_posts_image\"><a href=\"" . $h->url(array('page'=>$item->post_id)) . "\"> <img src=\"" . BASEURL . "content/images/post_images/" . $h->post->vars['img'] . "\" alt=\"" . stripslashes(urldecode($item->post_title)) . "\" /></a></span>";
 								}
 									else 
 								{
 									// Image is a 3rd party site thumbnail, print it out as it is
-									$output .= "<div class=\"related_posts_image\"><img src=\"" . $h->post->vars['img'] . "\" /></div>";
+									$output .= "<span class=\"related_posts_image\"><img src=\"" . $h->post->vars['img'] . "\" /></span>";
 								}
 							}
 				}
 			}
-				$output .= "<div class=\"related_posts_link " . $indent . "\">";
+				$output .= "<span class=\"related_posts_link " . $indent . "\">";
 				$output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' ";
 				$output .= "title='" . $h->lang['related_links_new_tab'] . "'>\n";
 				$output .= stripslashes(urldecode($item->post_title)); 
 				$output .= "</a>";
-				$output .= "</div>";
+				$output .= "</span></div>";
 				$output .= "</li>\n";
 		}
 		$output .= "</ul>\n";
