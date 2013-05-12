@@ -22,8 +22,8 @@ $lang["users_settings_no_keys"] = "Settings saved, but reCaptcha won't work with
 $lang["users_settings_saved"] = "Settings Saved";
 
 /* User Navigation */
-$lang["users_all_posts"] = "All Posts";
-$lang["users_all_comments"] = "All Comments";
+$lang["users_all_posts"] = "Posts";
+$lang["users_all_comments"] = "Comments";
 $lang["users_edit"] = "Edit";
 $lang["user_man_link"] = "User Manager";
 
