@@ -404,11 +404,11 @@ class Categories
 			// is this already a parent catgeory? Make the tab active:
 			if (($h->vars['category_id'] == $category->category_id)
 				&& ($category->category_parent == 1)) {
-			$active = " class='active_cat'";
+			$active = " class='active_cat active'";
 			} 
 			// is this a child category? If so, make the parent tab active:
 			elseif (isset($h->vars['category_parent']) &&($h->vars['category_parent'] == $category->category_id)) {
-            	$active = " class='active_cat'";
+            	$active = " class='active_cat active'";
 			}
         }
         
