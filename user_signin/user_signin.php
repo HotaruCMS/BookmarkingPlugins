@@ -145,12 +145,12 @@ class UserSignin
     {
         if ($h->currentUser->loggedIn) {
             
-            if ($h->pageName == 'logout') { $status = "id='navigation_active'"; } else { $status = ""; }
+            if ($h->pageName == 'logout') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
             echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
             
             if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
                 
-                if ($h->pageName == 'admin') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'admin') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["user_signin_admin"] . "</a></li>";
             }
         } else {    
@@ -172,7 +172,7 @@ class UserSignin
                 if (strpos($return, urlencode(BASEURL)) === false) { $return = urlencode(BASEURL); }
                 
                 // No plugin results, show the regular Login / Register links:
-                if ($h->pageName == 'login') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'login') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
                 
                 if (!$h->isPage('login')) {
                     echo "<li " . $status . "><a href='" . BASEURL . "index.php?page=login&amp;return=" . $return . "'>" . $h->lang["user_signin_login"] . "</a></li>";
@@ -180,7 +180,7 @@ class UserSignin
                     echo "<li " . $status . "><a href='" . $h->url(array('page'=>'login')) . "'>" . $h->lang["user_signin_login"] . "</a></li>";
                 }
                 
-                if ($h->pageName == 'register') { $status = "id='navigation_active'"; } else { $status = ""; }
+                if ($h->pageName == 'register') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
                 echo "<li " . $status . "><a href='" . $h->url(array('page'=>'register')) . "'>" . $h->lang["user_signin_register"] . "</a></li>";
             }
         }
@@ -225,7 +225,8 @@ class UserSignin
         
         if ($denied) {
             $h->messages[$h->lang["user_signin_access_denied"]] = 'red';
-            $h->showMessages();
+            //$h->showMessages();
+            $h->displayTemplate('user_signin_login');
         }
     }
 
