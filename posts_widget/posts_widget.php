@@ -125,7 +125,7 @@ class PostsWidget
             
             if ($type == 'top' || $type == 'new' || $type == 'upcoming') {
                 $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
-                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' alt='RSS' /></a>\n"; // RSS icon
+                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' width='16' height='16' alt='RSS' /></a>\n"; // RSS icon
             }
             
             $output .= "</h2>\n"; 
