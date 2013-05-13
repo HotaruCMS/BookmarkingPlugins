@@ -162,7 +162,7 @@ class Gravatar
         $resized = "style='height: " . $size . "px; width: " . $size . "px'";
                 
         if ($class) $class = ' ' . $class;
-        $img_url = "<img class='avatar" . $class . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
+        $img_url = "<img class='avatar" . $class . "' width='" . $size . "' height='" . $size . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
         return $img_url;
     }
 
