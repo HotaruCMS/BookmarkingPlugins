@@ -79,15 +79,15 @@ class Tags
      */
     public function header_include_raw($h)
     {    
-        echo "<script type='text/javascript'>\n";
-        echo "$(document).ready(function(){\n";
-            echo "$('.tags_link').click(function () {\n";
-            echo "var target = $(this).parents('div').nextAll('div.show_post_extras').children('div.show_tags');\n";
-            echo "target.fadeToggle();\n";
-            echo "return false;\n";
-            echo "});\n";
-        echo "});\n";
-        echo "</script>\n";
+//        echo "<script type='text/javascript'>\n";
+//        echo "$(document).ready(function(){\n";
+//            echo "$('.tags_link').click(function () {\n";
+//            echo "var target = $(this).parents('div').nextAll('div.show_post_extras').children('div.show_tags');\n";
+//            echo "target.fadeToggle();\n";
+//            echo "return false;\n";
+//            echo "});\n";
+//        echo "});\n";
+//        echo "</script>\n";
     }
 
     

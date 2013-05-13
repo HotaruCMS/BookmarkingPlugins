@@ -89,7 +89,7 @@ class Vote
     public function header_include_raw($h)
     {
      $vote_settings = $h->getSerializedSettings();
-     echo '<script type="text/javascript">$(document).ready(function(){ vote_on_url_click = "' . $vote_settings['vote_on_url_click'] . '" });</script>';
+     //echo '<script type="text/javascript">$(document).ready(function(){ vote_on_url_click = "' . $vote_settings['vote_on_url_click'] . '" });</script>';
     }
     
     
