@@ -26,7 +26,7 @@ class CronSettings extends Cron
 {
 	public function settings($h)
 	{
-	    echo "<h1>" . $h->lang["cron_settings_header"] . "</h1>";
+	    //echo "<h1>" . $h->lang["cron_settings_header"] . "</h1>";
 
 	     // If the form has been submitted, go and save the data...
 	    if ($h->cage->post->getAlpha('flush') == 'true') {
@@ -37,8 +37,6 @@ class CronSettings extends Cron
 	    if ($h->cage->post->getAlpha('restore') == 'true') {
 		$this->restoreCronDefaults($h);
 	    }
-
-
 
             //Get the settings from the database and put them in an array
             $cron_settings = $h->getSetting('cron_settings');
@@ -65,31 +63,29 @@ class CronSettings extends Cron
                             
 
                 <h3><?php echo $h->lang["cron_settings_available_schedules"]; ?></h3>
-                <ul class="cron_schedules">
+                <ul class="nav nav-pills">
                     <?php foreach( $schedules as $schedule ) { ?>
-                            <li><strong><?php echo $schedule[ 'display' ]; ?></strong>, </li>
+                            <li class="disabled"><a href="#"><?php echo $schedule[ 'display' ]; ?></a></li>
                     <?php } ?>
                 </ul>
-		<br class="clearall"/>
+		
 
                 <h3><?php echo $h->lang["cron_settings_events"]; ?></h3>
-                <table class="widefat fixed">
-                    <thead>
-                        <tr>
-                            <th scope="col"><?php echo $h->lang["cron_settings_table_nextdue"]; ?></th>
-                            <th scope="col"><?php echo $h->lang["cron_settings_table_schedule"]; ?></th>
-                            <th scope="col"><?php echo $h->lang["cron_settings_table_hooks"]; ?></th>
-                            <th scope="col"><?php echo $h->lang["cron_settings_table_args"]; ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <table class="table table-bordered">                    
+                        <tr class="table_headers info">
+                            <td scope="col"><?php echo $h->lang["cron_settings_table_nextdue"]; ?></td>
+                            <td scope="col"><?php echo $h->lang["cron_settings_table_schedule"]; ?></td>
+                            <td scope="col"><?php echo $h->lang["cron_settings_table_hooks"]; ?></td>
+                            <td scope="col"><?php echo $h->lang["cron_settings_table_args"]; ?></td>
+                        </tr>                    
+                    
                         <?php
                         if ($cron) {
                             foreach ( $cron as $timestamp => $cronhooks ) {
                                 foreach ( (array) $cronhooks as $hook => $events ) {
                                     foreach ( (array) $events as $event ) { ?>
                                     <tr>
-                                        <th scope="row"><?php echo $event[ 'date' ]; ?> (<?php echo $timestamp; ?>)</th>
+                                        <td scope="row"><?php echo $event[ 'date' ]; ?> (<?php echo $timestamp; ?>)</td>
                                         <td>
                                             <?php
                                                 if ( $event[ 'schedule' ] ) {
@@ -112,7 +108,7 @@ class CronSettings extends Cron
                                 }
                             }
                         } ?>
-                    </tbody>
+                   
                 </table>
 
 
