@@ -511,7 +511,7 @@ class Submit
         if ($h->pageName == 'edit_post') {
             $post_link = "<a href='" . $h->url(array('page'=>$h->post->id)) . "'>";
             $post_link .= $h->post->title . "</a>";
-            $h->pageTitle = $h->pageTitle . " &raquo; " . $post_link;
+            $h->pageTitle = $h->pageTitle . " / " . $post_link;
         }
     }
     
