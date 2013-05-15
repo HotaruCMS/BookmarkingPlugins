@@ -25,46 +25,87 @@
  */
  
 $username = $h->vars['user']->name;
-?>
+$userId = $h->vars['user']->id;
+$imageFolder = BASE . '/content/images/user/' . $userId . '/';
 
-<div class="profile_navigation">
+// make folder if does not exist
+if(!is_dir($imageFolder)) mkdir($imageFolder,0777,true);
 
-    <?php
-     if ($h->isActive('avatar')) {
-            echo "<div id='profile_avatar'>";
-            $h->setAvatar($h->vars['user']->id, 80, 'g', 'img-polaroid');
-            echo $h->linkAvatar();
-            echo "</div>";
-    }
+// check if we have profile pix for user. If not use default
+$imageId = rand(1, 2);
+
+if (file_exists($imageFolder . 'filename.jpg'))
+    $fileUrl = BASEURL . 'content/images/user/' . $userId . '';
+else 
+    $fileUrl = BASEURL . 'content/images/user/default/profile-pix' . $imageId . '.jpg';
+?> 
+
+<div class="">
+    <div id="userProfilePixBox" class="span8" style="position:relative;">
+	
+	<div id="" style="position:absolute;">
+	    <img title="<?php echo $username; ?>"  src="<?php echo $fileUrl;?>" alt="userPix">	    
+	</div>
+	
+	
+	<div id="profileAvatarOverlay" style="position:absolute;">
+	    <?php
+                if ($h->isActive('avatar')) {
+                       echo "<div id='profile_avatar'>";
+                       $h->setAvatar($h->vars['user']->id, 140, 'g', 'img-polaroid');
+                       echo $h->linkAvatar();
+                       echo "</div>";
+               }
     ?>
+        </div>	
+	    	
+    </div>
+    
+     <div class="span3">
+	<div class="mainBox">
+	    <div class="profileBox">
+		<h3><?php echo $username; ?></h3>
+                <div class="followersLine">
+                    <div class="followers"><?php echo $h->postsApproved($h->vars['user']->id); ?> posts</div>
+                    
+                </div>
+            </div>
+           
+	    
+	</div>
+    </div>
+    
+    <div class="clear">&nbsp;</div>
+</div>
+<br/>
 
-    <ul>
+<div class="profile_navigation2 tabbable tabs-below">
+ 
+    <ul class="nav nav-tabs">        
+        <li class="active"><a href='<?php echo $h->url(array('user'=>$username)); ?>' data-toggle='tab'><?php echo $h->lang["users_profile"]; ?></a></li>
+        <?php $h->pluginHook('profile_navigation'); ?>
     
-    <li><a href='<?php echo $h->url(array('user'=>$username)); ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
-    
-    <?php $h->pluginHook('profile_navigation'); ?>
     
     <?php // show account and profile links to owner or admin access users: 
-        if (($h->currentUser->name == $username) || ($h->currentUser->getPermission('can_access_admin') == 'yes')) { ?>
+        if (($h->currentUser->name == $username)) { ?>
 
-    <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
-    <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
-    <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
+            <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
+            <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
+            <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
 
-    <?php $h->pluginHook('profile_navigation_restricted'); ?>
-
-    <?php // show permissions and User Manager links admin access users only: 
-        if ($h->currentUser->getPermission('can_access_admin') == 'yes') { ?>
-        <li><a href='<?php echo $h->url(array('page'=>'permissions', 'user'=>$username)); ?>'><?php echo $h->lang["users_permissions"]; ?></a></li>
-    
-        <?php // show User Manager link only if theplugin is active
-            if ($h->isActive('user_manager')) { ?>
-            <li><a href="<?php echo BASEURL; ?>admin_index.php?search_value=<?php echo $username; ?>&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search"><?php echo $h->lang['user_man_link']; ?></a></li>
-        <?php } ?>
-        
     <?php } ?>
     
-    </ul>
-
-<?php } ?>
+    </ul> 
+    
+    
+    <div class="tab-content">
+        <div class="tab-pane active" id="profile">
+            Profile
+        </div>
+        
+        <div class="form tab-pane" id="settings">
+            settings
+        </div>
+    </div>
+    
 </div>

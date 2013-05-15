@@ -6,7 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * hooks: pagehandling_getpagename, theme_index_top, header_include, bookmarking_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
+ * hooks: install_plugin, pagehandling_getpagename, theme_index_top, header_include, bookmarking_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -34,6 +34,34 @@
 
 class Users
 {
+    /**
+    * Install Post Images
+    */
+    public function install_plugin($h)
+    {
+                // include following checks in case the folder has been deleted
+                // we actually include a default images/user folder with some default images in the core zip
+                $folder = BASE . '/content/images/user/';
+		if(!is_dir($folder)){
+			if(mkdir($folder,0777,true)) 
+                            $msg =  "Users image folder was created";
+			else 
+                            $msg = "A folder for images at " . $folder . " could not be created. Please try creating manually";
+		}
+		else if(!is_writable($folder)){
+			if(chmod("/somedir/somefile", 777)) 
+                            $msg = "Folder found and made writable";
+			else 
+                            $msg = "Could not change the folders permissions, please make it writable manually";
+		}
+		else {
+			$msg = "Image folder exists and is writeable";
+                }
+                
+                $h->messages[$msg] = 'alert-info';               
+    }
+    
+        
     /**
      * Check if we're looking at a user page
      */
@@ -191,6 +219,8 @@ class Users
      */
     public function breadcrumbs($h)
     {
+        $crumbs = '';
+        
         if (isset($h->vars['user']) && $h->vars['user']->name) {
             $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
             $userlink .= $h->vars['user']->name . "</a>";
@@ -202,24 +232,24 @@ class Users
         switch ($h->pageName)
         {
             case 'profile':
-                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile"];
-                return $crumbs;
+                $crumbs = $userlink . ' / ' . $h->lang["users_profile"];
+                //return $crumbs;
                 break;
             case 'account':
-                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_account"];
-                return $crumbs;
+                $crumbs = $userlink . ' / ' . $h->lang["users_account"];
+                //return $crumbs;
                 break;
             case 'edit-profile':
-                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_profile_edit"];
-                return $crumbs;
+                $crumbs = $userlink . ' / ' . $h->lang["users_profile_edit"];
+                //return $crumbs;
                 break;
             case 'user-settings':
-                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_settings"];
-                return $crumbs;
+                $crumbs = $userlink . ' / ' . $h->lang["users_settings"];
+                //return $crumbs;
                 break;
             case 'permissions':
-                $crumbs = $userlink . ' &raquo; ' . $h->lang["users_permissions"];
-                return $crumbs;
+                $crumbs = $userlink . ' / ' . $h->lang["users_permissions"];
+                //return $crumbs;
                 break;
         }
 
@@ -251,10 +281,50 @@ class Users
             $user = $h->cage->get->testUsername('user');
             $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
             $crumbs .= $user . "</a>\n ";
-            $crumbs .= " &raquo; " . $title;
+            $crumbs .= " / " . $title;
+            
+            
+            // put a dropdown on the right handside of the breadcrumb nav
+            $crumbs .= "<div class='pull-right'>dropdown</div>";
             
             return $crumbs . $h->rssBreadcrumbsLink('', array('user'=>$user));
         }
+        
+        // only show if the person has admin access
+        if ($h->currentUser->getPermission('can_access_admin') == 'yes') { 
+            
+            // put a dropdown on the right handside of the breadcrumb nav
+            $crumbs .= '<div class="pull-right">' .
+                    '<div class="btn-group">' .
+                    '<a class="btn btn-mini btn-danger dropdown-toggle" data-toggle="dropdown" href="#">' .
+                    'Admin&nbsp;<span class="caret"></span></a>' .
+                    '<ul class="dropdown-menu">' .
+                    '<!-- dropdown menu links -->';
+
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'account', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_account"] . '</a></li>';
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'edit-profile', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_profile_edit"] . '</a></li>';
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'user-settings', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_settings"] . '</a></li>';                        
+                        
+                        $crumbs .= '<li class="divider"></li>';
+                        
+                        // show permissions   
+                        $href = $h->url(array('page'=>'permissions', 'user'=>$h->vars['user']->name));
+                        $crumbs .= '<li><a href="' . $href . '">' . $h->lang["users_permissions"] . '</a></li>';
+ 
+                        // show User Manager link only if theplugin is active
+                        if ($h->isActive('user_manager')) {
+                            $crumbs .= '<li><a href="' . BASEURL . 'admin_index.php?search_value=' . $h->vars['user']->name . '&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search#tab_settings">' . $h->lang['user_man_link'] . '</a></li>';
+
+                        $h->pluginHook('profile_navigation_restricted');
+                        
+            $crumbs .= '</ul>' .
+            '</div>' .  
+            '</div>';
+         } 
+        
+   }
+                        
+        return $crumbs;
     }
     
     
