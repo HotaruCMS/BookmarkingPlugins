@@ -29,7 +29,7 @@
 //echo json_encode($json_array); exit;
 //echo $_SERVER['DOCUMENT_ROOT'];
 
-require_once('../../../hotaru_settings.php');
+require_once('../../../config/settings.php');
 require_once('../../../Hotaru.php');    // Not the cleanest way of getting to the root...
 
 $h = new Hotaru();

@@ -31,20 +31,19 @@ jQuery('document').ready(function($) {
 });	
 
 
-    $.fn.widget_onoff = function(widget) {
+    $.fn.widget_onoff = function(widget) {     
         // Get the current widget
         var currentId = widget.attr("id");
-        var widget_image = widget.children("img").attr("src");
-        this.widget_image = $(widget_image);
+        var widget_image = widget.children("img").attr("src"); 
+        //this.widget_image = $(widget_image);
         var action = '';
 
         var image_names = widget_image.split('/');
-        var image_name = image_names[image_names.length-1];
+        var image_name = image_names[image_names.length-1]; 
         if (image_name == "active.png") {  action = 'disable'; } else { action = 'enable'; }
-        
+
         var formdata = 'plugin=widgets&action=' + action + '&widget=' + currentId;
         var sendurl = BASEURL + 'content/plugins/widgets/widgets_functions.php';
-
         $.ajax(
             {
             type: 'post',
@@ -54,7 +53,8 @@ jQuery('document').ready(function($) {
                             widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>');
                     },
             error: 	function(XMLHttpRequest, textStatus, errorThrown) {
-                            //widget.html('ERROR');
+                            widget.html('ERROR');
+                            //alert(errorThrown);
             },
             success: function(data, textStatus) { // success means it returned some form of json code to us. may be code with custom error msg
                     if (data.error === true) {
@@ -66,9 +66,9 @@ jQuery('document').ready(function($) {
                         if(data.enabled == 'true') { img_src = "active.png"; } else { img_src = "inactive.png"; }
                         widget.html('<img src="' + BASEURL + "content/admin_themes/" + ADMIN_THEME + 'images/' + img_src + '"/>');
                     }                    
-                    $('#return_message').html(data.message).addClass(data.color);
+                    $('#return_message').html(data.message).addClass('alert alert-success');
                     $('#return_message').html(data.message).addClass('message');
-                    $('#return_message').fadeIn(1000).fadeout(1000);
+                    //$('#return_message').fadeIn(1000).fadeout(1000);
             },
             dataType: "json"
         });
