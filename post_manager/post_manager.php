@@ -5,7 +5,7 @@
  * version: 1.0
  * folder: post_manager
  * class: PostManager
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats, admin_sidebar_posts
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -150,6 +150,17 @@ class PostManager
 			}
 		}
 	    }
+    }
+    
+    /**
+     * Add link to admin sidebar
+     */
+    public function admin_sidebar_posts($h)
+    {
+        $links = array(            
+            'List Posts' => array('admin_index.php?page=plugin_settings&plugin=post_manager')
+        );
+        return $links;
     }
 }
 

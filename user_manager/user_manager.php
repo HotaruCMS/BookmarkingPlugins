@@ -76,19 +76,15 @@ class UserManager
     
     
     /**
-     * Add link to user at bottom of Submit Edit Post
+     * Add link to admin sidebar
      */
     public function admin_sidebar_users($h)
     {
-        echo '<li class="nav-header" style="cursor:pointer;" data-toggle="collapse" data-target="#admin_users_list">' . $h->lang["admin_theme_users"];
-            echo '<div id="admin_users_list" class="collapse out">';  
-                echo '<ul id="users_list">';
-                    echo "<li><a href='" . BASEURL . "admin_index.php?plugin=user_manager&page=plugin_settings&subpage=add_user'>Add User</a></li>";
-                    echo "<li><a href='" . BASEURL . "admin_index.php?page=plugin_settings&plugin=user_manager'>List Users</a></li>";
-                echo '</ul>';
-            echo '</div>';
-        echo '</li>';
-	echo '<hr style="margin:10px 0;"/>';
+        $links = array(
+            'Add User' => array('admin_index.php?plugin=user_manager&page=plugin_settings&subpage=add_user'),
+            'List Users' => array('admin_index.php?page=plugin_settings&plugin=user_manager')
+        );
+        return $links;
     }
 }
 
