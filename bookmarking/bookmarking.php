@@ -42,11 +42,11 @@ class Bookmarking
 		// Default settings 
 		$bookmarking_settings = $h->getSerializedSettings();
 		if (!isset($bookmarking_settings['posts_per_page'])) { $bookmarking_settings['posts_per_page'] = 10; }
-		if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }
-		if (!isset($bookmarking_settings['sort_bar_dropdown'])) { $bookmarking_settings['sort_bar_dropdown'] = ''; }		
+		if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }				
                 if (!isset($bookmarking_settings['default_type'])) { $bookmarking_settings['default_type'] = 'news'; }
 		if (!isset($bookmarking_settings['default_page'])) { $bookmarking_settings['default_page'] = 'popular'; }
 		if (!isset($bookmarking_settings['archive'])) { $bookmarking_settings['archive'] = "no_archive"; }
+                if (!isset($bookmarking_settings['sort_bar_dropdown'])) { $bookmarking_settings['sort_bar_dropdown'] = 'checked'; }
 		$h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
 		
 		// Add "open in new tab" option to the default user settings

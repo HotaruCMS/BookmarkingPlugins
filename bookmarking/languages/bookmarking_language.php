@@ -34,7 +34,7 @@ $lang["bookmarking_settings_posts_per_page"] = "Posts per page <small>(default: 
 $lang["bookmarking_settings_default_type"] = "Post type to show as default on list and post pages";
 $lang["bookmarking_settings_default_page"] = "Page type to show as default";
 $lang["bookmarking_settings_rss_redirect"] = "Automatically redirect RSS links to their original sources";
-$lang['bookmarking_settings_sort_bar_dropdown'] = "Display sort menu with dropdown box";
+$lang["bookmarking_settings_sort_bar_dropdown"] = "Use dropdown for selecting filtered posts";
 
 /* Admin Stats */
 $lang["bookmarking_admin_stats_total_posts"] = "Total";
