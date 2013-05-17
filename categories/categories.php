@@ -236,7 +236,7 @@ class Categories
                 $parent_name = $h->getCatName($parent_id);
                 $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
                 $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
-                $crumbs .= $parent_name . "</a> &raquo; \n";
+                $crumbs .= $parent_name . "</a> / \n";
             }
     
             $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
@@ -303,48 +303,106 @@ class Categories
     {
         $output = '';
         
-        // get all top-level categories
-        $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-        $query = $h->db->prepare($sql, 1, 1);
+//        // get all top-level categories
+//        $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
+//        $query = $h->db->prepare($sql, 1, 1);
+//        $h->smartCache('on', 'categories', 60, $query); // start using cache
+//        $categories = $h->db->get_results($query);
+//
+//		if ($h->pageType == 'post') {
+//			// for showing the category tab as active when looking at a post:
+//			$h->vars['category_id'] = $h->post->category;
+//			$h->vars['category_parent'] = $h->getCatParent($h->post->category);
+//		}
+//                
+        // try
+        $sql    = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
+        $query = $h->db->prepare($sql);
         $h->smartCache('on', 'categories', 60, $query); // start using cache
         $categories = $h->db->get_results($query);
-
-		if ($h->pageType == 'post') {
-			// for showing the category tab as active when looking at a post:
-			$h->vars['category_id'] = $h->post->category;
-			$h->vars['category_parent'] = $h->getCatParent($h->post->category);
-		}
-       
-        if($categories)
-        {
-            foreach ($categories as $category)
-            {
-                $parent = $category->category_id;
-                
-                // Check for children 
-                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
-                $countchildren = $h->db->get_var($h->db->prepare($sql, $parent)); 
-                   
-                // If children, go to a recursive function to build links for all children of this top-level category 
-                if ($countchildren) { 
-                    $depth = 1;
-                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth);
-                    $output .= "</ul>";
-                } else {  
-                    $output = $this->categoryLink($h, $category, $output); 
+        
+        // set the initial level Id as 1 for the top - as long as that never changes to be ALL
+        // TODO
+        // look this up and confirm it. Dont rely on it being 1
+        $topLevelId = 1;
+        $parentCats = array();
+        
+        // loop through the results and populate an array with the current top cats
+        foreach ($categories as $category) {
+            //if ($category['category_parent' == $thisLevelId])
+                if ($category->category_name != 'All') {
+                    $parentCats['p_' . $category->category_parent][] = $category;                
+                    //print 'inserting ' . $category->category_name . ' into parent ' . $category->category_parent .'<br/>';
                 }
-                
-                $output .= "</li>\n";
-            }
-            
-            // Output the category bar
-            $h->vars['output'] = $output;   
-            $h->displayTemplate('category_bar');
         }
+        
+//        print_r($parentCats);
+//        
+        //print '<br/>******<br/>';
+        
+        echo '<div id="category_bar">';
+        echo '<ul>';
+        // we ordered the array when we queried so that when we loop below we have it right
+        $this->loopCats($h, $parentCats, $topLevelId);
+        echo '</ul>';
+        echo '</div>';
+        
+        //die();
+                
+                
+                
+       
+//        if($categories)
+//        {
+//            foreach ($categories as $category)
+//            {
+//                $parent = $category->category_id;
+//                
+//                // Check for children 
+//                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
+//                $countchildren = $h->db->get_var($h->db->prepare($sql, $parent)); 
+//                   
+//                // If children, go to a recursive function to build links for all children of this top-level category 
+//                if ($countchildren) { 
+//                    $depth = 1;
+//                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth);
+//                    $output .= "</ul>";
+//                } else {  
+//                    $output = $this->categoryLink($h, $category, $output); 
+//                }
+//                
+//                $output .= "</li>\n";
+//            }
+//            
+//            // Output the category bar
+//            $h->vars['output'] = $output;   
+//            $h->displayTemplate('category_bar');
+//        }
         
         $h->smartCache('off'); // stop using cache
     }
     
+    function loopCats($h, $parentCats, $topLevelId) {
+        //print_r($parentCats);
+        $thisLevel =  $parentCats['p_' . $topLevelId];
+//        print '<br/>***************<br/>';
+//        print_r($thisLevel);
+            // loop through based on the top level and populate menus below it                        
+            foreach ($thisLevel as $category) {
+                
+                if (isset($parentCats['p_' . $category->category_id])) $children = count($parentCats['p_' . $category->category_id]); else $children = 0;
+                //echo "<li class=''><a href='#'>" . $category->category_name . "</a>";
+                echo $this->categoryLink($h, $category, ''); 
+                
+                // call function to loop back on this with $parentCats['p_' . $category->category_id]
+                if ($children > 0) {
+                    echo "<ul class='children'>";
+                    $this->loopCats($h, $parentCats, $category->category_id);
+                    echo "</ul>";
+                }
+                echo "</li>";
+            }
+        }
 
     /** 
      * Build Category Menu Bar - recursive function 
@@ -398,23 +456,22 @@ class Categories
         
         $active = '';
 
-		// give active status to highest parent tab 
-        if (isset($h->vars['category_id']))
-			{
-			// is this already a parent catgeory? Make the tab active:
-			if (($h->vars['category_id'] == $category->category_id)
-				&& ($category->category_parent == 1)) {
-			$active = " class='active_cat active'";
-			} 
-			// is this a child category? If so, make the parent tab active:
-			elseif (isset($h->vars['category_parent']) &&($h->vars['category_parent'] == $category->category_id)) {
-            	$active = " class='active_cat active'";
-			}
+	// give active status to highest parent tab 
+        if (isset($h->vars['category_id'])) {
+            // is this already a parent catgeory? Make the tab active:
+            if (($h->vars['category_id'] == $category->category_id) && ($category->category_parent == 1)) {
+                $active = " class='active_cat active'";
+            } 
+            // is this a child category? If so, make the parent tab active:
+            elseif (isset($h->vars['category_parent']) &&($h->vars['category_parent'] == $category->category_id)) {
+                $active = " class='active_cat active'";
+            }
         }
         
-        $category = stripslashes(urldecode($category->category_name));
-        $category = htmlentities($category, ENT_QUOTES,'UTF-8');
-        $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category . "</a>\n";
+        $category_name = stripslashes(urldecode($category->category_name));
+        $category_name = htmlentities($category_name, ENT_QUOTES,'UTF-8');
+        
+        $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category_name . "</a>\n";
         
         return $output; 
     } 
