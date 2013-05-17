@@ -210,7 +210,7 @@ class PostManagerSettings
         }
         
         // Show template:
-        $h->displayTemplate('post_man_main', 'post_manager');
+        $h->template('post_man_main', 'post_manager');
     }
     
     

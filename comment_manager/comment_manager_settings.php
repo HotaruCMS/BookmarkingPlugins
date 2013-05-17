@@ -290,7 +290,7 @@ class CommentManagerSettings
         }
         
         // Show template:
-        $h->displayTemplate('com_man_main', 'comment_manager');
+        $h->template('com_man_main', 'comment_manager');
     }
     
     

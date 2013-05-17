@@ -103,7 +103,7 @@ class Autoreader
 		default:
 
 		}
-		$h->displayTemplate($template);
+		$h->template($template);
 		exit;
 		}
 	}

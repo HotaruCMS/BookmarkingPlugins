@@ -376,7 +376,7 @@ class Categories
 //            
 //            // Output the category bar
 //            $h->vars['output'] = $output;   
-//            $h->displayTemplate('category_bar');
+//            $h->template('category_bar');
 //        }
         
         $h->smartCache('off'); // stop using cache

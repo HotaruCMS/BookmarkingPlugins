@@ -324,7 +324,7 @@ class UserManagerSettings
         }
         
         // Show template:
-        $h->displayTemplate('user_man_main', 'user_manager');
+        $h->template('user_man_main', 'user_manager');
     }
     
     
@@ -561,7 +561,7 @@ class UserManagerSettings
         }
         
         // Show template:
-        $h->displayTemplate('user_man_perms', 'user_manager');
+        $h->template('user_man_perms', 'user_manager');
     }
     
     
@@ -645,7 +645,7 @@ class UserManagerSettings
         $h->vars['settings'] = $default_settings;
 
         // Show template:
-        $h->displayTemplate('user_man_user_settings', 'user_manager');
+        $h->template('user_man_user_settings', 'user_manager');
     }
     
     
@@ -673,7 +673,7 @@ class UserManagerSettings
         if (!isset($h->vars['user_man_username_3'])) { $h->vars['user_man_username_3'] = ''; }
         if (!isset($h->vars['user_man_email'])) { $h->vars['user_man_email'] = ''; }
         
-        $h->displayTemplate('user_man_add');
+        $h->template('user_man_add');
     }
     
     

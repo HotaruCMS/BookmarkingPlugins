@@ -539,7 +539,7 @@ class Submit
                 }
             
                 // display template
-                $h->displayTemplate('submit1');
+                $h->template('submit1');
                 return true;
                 break;
                 
@@ -579,7 +579,7 @@ class Submit
                 }
                 
                 // display template
-                $h->displayTemplate('submit2');
+                $h->template('submit2');
                 return true;
                 break;
                 
@@ -597,7 +597,7 @@ class Submit
                 $h->vars['editorial'] = true; // this makes the link unclickable
                 
                 // display template
-                $h->displayTemplate('submit3');
+                $h->template('submit3');
                 return true;
                 break;
                 
@@ -655,7 +655,7 @@ class Submit
                 }
                 
                 // display template
-                $h->displayTemplate('submit_edit');
+                $h->template('submit_edit');
                 return true;
                 break;
                 

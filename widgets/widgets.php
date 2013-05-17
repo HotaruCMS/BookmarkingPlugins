@@ -233,7 +233,7 @@ class Widgets
         }
         
         $h->showMessages();
-        $h->displayTemplate('widget_ordering', 'widgets');
+        $h->template('widget_ordering', 'widgets');
         return true;
     }
 

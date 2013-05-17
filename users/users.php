@@ -344,32 +344,32 @@ class Users
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
         if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
 
-        $h->displayTemplate('users_navigation');
+        $h->template('users_navigation');
         
         switch($h->pageName) {
             case 'profile':
-                $h->displayTemplate('users_profile');
+                $h->template('users_profile');
                 return true;
                 break;
             case 'account':
                 if (!$admin && !$own) { $denied = true; break; }
-                $h->displayTemplate('users_account');
+                $h->template('users_account');
                 return true;
                 break;
             case 'edit-profile':
                 if (!$admin && !$own) { $denied = true; break; }
-                $h->displayTemplate('users_edit_profile');
+                $h->template('users_edit_profile');
                 return true;
                 break;
             case 'user-settings':
                 if (!$admin && !$own) { $denied = true; break; }
-                $h->displayTemplate('users_settings');
+                $h->template('users_settings');
                 return true;
                 break;
             case 'permissions':
                 if (!$admin) { $denied = true; break; }
                 $this->editPermissions($h);
-                $h->displayTemplate('users_permissions');
+                $h->template('users_permissions');
                 return true;
                 break;
         }

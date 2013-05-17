@@ -50,7 +50,7 @@ class AutoreaderSettings
 
 		switch($template_call) {
 				case 'autoreader_list': {
-					$h->displayTemplate($template_call);
+					$h->template($template_call);
 				}
 
 				default : {

@@ -240,7 +240,7 @@ class Vote
             $return = $h->cage->get->testUri('return'); // use existing return parameter
         }
         $h->vars['vote_login_url'] = BASEURL . "index.php?page=login&amp;return=" . $return;
-        $h->displayTemplate('vote_button', 'vote', false);
+        $h->template('vote_button', 'vote', false);
     }
     
     
@@ -262,7 +262,7 @@ class Vote
 
         // $h->vars['flag_count'] got from above function
         $h->vars['flag_why'] = $why_list;
-        $h->displayTemplate('vote_alert', 'vote', false);
+        $h->template('vote_alert', 'vote', false);
     }
 
 

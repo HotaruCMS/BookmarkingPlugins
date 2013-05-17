@@ -578,7 +578,7 @@ class Comments
         $h->comment->id = 0;
         $h->comment->depth = 0;
         $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
-        $h->displayTemplate('comment_form', 'comments', false);
+        $h->template('comment_form', 'comments', false);
     }
     
     
@@ -625,9 +625,9 @@ class Comments
         $h->comment->readComment($h, $item);
         if ($h->comment->status == 'approved') {
             if ($all) {
-                $h->displayTemplate('all_comments', 'comments', false);
+                $h->template('all_comments', 'comments', false);
             } else {
-                $h->displayTemplate('show_comments', 'comments', false);
+                $h->template('show_comments', 'comments', false);
             }
             
             // don't show the reply form in these cases:
@@ -639,7 +639,7 @@ class Comments
     
             // show the reply form:
             $h->vars['subscribe'] = ($h->comment->subscribe) ? 'checked' : '';
-            $h->displayTemplate('comment_form', 'comments', false);
+            $h->template('comment_form', 'comments', false);
         }
     }
     

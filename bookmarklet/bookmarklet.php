@@ -41,7 +41,7 @@ class Bookmarklet
 {
     public function hotaru_bookmarklet($h)
     {
-        $h->displayTemplate('bookmarklet');
+        $h->template('bookmarklet');
     }
 
 }

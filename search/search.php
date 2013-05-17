@@ -75,7 +75,7 @@ class Search
      */
     public function search_box($h)
     {
-        $h->displayTemplate('search_box', 'search');
+        $h->template('search_box', 'search');
     }
     
     
@@ -84,7 +84,7 @@ class Search
      */
     public function widget_search($h)
     {
-        $h->displayTemplate('search_box', 'search');
+        $h->template('search_box', 'search');
     }
     
     

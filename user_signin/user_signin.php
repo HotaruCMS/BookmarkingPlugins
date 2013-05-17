@@ -196,7 +196,7 @@ class UserSignin
         
         switch($h->pageName) {
             case 'login':
-                $h->displayTemplate('user_signin_login');
+                $h->template('user_signin_login');
                 return true;
                 break;
             case 'register':
@@ -208,7 +208,7 @@ class UserSignin
                 $result = $h->pluginHook('user_signin_pre_display_register_template');
                 if (!$result) {
                     // show this form if not overridden by a plugin
-                    $h->displayTemplate('user_signin_register', 'user_signin');
+                    $h->template('user_signin_register', 'user_signin');
                     return true;
                 }
                 return true;
@@ -226,7 +226,7 @@ class UserSignin
         if ($denied) {
             $h->messages[$h->lang["user_signin_access_denied"]] = 'red';
             //$h->showMessages();
-            $h->displayTemplate('user_signin_login');
+            $h->template('user_signin_login');
         }
     }
 

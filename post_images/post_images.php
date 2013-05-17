@@ -113,7 +113,7 @@ class PostImages
 					$h->post->vars['img_coords'] = '';
 				}
 		}
-		$h->displayTemplate('form_field');
+		$h->template('form_field');
 	}
 	/**
 	* Include jQuery for hiding and showing email options in plugin settings
@@ -123,7 +123,7 @@ class PostImages
 		if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }
 		echo "<script type='text/javascript' src='".SITEURL."content/plugins/post_images/javascript/jquery.Jcrop.js'></script>";
 		echo "<link rel='stylesheet' href='".SITEURL."content/plugins/post_images/css/jquery.Jcrop.css' type='text/css' />";
-		$h->displayTemplate('image_script');
+		$h->template('image_script');
 	}
 	/**
 	* Check and update post_submit in Submit step 2 and Post Edit pages
@@ -191,7 +191,7 @@ class PostImages
 	* Add to list view
 	*/
 	public function pre_show_post($h){
-		$h->displayTemplate('display_image','',false);
+		$h->template('display_image','',false);
 	}
 
 

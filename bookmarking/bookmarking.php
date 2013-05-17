@@ -374,9 +374,9 @@ class Bookmarking
                 
                 // display post or show error message
                 if (!$buried && !$pending){
-                    $h->displayTemplate('bookmarking_post');
+                    $h->template('bookmarking_post');
                 } elseif ($can_edit) {
-                    $h->displayTemplate('bookmarking_post');
+                    $h->template('bookmarking_post');
                 } else {
                     // don't show the post
                 }
@@ -386,10 +386,10 @@ class Bookmarking
                 
             case 'list':
                 if (isset($h->vars['pagedResults']->items)) {
-                    $h->displayTemplate('bookmarking_list');
+                    $h->template('bookmarking_list');
                     echo $h->pageBar($h->vars['pagedResults']);
                 } else {
-                    $h->displayTemplate('bookmarking_no_posts');
+                    $h->template('bookmarking_no_posts');
                 }
                 return true;
         }
@@ -655,7 +655,7 @@ class Bookmarking
         } else { $h->vars['top_all_time_active'] = ""; }
         
         // display the sort links
-        $h->displayTemplate('bookmarking_sort_filter');
+        $h->template('bookmarking_sort_filter');
     }
     
     
