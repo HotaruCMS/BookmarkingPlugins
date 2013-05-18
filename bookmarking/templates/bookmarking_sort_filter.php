@@ -31,7 +31,7 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
 <!-- SORT -->
 <div id="sort_box">
     
-    <?php if ($h->vars['bookmarking_settings']['sort_bar_dropdown'] != 'checked') { ?> 
+    <?php if (isset($h->vars['bookmarking_settings']['sort_bar_dropdown']) && $h->vars['bookmarking_settings']['sort_bar_dropdown'] != 'checked') { ?> 
         <ul class="sort_menu">
     
         <li <?php echo $h->vars['popular_active']; ?>>
