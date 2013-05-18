@@ -533,6 +533,10 @@ class SubmitFunctions
             // No title present...
             $h->messages[$h->lang['submit_title_not_present_error']] = "red";
             $error_title= 1;
+        } elseif ($this->pageMatch($title)) {
+            // title matches existing page names so don't allow it
+            $h->messages[$h->lang['submit_title_already_exists_error']] = "red";
+            $error_title = 1;
         } elseif (!$post_id && $h->titleExists($title)) {
             // title already exists...
             if ($post_id != $h->titleExists($title)) {
@@ -756,6 +760,21 @@ class SubmitFunctions
         
         return $title;
     }
+    
+    
+    /**
+     * Prevents posts being given existing page names, e.g. profile and login
+     *
+     * @param string $title
+     * @return bool
+     */
+    public function pageMatch($title = '')
+    {
+        $pages = array('profile', 'login', 'activity');
+        if (array_search(strcasecmp($title, $pages))) { return TRUE; }        
+        
+        return FALSE;
+    }  
     
 }
 ?>
