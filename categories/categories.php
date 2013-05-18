@@ -320,7 +320,7 @@ class Categories
         $query = $h->db->prepare($sql);
         $h->smartCache('on', 'categories', 60, $query); // start using cache
         $categories = $h->db->get_results($query);
-        
+        //print_r($categories);
         // set the initial level Id as 1 for the top - as long as that never changes to be ALL
         // TODO
         // look this up and confirm it. Dont rely on it being 1
@@ -329,12 +329,16 @@ class Categories
         
         // loop through the results and populate an array with the current top cats
         foreach ($categories as $category) {
+            //print $category->category_name . '<br/>';
             //if ($category['category_parent' == $thisLevelId])
-                if ($category->category_name != 'All') {
+                if (strtolower($category->category_id) != 1) {
                     $parentCats['p_' . $category->category_parent][] = $category;                
                     //print 'inserting ' . $category->category_name . ' into parent ' . $category->category_parent .'<br/>';
                 }
         }
+        
+        // TODO
+        // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?
         
 //        print_r($parentCats);
 //        
