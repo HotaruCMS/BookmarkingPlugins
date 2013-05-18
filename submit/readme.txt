@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.3.3 2013/05/18 - Nick - Prevent default pages title being used in post title
 v.3.2 2010/08/12 - Nick - Fixed edit post redirect so you're returned to Post Manager if that's where you came from
 		 - Nick - Replaced "logged in" tests with submission permission checks instead
 		 - Nick - Minor fix for &amp; in urls when redirecting from login to submit step 2
