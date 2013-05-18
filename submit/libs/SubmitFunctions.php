@@ -771,7 +771,7 @@ class SubmitFunctions
     public function pageMatch($title = '')
     {
         $pages = array('profile', 'login', 'activity');
-        if (array_search(strcasecmp($title, $pages))) { return TRUE; }        
+        if (array_search($title, $pages)) { return TRUE; }        
         
         return FALSE;
     }  
