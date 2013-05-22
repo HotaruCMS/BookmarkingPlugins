@@ -6,7 +6,7 @@
  * folder: user_signin
  * type: signin
  * class: UserSignin
- * hooks: install_plugin, theme_index_top, admin_header_include_raw, navigation_users, theme_index_main, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, theme_index_top, navigation_users, theme_index_main, admin_sidebar_plugin_settings, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -124,7 +124,7 @@ class UserSignin
     /**
      * Include jQuery for hiding and showing email options in plugin settings
      */
-    public function admin_header_include_raw($h)
+    public function admin_footer($h)
     {
         if ($h->isSettingsPage('user_signin')) {
             echo "<script type='text/javascript'>\n";
@@ -149,9 +149,7 @@ class UserSignin
             echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
             
             if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
-                
-                if ($h->pageName == 'admin') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
-                echo "<li " . $status . "><a href='" . $h->url(array(), 'admin') . "'>" . $h->lang["user_signin_admin"] . "</a></li>";
+                $h->adminNav();
             }
         } else {    
             
