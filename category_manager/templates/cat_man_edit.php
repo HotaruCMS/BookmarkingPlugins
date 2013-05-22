@@ -27,11 +27,11 @@
 
 ?>
  
-    <h2><?php echo $h->lang["cat_man_edit"]; ?></h2>
+    <h2><?php echo $h->lang("cat_man_edit"); ?></h2>
 
     <table class="cat_man_table">
     <tr><td class="cat_man_body">
-        <?php echo $h->lang["cat_man_edit_instruct"]; ?> <br /><br />
+        <?php echo $h->lang("cat_man_edit_instruct"); ?> <br /><br />
     
         <form name='category_manager_edit_form' action='<?php echo BASEURL; ?>admin_index.php?page=plugin_settings&amp;plugin=category_manager&amp;action=edit_save' method='post'>
         <?php
@@ -50,7 +50,7 @@
         ?>
         <br />
         <div style="text-align: center;">
-            <input type='submit' name='cancel_all' value='<?php echo $h->lang["cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $h->lang["cat_man_save_all"]; ?>'>
+            <input type='submit' name='cancel_all' value='<?php echo $h->lang("cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $h->lang["cat_man_save_all"); ?>'>
         </div>
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>
@@ -58,10 +58,10 @@
     
     <td class="cat_man_menu_holder">
         <div>
-            <h3><?php echo $h->lang["cat_man_menu_title"]; ?></h3>
+            <h3><?php echo $h->lang("cat_man_menu_title"); ?></h3>
             <?php $h->template('cat_man_menu', 'category_manager'); ?>
             
-            <h3><?php echo $h->lang["cat_man_category_tree"]; ?></h3>
+            <h3><?php echo $h->lang("cat_man_category_tree"); ?></h3>
             <?php
                 $tree = new CategoryManagerSettings($h); 
                 $tree->tree($h, $h->vars['the_cats']);
