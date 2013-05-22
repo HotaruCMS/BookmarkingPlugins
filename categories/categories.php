@@ -126,8 +126,6 @@ class Categories
         if (!$key || !$value) { return false; }
 
         $exists = $h->getCatId(urlencode($key));
-        //$sql = "SELECT category_id FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-        //$exists = $h->db->get_var($h->db->prepare($sql, urlencode($key)));
         
         // no category? exit...
         if (!$exists) { return false; }
@@ -158,13 +156,13 @@ class Categories
             if (isset($cat_meta->category_desc)) {
                 echo '<meta name="description" content="' . urldecode($cat_meta->category_desc) . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['header_meta_description'] . '" />' . "\n";  // default meta tags
+                echo '<meta name="description" content="' . $h->lang('header_meta_description') . '" />' . "\n";  // default meta tags
             }
             
             if (isset($cat_meta->category_keywords)) {
                 echo '<meta name="keywords" content="' . urldecode($cat_meta->category_keywords) . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['header_meta_keywords'] . '" />' . "\n";  // default meta tags
+                echo '<meta name="description" content="' . $h->lang('header_meta_keywords') . '" />' . "\n";  // default meta tags
             }
 
             return true;
@@ -280,7 +278,7 @@ class Categories
             $cat_name = $h->getCatName($h->post->category);
             $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
             
-            echo " " . $h->lang["categories_post_in"] . " ";
+            echo " " . $h->lang("categories_post_in") . " ";
             echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a>\n";
         }        
     }
@@ -294,153 +292,65 @@ class Categories
 
 
     /**
-     * Category Bar - shows categories as a drop-down menu
+     * Category Bar - categories nav bar
      *
-     * Adapted from:
-     * @link http://www.cssnewbie.com/easy-css-dropdown-menus/
      */
     public function header_end($h)
     {
-        $output = '';
+        $output = '';     
         
-//        // get all top-level categories
-//        $sql    = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_id != %d AND category_parent = %d ORDER BY category_order ASC";
-//        $query = $h->db->prepare($sql, 1, 1);
-//        $h->smartCache('on', 'categories', 60, $query); // start using cache
-//        $categories = $h->db->get_results($query);
-//
-//		if ($h->pageType == 'post') {
-//			// for showing the category tab as active when looking at a post:
-//			$h->vars['category_id'] = $h->post->category;
-//			$h->vars['category_parent'] = $h->getCatParent($h->post->category);
-//		}
-//                
-        // try
         $sql    = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
         $query = $h->db->prepare($sql);
         $h->smartCache('on', 'categories', 60, $query); // start using cache
         $categories = $h->db->get_results($query);
-        //print_r($categories);
+        $h->smartCache('off'); // stop using cache
+        
         // set the initial level Id as 1 for the top - as long as that never changes to be ALL
         // TODO
-        // look this up and confirm it. Dont rely on it being 1
+        // newly installed category plugin should always have cat1 = all but could it get changed for some reason?
+        // should we look up 'all' and return its id to be safe?
         $topLevelId = 1;
         $parentCats = array();
         
         // loop through the results and populate an array with the current top cats
         foreach ($categories as $category) {
-            //print $category->category_name . '<br/>';
-            //if ($category['category_parent' == $thisLevelId])
                 if (strtolower($category->category_id) != 1) {
-                    $parentCats['p_' . $category->category_parent][] = $category;                
-                    //print 'inserting ' . $category->category_name . ' into parent ' . $category->category_parent .'<br/>';
+                    $parentCats['p_' . $category->category_parent][] = $category;                                    
                 }
         }
         
         // TODO
-        // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?
+        // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
+        $h->vars['output'] = $this->loopCats($h, $parentCats, $topLevelId, '');
         
-//        print_r($parentCats);
-//        
-        //print '<br/>******<br/>';
-        
-        echo '<div id="category_bar">';
-        echo '<ul>';
-        // we ordered the array when we queried so that when we loop below we have it right
-        $this->loopCats($h, $parentCats, $topLevelId);
-        echo '</ul>';
-        echo '</div>';
-        
-        //die();
-                
-                
-                
-       
-//        if($categories)
-//        {
-//            foreach ($categories as $category)
-//            {
-//                $parent = $category->category_id;
-//                
-//                // Check for children 
-//                $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
-//                $countchildren = $h->db->get_var($h->db->prepare($sql, $parent)); 
-//                   
-//                // If children, go to a recursive function to build links for all children of this top-level category 
-//                if ($countchildren) { 
-//                    $depth = 1;
-//                    $output = $this->buildMenuBar($h, $category, $output, $parent, $depth);
-//                    $output .= "</ul>";
-//                } else {  
-//                    $output = $this->categoryLink($h, $category, $output); 
-//                }
-//                
-//                $output .= "</li>\n";
-//            }
-//            
-//            // Output the category bar
-//            $h->vars['output'] = $output;   
-//            $h->template('category_bar');
-//        }
-        
-        $h->smartCache('off'); // stop using cache
+        $h->template('category_bar');
     }
     
-    function loopCats($h, $parentCats, $topLevelId) {
-        //print_r($parentCats);
+    function loopCats($h, $parentCats, $topLevelId, $output = '') {
+
         $thisLevel =  $parentCats['p_' . $topLevelId];
-//        print '<br/>***************<br/>';
-//        print_r($thisLevel);
-            // loop through based on the top level and populate menus below it                        
-            foreach ($thisLevel as $category) {
-                
-                if (isset($parentCats['p_' . $category->category_id])) $children = count($parentCats['p_' . $category->category_id]); else $children = 0;
-                //echo "<li class=''><a href='#'>" . $category->category_name . "</a>";
-                echo $this->categoryLink($h, $category, ''); 
-                
-                // call function to loop back on this with $parentCats['p_' . $category->category_id]
-                if ($children > 0) {
-                    echo "<ul class='children'>";
-                    $this->loopCats($h, $parentCats, $category->category_id);
-                    echo "</ul>";
-                }
-                echo "</li>";
+
+        if (!$thisLevel) return false;
+        
+        // loop through based on the top level and populate menus below it                        
+        foreach ($thisLevel as $category) {
+
+            if (isset($parentCats['p_' . $category->category_id])) $children = count($parentCats['p_' . $category->category_id]); else $children = 0;
+            
+            // echo li with this function
+            $output .= $this->categoryLink($h, $category, ''); 
+
+            // call function to loop back on this with $parentCats['p_' . $category->category_id]
+            if ($children > 0) {
+                $output .= "<ul class='children'>";
+                $output .= $this->loopCats($h, $parentCats, $category->category_id);
+                $output .= "</ul>";
             }
+            $output .= "</li>";
         }
-
-    /** 
-     * Build Category Menu Bar - recursive function 
-     * 
-     * @param array $category  
-     * @param string $output  
-     * @param int $parent 
-     * @return string $output 
-     */ 
-    public function buildMenuBar($h, $category, $output, $parent, $depth) 
-    { 
-        $output = $this->categoryLink($h, $category, $output); 
-
-        $sql = "SELECT count(*) FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d"; 
-        $countchildren = $h->db->get_var($h->db->prepare($sql, $category->category_id)); 
-
-        if ($countchildren) { 
-            $output .=  "<ul class='children'>\n"; 
-            
-            $sql = "SELECT * FROM " . TABLE_CATEGORIES . " WHERE category_parent = %d ORDER BY category_order ASC"; 
-            $children = $h->db->get_results($h->db->prepare($sql, $category->category_id)); 
-            
-            $depth++;
-            foreach ($children as $child) { 
-                if ($depth < 3) { 
-                    $output = $this->buildMenuBar($h, $child, $output, $child->category_id, $depth);
-                }
-            } 
-            $output .= "";
-            return $output; 
-        }  
-        $output .= "</li>";
-        return $output; 
+        return $output;
     }
+  
 
 
     /** 
@@ -514,7 +424,7 @@ class Categories
         $h->vars['postRssFilter'][$filter_string] = $values; 
 
         $category = str_replace('_', ' ', stripslashes(html_entity_decode($cat_id, ENT_QUOTES,'UTF-8'))); 
-        $h->vars['postRssFeed']['description'] = $h->lang["post_rss_in_category"] . " " . $h->getCatName($cat_id); 
+        $h->vars['postRssFeed']['description'] = $h->lang("post_rss_in_category") . " " . $h->getCatName($cat_id); 
     }
 }
 
