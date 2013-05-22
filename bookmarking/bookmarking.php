@@ -488,9 +488,9 @@ class Bookmarking
      */
     public function profile_navigation($h)
     {
-        echo "<li><a href='" . $h->url(array('page'=>'all', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang["users_all_posts"] . "</a></li>\n";
+        echo "<li><a href='" . $h->url(array('page'=>'all', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang["users_all_posts"] . "&nbsp;<span class='badge'>" . $h->postsApproved($h->vars['user']->id) . "</span></a></li>\n";
     }
-    
+
     
     /** 
      * Prepare sort links

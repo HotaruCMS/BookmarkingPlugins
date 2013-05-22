@@ -36,7 +36,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
     <div class="show_post vote_button_space media" id="show_post_<?php echo $h->post->id ?>" >
             
         <?php $h->pluginHook('show_post_pre_title'); ?>
-        
+        <div class="media-body">
         <?php   // Show avatars if enabled (requires an avatars plugin)
             if($h->isActive('avatar')) {
                 $h->setAvatar($user->id, 32);
@@ -44,7 +44,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
             }
         ?>
         
-        <div class="media-body">
+        
             <div class="show_post_title media-heading">
                 <?php if ($h->vars['link_action'] == 'source') { 
                     echo "<a href=' ". $h->post->origUrl ."' " . $h->vars['target'] ." class='click_to_source' rel='nofollow'>" . $h->post->title . "</a>";
@@ -78,7 +78,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
                     }
                 ?> 
             </div>
-        </div>
+        
             
         <?php if ($h->vars['use_content']) { ?>
             <div class="show_post_content">
@@ -103,7 +103,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
         <div class="show_post_extras">
             <?php $h->pluginHook('show_post_extras'); ?>
         </div>
-
+</div>
 	
             
     </div>

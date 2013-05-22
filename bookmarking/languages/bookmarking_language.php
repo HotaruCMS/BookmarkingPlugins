@@ -64,4 +64,7 @@ $lang["bookmarking_sort_top_30_days"] = "30 Days";
 $lang["bookmarking_sort_top_365_days"] = "365 Days";
 $lang["bookmarking_sort_top_all_time"] = "All Time";
 
+/* Display */
+$lang["bookmarking_number_of_posts"] = "Number of posts found";
+
 ?>
