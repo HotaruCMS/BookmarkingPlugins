@@ -28,8 +28,8 @@ class TextWidgetSettings
     {
         // Cycle through the text widgets, displaying their settings...
         $id = 1;
-
-        while($settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget'))) 
+        
+        while($settings = unserialize(base64_decode($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')))) 
         {
             echo "<h1>" . $h->lang["text_widget_settings_header"] . " [ id:" .  $id . " ]</h1>";
             
@@ -50,7 +50,7 @@ class TextWidgetSettings
             
             echo $h->lang["text_widget_title"] . ' <input type="text" size=30 name="text_widget_title" value="' . $title . '" /><br /><br />' . "\n";
             echo '<input type="checkbox" name="text_widget_php" ' . $php_check . ' /> ' . $h->lang['text_widget_php'] . '<br /><br />' . "\n";
-            echo '<textarea name="text_widget_content" cols=60 rows = 15>' . $content . '</textarea>' . "\n";
+            echo '<textarea style="width:80%;" name="text_widget_content" cols=60 rows = 15>' . $content . '</textarea>' . "\n";
             
             echo "<br /><br />";
             echo '<input type="submit" value="' . $h->lang['main_form_save'] . '" />' . "\n";

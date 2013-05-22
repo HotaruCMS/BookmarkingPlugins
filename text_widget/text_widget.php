@@ -56,7 +56,7 @@ class TextWidget
         
         // parameters: plugin folder name, setting name, setting value
         if (!$h->getSetting('text_widget_' . $id . '_settings')) {
-            $h->updateSetting('text_widget_' . $id . '_settings', serialize($text_widget_settings), 'text_widget');
+            $h->updateSetting('text_widget_' . $id . '_settings', base64_encode(serialize($text_widget_settings)), 'text_widget');
         }
         
         $settings = $h->getSettingsArray();
@@ -92,7 +92,8 @@ class TextWidget
         foreach ($ids as $id) { 
             
             // Get settings from the database:
-            $settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')); 
+            $settings = unserialize(base64_decode($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')));           
+
             $title = html_entity_decode(stripslashes($settings['text_widget_title']), ENT_QUOTES,'UTF-8');
             $content = html_entity_decode(stripslashes($settings['text_widget_content']), ENT_QUOTES,'UTF-8');
 
@@ -152,7 +153,7 @@ class TextWidget
                 // delete from "widgets_settings" in pluginsettings table;
                 $widgets_settings = $h->getSerializedSettings('widgets'); 
                 unset($widgets_settings['widgets']['text_widget_' . $id]);
-                $h->updateSetting('widgets_settings', serialize($widgets_settings), 'widgets');
+                $h->updateSetting('widgets_settings', base64_encode(serialize($widgets_settings), 'widgets'));
                 
                 $h->message = $h->lang["text_widget_removed"];
                 $h->messageType = "green";
@@ -189,7 +190,7 @@ class TextWidget
         $h->message = "";
         if ($parameters) {
             if ($h->message == "") {
-                $values = serialize($parameters);
+                $values = base64_encode(serialize($parameters));
                 $h->message = $h->lang["text_widget_updated"];
                 $h->messageType = "green";
                 $h->updateSetting('text_widget_' . $id . '_settings', $values, 'text_widget');    
