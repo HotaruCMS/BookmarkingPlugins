@@ -23,6 +23,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+/* check for account updates */
+    $h->vars['checks'] = $h->vars['user']->updateAccount($h);
+    $h->vars['user']->name = $h->vars['checks']['username_check'];           
+ 
+// ****************** was in users page at theme_index_top
+
 extract($h->vars['checks']); // extracts $username_check, etc.
 $username = $username_check; // used for user_tabs template
 if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "User deleted" notice
@@ -30,7 +37,7 @@ if ($username_check == 'deleted') { $h->showMessage(); return true; } // shows "
 ?>
 <div id="users_account" class="users_content">
 
-    <h2><?php echo $h->lang["users_account"]; ?>: <?php echo $username; ?></h2>
+    <h2><?php echo $h->lang("users_account"); ?>: <?php echo $username; ?></h2>
     
     <?php echo $h->showMessages(); ?>
 

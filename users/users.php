@@ -296,7 +296,7 @@ class Users
             // put a dropdown on the right handside of the breadcrumb nav
             $crumbs .= '<div class="pull-right">' .
                     '<div class="btn-group">' .
-                    '<a class="btn btn-mini btn-danger dropdown-toggle" data-toggle="dropdown" href="#">' .
+                    '<a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">' .
                     'Admin&nbsp;<span class="caret"></span></a>' .
                     '<ul class="dropdown-menu">' .
                     '<!-- dropdown menu links -->';
@@ -348,7 +348,7 @@ class Users
         
         switch($h->pageName) {
             case 'profile':
-                $h->template('users_profile');
+                //$h->template('users_profile');
                 return true;
                 break;
             case 'account':

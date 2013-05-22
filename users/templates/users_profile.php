@@ -27,7 +27,7 @@
 $profile = $h->vars['profile'];
 
 //defaults:
-    if (!isset($profile['bio'])) { $profile['bio'] = $h->lang['users_profile_default_bio']; }
+    if (!isset($profile['bio'])) { $profile['bio'] = $h->lang('users_profile_default_bio'); }
     $h->pluginHook('user_profile_defaults'); 
 ?>
 

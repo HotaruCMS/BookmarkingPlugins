@@ -38,13 +38,19 @@ if (file_exists($imageFolder . 'filename.jpg'))
     $fileUrl = BASEURL . 'content/images/user/' . $userId . '';
 else 
     $fileUrl = BASEURL . 'content/images/user/default/profile-pix' . $imageId . '.jpg';
+
+// determine permissions
+$admin = false; $own = false; $denied = false;
+if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
+if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
+
 ?> 
 
 <div class="">
-    <div id="userProfilePixBox" class="span8" style="position:relative;">
+    <div id="userProfilePixBox"  style="position:relative;">
 	
-	<div id="" style="position:absolute;">
-	    <img title="<?php echo $username; ?>"  src="<?php echo $fileUrl;?>" alt="userPix">	    
+	<div id="" style="position:absolute;width:100%;">
+	    <img style="width:100%;" title="<?php echo $username; ?>"  src="<?php echo $fileUrl;?>" alt="userPix">	    
 	</div>
 	
 	
@@ -60,38 +66,36 @@ else
         </div>	
 	    	
     </div>
-    
-     <div class="span3">
-	<div class="mainBox">
-	    <div class="profileBox">
-		<h3><?php echo $username; ?></h3>
-                <div class="followersLine">
-                    <div class="followers"><?php echo $h->postsApproved($h->vars['user']->id); ?> posts</div>
-                    
-                </div>
-            </div>
-           
-	    
-	</div>
-    </div>
-    
     <div class="clear">&nbsp;</div>
+    
+	<div class="mainBox">
+	    <span class="profileBox pull-left">
+		<h3><?php echo $username; ?></h3>
+            </span>
+            <span class="pull-right" style="padding:15px;">
+                <ul>
+                 <?php $h->pluginHook('profile_action_buttons'); ?>
+                </ul>
+            </span>	    
+	</div>
+
+    <div class="clear">&nbsp;</div>
+    
 </div>
-<br/>
+
 
 <div class="profile_navigation2 tabbable tabs-below">
  
     <ul class="nav nav-tabs">        
-        <li class="active"><a href='<?php echo $h->url(array('user'=>$username)); ?>' data-toggle='tab'><?php echo $h->lang["users_profile"]; ?></a></li>
+        <li class="active"><a href='#profile' data-toggle='tab'><?php echo $h->lang["users_profile"]; ?></a></li>
         <?php $h->pluginHook('profile_navigation'); ?>
-    
-    
+                        
     <?php // show account and profile links to owner or admin access users: 
-        if (($h->currentUser->name == $username)) { ?>
+        if ($own) { ?>
 
-            <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
-            <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
-            <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
+            <li><a href='#account' data-toggle='tab'><?php echo $h->lang["users_account"]; ?></a></li>
+            <li><a href='#editProfile' data-toggle='tab'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
+            <li><a href='#settings' data-toggle='tab'><?php echo $h->lang["users_settings"]; ?></a></li>
 
     <?php } ?>
     
@@ -100,12 +104,24 @@ else
     
     <div class="tab-content">
         <div class="tab-pane active" id="profile">
-            Profile
+            <?php echo $h->template('users_profile'); ?>
+        </div>
+                
+        <?php $h->pluginHook('profile_content'); ?>
+        
+        <?php if ($admin || $own) { ?>
+        <div class="tab-pane" id="account">
+            <?php echo $h->template('users_account'); ?>
         </div>
         
-        <div class="form tab-pane" id="settings">
-            settings
+        <div class="tab-pane" id="editProfile">
+            <?php echo $h->template('users_edit_profile'); ?>
         </div>
+        
+        <div class="tab-pane" id="settings">
+            <?php echo $h->template('users_settings'); ?>
+        </div>
+        <?php } ?>
     </div>
     
 </div>
