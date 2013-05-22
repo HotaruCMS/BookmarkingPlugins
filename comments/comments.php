@@ -7,7 +7,7 @@
  * class: Comments
  * type: comments
  * requires: users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission, profile_content
  *
  * PHP version 5
  *
@@ -415,69 +415,128 @@ class Comments
      */
     public function show_post_extra_fields($h)
     {
-        echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
-	}
+            echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
+    }
 	
 	
-	/**
-	 * Prepare and display comments wrapper and form
-	 */
-	public function post_show_post($h)
-	{
-		$this->prepareShowComments($h);
-		
-		if ($h->isPage('submit3')) { return false; } // if submit3, stop here
+    /**
+     * Profile navigation link
+     */
+    public function profile_navigation($h)
+    {
+        echo "<li><a href='#comments' data-toggle='tab'>" . $h->lang['users_all_comments']  . "</a></li>\n";
+    }
+    
+    
+    /**
+     * 
+     * @param type $h
+     * @return boolean
+     */
+    public function profile_content($h)
+    {       
+            echo '<div class="tab-pane" id="comments">';            
+            
+            if ($h->cage->get->keyExists('user')) {
+                $user = $h->cage->get->testUsername('user');
+                $userid = $h->getUserIdFromName($user);
+            } else {
+                $userid = 0;
+            }
 
-		$comments_settings = $h->getSerializedSettings();
-		$h->comment->pagination = $comments_settings['comment_pagination'];
-		$h->comment->order = $comments_settings['comment_order'];
-		$h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
-		
-		$this->showComments($h);
-	
-		$this->checkCommentDetails($h);
+            $comments_settings = $h->getSerializedSettings();
+            $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
 
-		if ($h->currentUser->getPermission('can_access_admin') == 'yes')
-		{
-			echo "<ul id='post_comments_admin'>";
+            if ($userid) {
+                $comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
+                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);	   
+            } else {
+                $comments_count = $h->comment->getAllCommentsCount($h);
+                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');	    
+            }
 
-			// Show "Access Comment Manager" link if not submit3 and permissions allow
-			if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes')
-			{
-				echo "<li id='comment_manager_link'><a class='btn btn-info' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>&nbsp;" . $h->lang['comments_access_comment_manager'] . " </a></li>";
-			}
-	
-			$h->pluginHook('comments_post_last_form');
-	
-			echo "</ul>";
-		}
-	}
-	
-	
-	/**
-	 * Preparation for showing comments
-	 */
-	public function prepareShowComments($h)
-	{
-		// set default
-		$h->vars['subscribe_check'] = ''; 
+            if (!$comments_count) {
+                $h->showMessage($h->lang['comments_user_no_comments'], 'red');
+                //return true; 
+            }
+
+            $pagedResults = $h->pagination($comments_query, $comments_count, $h->comment->itemsPerPage, 'comments');
+
+            if (isset($pagedResults->items)) {
+                foreach ($pagedResults->items as $comment) {
+                                    if (!$this->showSingleComment($h, $comment)) {
+                                            continue;
+                                    }
+                }
+
+                echo $h->pageBar($pagedResults);
+            }
+            
+            echo "</div>";            
+
+            return true;
+    }
+        
+        
+    /**
+     * Prepare and display comments wrapper and form
+     */
+    public function post_show_post($h)
+    {
+            $this->prepareShowComments($h);
 		
-		// Check if the currentUser is the post author
-		if ($h->post->author == $h->currentUser->id) {
-		    // Check if the user subscribed to comments as a submitter
-		    if ($h->post->subscribe == 1) { 
-		        $h->vars['subscribe_check'] = 'checked';
-		    } 
-		} 
-		
-		// Check if the user subscribed to comments as a commenter
-		$sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
-		$subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
-		
-		if ($subscribe_result > 0) { 
-		    $h->vars['subscribe_check'] = 'checked';
-		} 
-	}
+            if ($h->isPage('submit3')) { return false; } // if submit3, stop here
+
+            $comments_settings = $h->getSerializedSettings();
+            $h->comment->pagination = $comments_settings['comment_pagination'];
+            $h->comment->order = $comments_settings['comment_order'];
+            $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
+
+            $this->showComments($h);
+
+            $this->checkCommentDetails($h);
+
+            if ($h->currentUser->getPermission('can_access_admin') == 'yes')
+            {
+                    echo "<ul id='post_comments_admin'>";
+
+                    // Show "Access Comment Manager" link if not submit3 and permissions allow
+                    if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes')
+                    {
+                            echo "<li id='comment_manager_link'><a class='btn btn-info' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>&nbsp;" . $h->lang['comments_access_comment_manager'] . " </a></li>";
+                    }
+
+                    $h->pluginHook('comments_post_last_form');
+
+                    echo "</ul>";
+            }
+    }
+	
+	
+    /**
+     * Preparation for showing comments
+     */
+    public function prepareShowComments($h)
+    {
+            // set default
+            $h->vars['subscribe_check'] = ''; 
+
+            // Check if the currentUser is the post author
+            if ($h->post->author == $h->currentUser->id) {
+                // Check if the user subscribed to comments as a submitter
+                if ($h->post->subscribe == 1) { 
+                    $h->vars['subscribe_check'] = 'checked';
+                } 
+            } 
+
+            // Check if the user subscribed to comments as a commenter
+            $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
+            $subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
+
+            if ($subscribe_result > 0) { 
+                $h->vars['subscribe_check'] = 'checked';
+            } 
+    }
     
     
     /**
@@ -817,16 +876,7 @@ class Comments
         $h->db->query($h->db->prepare($sql, $h->post->id));
     }
 
-    
-    /**
-     * Profile navigation link
-     */
-    public function profile_navigation($h)
-    {
-        echo "<li><a href='" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang['users_all_comments']  . "</a></li>\n";
-    }
-    
-    
+        
     /**
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
