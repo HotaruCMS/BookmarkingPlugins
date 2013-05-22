@@ -2,11 +2,11 @@
 /**
 * name: Post Images
 * description: Add images to your posts
-* version: 1.2
+* version: 1.4
 * folder: post_images
 * class: PostImages
 * type: post_images
-* hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, submit_2_fields, header_include_raw, post_read_post, submit_functions_process_submitted, post_add_post, post_update_post, pre_show_post, header_include, theme_index_top
+* hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, submit_2_fields, header_include_raw, post_read_post, submit_functions_process_submitted, post_add_post, post_update_post, pre_show_post, header_include, theme_index_top, footer, show_post_pre_title
 * author: Matthis de Wit
 * authorurl: http://fourtydegrees.nl/ties
 *
@@ -60,17 +60,16 @@ class PostImages
 
 		$folder = BASE . '/content/images/post_images/';
 		if(!is_dir($folder)){
-			if(mkdir($folder,0777,true)) $msg =  "Folder made you're good to go.";
-			else $msg = "There is no folder, and I could not create one please do and make it writable for me.";
+			if(mkdir($folder,0777,true)) $h->messages['Image folder created'] = 'green';
+			else $h->messages['There is no folder, and I could not create one. Please create one manually.'] = 'red';
 		}
 		else if(!is_writable($folder)){
-			if(chmod("/somedir/somefile", 777)) $msg = "Folder found and made writable, you're good to go.";
-			else $msg = "I could not change the folders permissions, please make it writable for me.";
+			if(chmod("/somedir/somefile", 777)) $h->messages["Image folder found and made writable"] = "green";
+			else $h->messages["Image folder permissions could not be set, please manually make it writable."] = 'red';
 		}
 		else {
-			$msg = "You're good to go";
-		}
-		echo '<script type="text/javascript">alert("'.$msg.'")</script>';
+			//
+		}		
 	}
 	/**
 	* Include CSS and JavaScript files for this plugin
@@ -78,8 +77,18 @@ class PostImages
 	public function header_include($h)
 	{
 		// include a files that match the name of the plugin folder:
-			$h->includeCss('post_images');
+                $h->includeCss('post_images');                                        
 	}  
+        
+        
+        public function footer($h)
+        {
+                if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }
+                $h->displayTemplate('image_script');
+                echo "<script type='text/javascript' src='".SITEURL."content/plugins/post_images/javascript/jquery.Jcrop.min.js'></script>";
+        }
+        
+        
 	/**
 	* Read post media if post_id exists.
 	*/
@@ -113,18 +122,18 @@ class PostImages
 					$h->post->vars['img_coords'] = '';
 				}
 		}
-		$h->template('form_field');
+		$h->displayTemplate('form_field');
 	}
 	/**
 	* Include jQuery for hiding and showing email options in plugin settings
 	*/
 	public function header_include_raw($h)
 	{
-		if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }
-		echo "<script type='text/javascript' src='".SITEURL."content/plugins/post_images/javascript/jquery.Jcrop.js'></script>";
+		if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }		
 		echo "<link rel='stylesheet' href='".SITEURL."content/plugins/post_images/css/jquery.Jcrop.css' type='text/css' />";
-		$h->template('image_script');
-	}
+		$h->displayTemplate('image_script');
+	}                        
+        
 	/**
 	* Check and update post_submit in Submit step 2 and Post Edit pages
 	*/
@@ -191,18 +200,29 @@ class PostImages
 	* Add to list view
 	*/
 	public function pre_show_post($h){
-		$h->template('display_image','',false);
+		//$h->displayTemplate('display_image','',false);
 	}
 
+        /**
+	* Add to list view
+	*/
+	public function show_post_pre_title($h){
+		$h->displayTemplate('display_image','',false);
+	}
+        
 
 	/**
 	* Crop function
 	*/
 	private function cropImage($h){
-		$h->vars['post_images_settings'] = $h->getSerializedSettings();
+		//$h->vars['post_images_settings'] = $h->getSerializedSettings();
 		$src = $h->post->vars['img'];
-		if(strstr($src,'http://images.sitethumbshot.com/')) return $src;
-		else if(strstr($src,'http://') === false && file_exists(BASE.'content/images/post_images/'.$src)) $src = SITEURL.'content/images/post_images/'.$src;
+                
+		if(strstr($src,'http://images.sitethumbshot.com/'))
+                        return $src;
+		else if(strstr($src,'http://') === false && file_exists(BASE.'content/images/post_images/'.$src))
+                        $src = BASE.'content/images/post_images/'.$src;
+                
 		$src = html_entity_decode($src, ENT_QUOTES,'UTF-8');
 		$src = str_replace(" ","%20",$src);
 		$get_info = getimagesize($src);
@@ -263,7 +283,9 @@ class PostImages
 	}
 	
 	public function theme_index_top($h){
-		$h->vars['post_images_settings'] = $h->getSerializedSettings();
+		// get the admin settings for this plugin
+                $h->vars['post_images_settings'] = $h->getSerializedSettings();
+                
 		if($h->vars['post_images_settings']['default'] == 'sitethumbshot'){
 			if($h->vars['post_images_settings']['sitethumbshot_size'] == 'T'){
 				$h->vars['post_images_settings']['h'] = 70;

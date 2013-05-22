@@ -8,11 +8,13 @@ class PostImagesSettings
 	* Admin settings for the Post Images plugin
 	*/
 	public function settings($h)
-	{
-		echo "<h1>" . $h->lang["post_images_settings_header"] . "</h1>\n";
+	{		
 		$folder = BASE . '/content/images/post_images/';
-		if(is_dir($folder) && is_writable($folder)) echo '<span class="green">OK</span> Post_images folder found and writable.';
-		else echo '<span class="red"> ! </span> Make sure '.$folder.' exists and is writable by hotaru.';
+		if(is_dir($folder) && is_writable($folder)) {
+                    //echo '<span class="green">OK</span> Post_images folder found and writable.'; 
+                } else { 
+                    echo '<span class="red"> ! </span> Make sure '.$folder.' exists and is writable by hotaru.';                     
+                }
 
 		// If the form has been submitted, go and save the data...
 		if ($h->cage->post->getAlpha('submitted') == 'true') { 
