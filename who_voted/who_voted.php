@@ -71,7 +71,7 @@ class WhoVoted
         $limit = $who_voted_settings['who_voted_num'];
         $avatars = $who_voted_settings['who_voted_avatars'];
         $avatar_size = $who_voted_settings['who_voted_avatar_size'];
-        $avatar_shape = $who_voted_settings['who_voted_avatar_shape'];
+        $avatar_shape = isset($who_voted_settings['who_voted_avatar_shape']) ? $who_voted_settings['who_voted_avatar_shape'] : '';
         $names = $who_voted_settings['who_voted_names'];
         $show_title = $who_voted_settings['who_voted_widget_title'];
         
