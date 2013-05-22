@@ -29,7 +29,7 @@ class TextWidgetSettings
         // Cycle through the text widgets, displaying their settings...
         $id = 1;
         
-        while($settings = unserialize(base64_decode($h->getSetting('text_widget_' . $id . '_settings', 'text_widget')))) 
+        while($settings = unserialize($h->getSetting('text_widget_' . $id . '_settings', 'text_widget'))) 
         {
             echo "<h1>" . $h->lang["text_widget_settings_header"] . " [ id:" .  $id . " ]</h1>";
             
