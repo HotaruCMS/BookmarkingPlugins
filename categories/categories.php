@@ -328,6 +328,8 @@ class Categories
     
     function loopCats($h, $parentCats, $topLevelId, $output = '') {
 
+        if (!$parentCats) return $output;
+        
         $thisLevel =  $parentCats['p_' . $topLevelId];
 
         if (!$thisLevel) return false;

@@ -42,7 +42,7 @@
                 <h2><?php echo $h->lang['bookmarking_no_posts']; ?></h2>
                 <?php if ($h->isActive('submit')) { ?>
                     <p>You can add new posts to this section here</p>            
-                    <p><a href="<?php echo $h->url(array(), 'submit'); ?>" class="btn btn-primary">Submit</a></p>
+                    <p><a href="<?php echo $h->url(array('page'=>'submit')); ?>" class="btn btn-primary">Submit</a></p>
             <?php } ?>
             </div>
         <?php }
