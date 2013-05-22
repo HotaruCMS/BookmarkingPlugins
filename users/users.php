@@ -150,7 +150,7 @@ class Users
         if (isset($result)) {
             $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
             $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
-            $h->vars['user']->id = $result->user_id;
+            $h->vars['user']->id = isset($result->user_id) ? $result->user_id : 0;
         } else {
             $h->pageTitle = $h->lang["main_theme_page_not_found"];
             $h->pageType = '';
