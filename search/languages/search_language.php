@@ -12,4 +12,6 @@ $lang["submit_page_breadcrumbs_search"] = "Search";
 /* RSS */
 $lang['post_rss_search'] = "Search results for";
 
+$lang['search_search_word_error'] = "Search word error";
+
 ?>
