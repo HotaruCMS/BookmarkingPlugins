@@ -424,7 +424,7 @@ class Comments
      */
     public function profile_navigation($h)
     {
-        echo "<li><a href='#comments' data-toggle='tab'>" . $h->lang['users_all_comments']  . "</a></li>\n";
+        echo "<li><a href='#comments' data-toggle='tab'>" . $h->lang['users_all_comments']  . "&nbsp;<span class='badge'>" . $h->countUserComments($h->vars['user']->id) . "</span></a></li>\n";        
     }
     
     

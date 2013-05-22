@@ -78,7 +78,7 @@ class Users
      * Determine what page we're looking at
      */
     public function theme_index_top($h)
-    {
+    {        
         $user = $h->cage->get->testUsername('user');
         if ($user) {
             $h->subPage = 'user';
@@ -150,6 +150,7 @@ class Users
         if (isset($result)) {
             $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
             $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
+            $h->vars['user']->id = $result->user_id;
         } else {
             $h->pageTitle = $h->lang["main_theme_page_not_found"];
             $h->pageType = '';
