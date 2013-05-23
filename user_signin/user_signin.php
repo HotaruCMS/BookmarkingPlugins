@@ -6,7 +6,7 @@
  * folder: user_signin
  * type: signin
  * class: UserSignin
- * hooks: install_plugin, theme_index_top, navigation_users, theme_index_main, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, theme_index_top, navigation_users, theme_index_main, admin_sidebar_plugin_settings, admin_plugin_settings, admin_footer
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
