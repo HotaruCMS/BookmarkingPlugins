@@ -6,7 +6,7 @@
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, bookmarking 0.1
- * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, hotaru_header, header_include
+ * hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, hotaru_header, header_include, footer
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -79,6 +79,13 @@ class PostsWidget
     public function widget_posts_widget($h, $type = 'top')
     {
         $this->postsWidgetDefault($h, $type);
+        
+        // test for ajax loading
+        // js in footer hook functin below
+        if (1==0) {            
+            $output = "<div id='widget_posts_latest'></div>";
+            echo $output;
+        }
     }
     
     
@@ -303,6 +310,41 @@ class PostsWidget
         
         return $output;
     }
+    
+    public function footer($h) {
+        // test for ajax loading
+        if (1==0) {
+            ?>
+            <script type='text/javascript'>
+                jQuery(window).load(function() {        
 
+                var sendurl = SITEURL + "index.php?page=api";
+                var formdata = 'method=hotaru.posts.getLatest&format=json';
+
+                $.ajax(
+                    {
+                    type: 'post',
+                            url: sendurl,
+                            cache: false,
+                            data: formdata,
+                            beforeSend: function () {
+                                            //$('#adminNews').html('<img src="' + SITEURL + "content/admin_themes/" + ADMIN_THEME + 'images/ajax-loader.gif' + '"/>&nbsp;Loading latest news.<br/>');
+                                    },
+                            error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+                                            $('#widget_posts_latest').html('ERROR');                                    
+                            },
+                            success: function(data) { // success means it returned some form of json code to us. may be code with custom error msg                                                                               
+                                            $('#widget_posts_latest').html(data).fadeIn("fast");
+                                            //$('#hotaruImg').fadeOut("slow");
+
+                            },
+                            dataType: "html"
+                    });
+                });
+            </script>
+
+            <?php
+        }
+    }
 }
 ?>
