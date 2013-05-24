@@ -47,9 +47,9 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
 ?> 
 
 <div class="">
-    <div id="userProfilePixBox"  style="position:relative;">
+    <div id="userProfilePixBox">
 	
-	<div id="" style="position:absolute;width:100%;">
+	<div class="profile_pix">
 	    <img style="width:100%;" title="<?php echo $username; ?>"  src="<?php echo $fileUrl;?>" alt="userPix">	    
 	</div>
 	
@@ -68,12 +68,12 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
     </div>
     <div class="clear">&nbsp;</div>
     
-	<div class="mainBox">
+	<div id="user_profile_navigation"class="mainBox">
 	    <span class="profileBox pull-left">
 		<h3><?php echo $username; ?></h3>
             </span>
             <span class="pull-right" style="padding:15px;">
-                <ul>
+                <ul class="nav nav-pills">
                  <?php $h->pluginHook('profile_action_buttons'); ?>
                 </ul>
             </span>	    
@@ -83,7 +83,7 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
     
 </div>
 
-
+<?php if (isset($h->vars['theme_settings']['userProfile_tabs']) && $h->vars['theme_settings']['userProfile_tabs']) { ?>
 <div class="profile_navigation2 tabbable tabs-below">
  
     <ul class="nav nav-tabs">        
@@ -123,5 +123,29 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
         </div>
         <?php } ?>
     </div>
+<?php } else {
+     ?>
+    
+    <div class="profile_navigation">
+     <ul>        
+        <li><a href='<?php echo $h->url(array('page'=>'profile', 'user'=>$h->vars['user']->name)) ?>'><?php echo $h->lang["users_profile"]; ?></a></li>
+        
+        <?php $h->pluginHook('profile_navigation'); ?>
+     
+        <?php // show account and profile links to owner or admin access users: 
+        if ($own) { ?>
+
+            <li><a href='<?php echo $h->url(array('page'=>'account', 'user'=>$username)); ?>'><?php echo $h->lang["users_account"]; ?></a></li>
+            <li><a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$username)); ?>'><?php echo $h->lang["users_profile_edit"]; ?></a></li>
+            <li><a href='<?php echo $h->url(array('page'=>'user-settings', 'user'=>$username)); ?>'><?php echo $h->lang["users_settings"]; ?></a></li>
+     </ul>
+    <?php } ?>
+    </div>
+    
+    
+    
+<?php    
+}
+?>
     
 </div>

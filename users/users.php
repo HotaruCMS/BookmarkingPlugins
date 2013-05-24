@@ -282,17 +282,13 @@ class Users
             $user = $h->cage->get->testUsername('user');
             $crumbs = "<a href='" . $h->url(array('user'=>$user)) . "'>\n";
             $crumbs .= $user . "</a>\n ";
-            $crumbs .= " / " . $title;
-            
-            
-            // put a dropdown on the right handside of the breadcrumb nav
-            $crumbs .= "<div class='pull-right'>dropdown</div>";
+            $crumbs .= " / " . $title;                                    
             
             return $crumbs . $h->rssBreadcrumbsLink('', array('user'=>$user));
         }
         
         // only show if the person has admin access
-        if ($h->currentUser->getPermission('can_access_admin') == 'yes') { 
+        if ($h->currentUser->adminAccess) { 
             
             // put a dropdown on the right handside of the breadcrumb nav
             $crumbs .= '<div class="pull-right">' .
@@ -349,7 +345,7 @@ class Users
         
         switch($h->pageName) {
             case 'profile':
-                //$h->template('users_profile');
+                $h->template('users_profile');
                 return true;
                 break;
             case 'account':
