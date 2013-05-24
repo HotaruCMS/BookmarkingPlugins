@@ -424,7 +424,12 @@ class Comments
      */
     public function profile_navigation($h)
     {
-        echo "<li><a href='#comments' data-toggle='tab'>" . $h->lang['users_all_comments']  . "&nbsp;<span class='badge'>" . $h->countUserComments($h->vars['user']->id) . "</span></a></li>\n";        
+        if (isset($h->vars['theme_settings']['userProfile_tabs']) && $h->vars['theme_settings']['userProfile_tabs']) {
+            $ahref = "<a href = '#comments' data-toggle='tab'>";
+        } else {
+            $ahref = "<a href = '" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>";
+        }
+        echo "<li>" . $ahref . $h->lang['users_all_comments']  . "&nbsp;<span class='badge'>" . $h->countUserComments($h->vars['user']->id) . "</span></a></li>\n";        
     }
     
     
