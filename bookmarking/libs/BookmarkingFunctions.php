@@ -224,7 +224,7 @@ class BookmarkingFunctions
             // Assume 'top' page and filter to 'top' stories.
             $h->vars['filter']['post_archived = %s'] = 'N'; 
             $h->vars['filter']['post_status = %s'] = 'top';
-            $h->vars['orderby'] = "post_pub_date DESC";
+            $h->vars['orderby'] = "post_date DESC";
         }
         else
         {
