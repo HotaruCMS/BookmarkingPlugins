@@ -50,7 +50,7 @@
         ?>
         <br />
         <div style="text-align: center;">
-            <input type='submit' name='cancel_all' value='<?php echo $h->lang("cat_man_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $h->lang["cat_man_save_all"); ?>'>
+            <input type='submit' name='cancel_all' value='<?php echo $h->lang("cat_man_cancel"); ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='save_all' value='<?php echo $h->lang("cat_man_save_all"); ?>'>
         </div>
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>

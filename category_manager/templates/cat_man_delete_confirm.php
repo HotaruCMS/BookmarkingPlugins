@@ -44,7 +44,7 @@
         <br />
         <h3><?php echo $h->lang("cat_man_delete_are_you_sure"); ?></h3>
         <div style="float: right;">
-            <input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $h->lang("cat_man_delete_no_cancel"]; ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $h->lang["cat_man_delete_yes_delete"); ?>'>
+            <input style='padding: 2px;' type='submit' name='delete_confirm_no' value='<?php echo $h->lang("cat_man_delete_no_cancel"); ?>'>&nbsp;&nbsp;<input style='padding: 2px;' type='submit' name='delete_confirm_yes' value='<?php echo $h->lang("cat_man_delete_yes_delete"); ?>'>
         </div>
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         </form>
