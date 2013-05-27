@@ -50,7 +50,7 @@ class ReCaptchaSettings
         echo "<form name='recaptcha_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=recaptcha' method='post'>\n";
         
         $thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
-        echo "<p>" . $h->lang["recaptcha_settings_desc"] . " <a href='http://recaptcha.net/api/getkey?domain=" . $thisdomain . "&app=HotaruCMS'>reCAPTCHA.net</a>.</p><br />\n";
+        echo "<p>" . $h->lang["recaptcha_settings_desc"] . " <a href='https://www.google.com/recaptcha/admin/create'>reCAPTCHA.net</a>.</p><br />\n";
         
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $h->lang["recaptcha_settings_public_key"] . ": <input type='text' name='rc_pubkey' size=50 value='" . $pubkey . "'><br /><br />\n";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $h->lang["recaptcha_settings_private_key"] . ": <input type='text' name='rc_privkey' size=50 value='" . $privkey . "'><br /><br />\n";
