@@ -2,7 +2,7 @@
 /**
 * name: Post Images
 * description: Add images to your posts
-* version: 1.4
+* version: 1.5
 * folder: post_images
 * class: PostImages
 * type: post_images
@@ -217,6 +217,8 @@ class PostImages
 	private function cropImage($h){
 		//$h->vars['post_images_settings'] = $h->getSerializedSettings();
 		$src = $h->post->vars['img'];
+                
+                if (!$src) return false;
                 
 		if(strstr($src,'http://images.sitethumbshot.com/'))
                         return $src;
