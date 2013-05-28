@@ -43,28 +43,25 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     
         <form name='login_form' class='form-signin' action='<?php echo BASEURL; ?>index.php' method='post'>
             
-                <input id="prependedInput" type="text" name="username" placeholder="<?php echo $h->lang["user_signin_login_form_submit_username"]; ?>" value="<?php echo $username_check; ?>">
+            <input id="prependedInput" type="text" name="username" placeholder="<?php echo $h->lang["user_signin_login_form_submit_username"]; ?>" value="<?php echo $username_check; ?>">
             <br/>
-                <input  id="prependedInput" type="password" name="password" placeholder="<?php echo $h->lang["user_signin_login_form_submit_password"]; ?>" value="<?php echo $password_check; ?>">
+            <input  id="prependedInput" type="password" name="password" placeholder="<?php echo $h->lang["user_signin_login_form_submit_password"]; ?>" value="<?php echo $password_check; ?>">
             
             <label class="checkbox">
                 <input type="checkbox" name="remember" value="1" <?php echo $remember_check; ?>/> <?php echo $h->lang["user_signin_login_form_submit_remember"]; ?>
-            </label>
-       
-           
-           
-       
+            </label>   
+            
+            <strong>Having problems logging in?</strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies">clear cookies on this domain</a>
             
             <div class="form-actions">
-  <button type="submit" class="btn btn-large btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
-
-</div>
+                <button type="submit" class="btn btn-large btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
+            </div>
             
-        <input type='hidden' name='page' value='login'>
-        <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
-        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+            <input type='hidden' name='page' value='login'>
+            <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
+            <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
 
-	<a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
+            <a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
         </form>
 	
     </div>

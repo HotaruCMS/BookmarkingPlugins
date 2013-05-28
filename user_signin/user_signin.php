@@ -90,6 +90,19 @@ class UserSignin
                     die(); exit;
                 } 
                 break;
+            case 'cookies':                
+                // clear cookies for entire domain, not just subdomain                
+                // By using url and .
+                $parsed = parse_url(SITEURL); 
+                setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+                setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']);  
+                setcookie("hotaru_user", "", time()-3600, "/");
+                setcookie("hotaru_key", "", time()-3600, "/");  
+                $h->messages['Cookies have been cleared for domain : ' . $parsed['host']] = 'green';                                
+                $h->pageTitle = $h->lang["user_signin_login"];
+                $h->pageType = 'login';
+                $h->pageName = 'login';
+                break;
             case 'register':
                 $h->pageTitle = $h->lang["user_signin_register"];
                 $h->pageType = 'register';
@@ -210,7 +223,7 @@ class UserSignin
                     return true;
                 }
                 return true;
-                break;
+                break;            
             case 'emailconf':
                 $user_signin_settings = $h->getSerializedSettings();
                 $h->vars['useEmailNotify'] = $user_signin_settings['email_notify'];
