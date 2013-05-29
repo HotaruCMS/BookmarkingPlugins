@@ -7,7 +7,7 @@
  * class: Search
  * type: search
  * requires: widgets 0.6
- * hooks: install_plugin, theme_index_top, header_include, bookmarking_functions_preparelist, search_box, breadcrumbs, post_rss_feed
+ * hooks: install_plugin, theme_index_top, header_include, bookmarking_functions_preparelist, search_box, search_box_nav, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://nickramsay.com
  *
@@ -76,6 +76,12 @@ class Search
     public function search_box($h)
     {
         $h->template('search_box', 'search');
+    }
+    
+    
+    public function search_box_nav($h)
+    {
+        $h->template('search_box_nav', 'search');
     }
     
     
