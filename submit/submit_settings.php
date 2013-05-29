@@ -55,6 +55,7 @@ class SubmitSettings
         $email_mods = $submit_settings['email_notify_mods'];
         $url_limit = $submit_settings['url_limit'];
         $daily_limit = $submit_settings['daily_limit'];
+        $period_limit = $submit_settings['period_limit'];
         $freq_limit = $submit_settings['freq_limit'];
         $categories = $submit_settings['categories'];
         $tags = $submit_settings['tags'];
@@ -71,6 +72,7 @@ class SubmitSettings
         if (!$x_posts) { $x_posts = 1; }
         if (!$url_limit) { $url_limit = 0; }
         if (!$daily_limit) { $daily_limit = 0; }
+        if (!$period_limit) { $period_limit = 0; }
         if (!$freq_limit) { $freq_limit = 0; }
         if (!$categories) { $categories = ''; }
         if (!$tags) { $tags = ''; }
@@ -112,6 +114,7 @@ class SubmitSettings
         
         echo "<p>" . " <input type='text' size=5 name='url_limit' value='" . $url_limit . "' /> " . $h->lang["submit_settings_url_limit"] . "</p>";
         echo "<p>" . " <input type='text' size=5 name='daily_limit' value='" . $daily_limit . "' /> " . $h->lang["submit_settings_daily_limit"] . "</p>";
+        echo "<p>" . " <input type='text' size=5 name='period_limit' value='" . $period_limit . "' /> " . $h->lang["submit_settings_period_limit"] . "</p>";
         echo "<p>" . " <input type='text' size=5 name='freq_limit' value='" . $freq_limit . "' /> " . $h->lang["submit_settings_frequency_limit"] . "</p>";
         
         echo "<p>" . $h->lang["submit_settings_limit_note"] . "</p>";
@@ -259,6 +262,12 @@ class SubmitSettings
             $daily_limit = $submit_settings['daily_limit'];
         }
         
+        // Period limit
+        $period_limit = $h->cage->post->testInt('period_limit'); 
+        if (!is_numeric($period_limit)) { 
+            $period_limit = $submit_settings['period_limit'];
+        }
+        
         // Frequency limit
         $freq_limit = $h->cage->post->testInt('freq_limit'); 
         if (!is_numeric($freq_limit)) { 
@@ -329,6 +338,7 @@ class SubmitSettings
         $submit_settings['allowable_tags'] = $allowable_tags;
         $submit_settings['url_limit'] = $url_limit;
         $submit_settings['daily_limit'] = $daily_limit;
+        $submit_settings['period_limit'] = $period_limit;
         $submit_settings['freq_limit'] = $freq_limit;
         $submit_settings['set_pending'] = $set_pending;
         $submit_settings['x_posts'] = $x_posts;

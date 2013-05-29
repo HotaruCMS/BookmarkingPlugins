@@ -284,15 +284,15 @@ class SubmitFunctions
         // delete everything in this table older than 30 minutes:
         $this->deleteTempData($h->db);
         
-        if (!$key) { return false; }
+        if (!$key) { return array(); }
         
         $cleanKey = preg_replace('/[^a-z0-9]+/','',$key);
         if (strcmp($key,$cleanKey) != 0) {
-            return false;
+            return array();
         } else {
             $sql = "SELECT tempdata_value FROM " . TABLE_TEMPDATA . " WHERE tempdata_key = %s ORDER BY tempdata_updatedts DESC LIMIT 1";
             $submitted_data = $h->db->get_var($h->db->prepare($sql, $key));
-            if ($submitted_data) { return unserialize($submitted_data); } else { return false; } 
+            if ($submitted_data) { return unserialize($submitted_data); } else { return array(); } 
         }
     }
     
@@ -371,6 +371,7 @@ class SubmitFunctions
         // get the settings we need:
         $submit_settings = $h->getSerializedSettings('submit');
         $daily_limit = $submit_settings['daily_limit'];
+        $period_limit = $submit_settings['period_limit'];
         $freq_limit = $submit_settings['freq_limit'];
         
         // get the last submitted data by this user:
@@ -420,7 +421,13 @@ class SubmitFunctions
             $h->messageType = 'red';
             $error = 1;
         } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
-                   && $daily_limit && ($daily_limit < $h->countPosts(24))) { 
+                   && $period_limit && ($period_limit < $h->countPosts(24))) { 
+            // exceeded period limit
+            $h->message = $h->lang['submit_period_limit_exceeded'];
+            $h->messageType = 'red';
+            $error = 1;
+        } elseif (($h->currentUser->role == 'member' || $h->currentUser->role == 'undermod')
+                   && $daily_limit && ($daily_limit < $h->countPosts(date('H'), date('i')))) { 
             // exceeded daily limit
             $h->message = $h->lang['submit_daily_limit_exceeded'];
             $h->messageType = 'red';

@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 3.3
+ * version: 3.4
  * folder: submit
  * class: Submit
  * type: post
@@ -84,6 +84,7 @@ class Submit
         if (!isset($submit_settings['allowable_tags'])) { $submit_settings['allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
         if (!isset($submit_settings['url_limit'])) { $submit_settings['url_limit'] = 0; }
         if (!isset($submit_settings['daily_limit'])) { $submit_settings['daily_limit'] = 0; }
+        if (!isset($submit_settings['period_limit'])) { $submit_settings['period_limit'] = 0; }
         if (!isset($submit_settings['freq_limit'])) { $submit_settings['freq_limit'] = 0; }
         if (!isset($submit_settings['set_pending'])) { $submit_settings['set_pending'] = ""; } // sets all new posts to pending 
         if (!isset($submit_settings['x_posts'])) { $submit_settings['x_posts'] = 1; }
