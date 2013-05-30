@@ -24,8 +24,18 @@
  * @link      http://www.hotarucms.org/
  */
 
+// check whether we have the fluid setting. If not make false
+$fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+
 ?>
 
+<div class="container<?php echo $fluid; ?>">
+            <div class="row<?php echo $fluid; ?>">
+
+<div id="header_end" class="container<?php echo $fluid; ?>">
+                        <!-- CATEGORIES, ETC -->
+                        
+                
 <div id="category_bar">
 	<ul>
 		<?php $h->pluginHook('category_bar_start'); ?>
@@ -35,3 +45,6 @@
 </div>
 
 <div class="clear"></div>
+
+
+</div></div></div>

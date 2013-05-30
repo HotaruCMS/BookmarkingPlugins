@@ -6,7 +6,7 @@
  * folder: categories
  * class: Categories
  * type: categories
- * hooks: theme_index_top, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed
+ * hooks: theme_index_top, install_plugin, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -34,6 +34,20 @@
 
 class Categories
 {
+    /*
+    * Setup the default settings
+    * */
+    public function install_plugin($h)
+    {
+           // Get plugin settings if they exist
+           $categories_settings = $h->getSerializedSettings();
+
+           if (!isset($categories_settings['categories_nav_style'])) { $categories_settings['categories_nav_style'] = 'style1'; }
+
+           // Update plugin settings
+           $h->updateSetting('categories_settings', serialize($categories_settings));
+    }
+        
     /**
      * Determine if we are filtering to a category
      * Categories might be numeric, e.g. category=3 or safe names, e.g. category=news_and_business
@@ -90,9 +104,14 @@ class Categories
      */
     public function header_include($h)
     {
-        // include a files that match the name of the plugin folder:
-        $h->includeJs('categories', 'suckerfish');
-        $h->includeCss();
+        $categories_settings = $h->getSerializedSettings();
+        $h->vars['categories_settings_nav_style'] = isset($categories_settings['categories_nav_style']) ? $categories_settings['categories_nav_style'] : 'style1';
+        
+        if ($h->vars['categories_settings_nav_style'] == 'style1') { 
+            $h->includeJs('categories', 'suckerfish');            
+        }
+        
+        $h->includeCss();      // include a files that match the name of the plugin folder:
     }
     
     
@@ -323,7 +342,11 @@ class Categories
         // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
         $h->vars['output'] = $this->loopCats($h, $parentCats, $topLevelId, '');
         
-        $h->template('category_bar');
+        if ($h->vars['categories_settings_nav_style'] == 'style2') {
+            $h->template('category_bar_2');
+        } else {
+            $h->template('category_bar');
+        }
     }
     
     function loopCats($h, $parentCats, $topLevelId, $output = '') {
@@ -340,11 +363,11 @@ class Categories
             if (isset($parentCats['p_' . $category->category_id])) $children = count($parentCats['p_' . $category->category_id]); else $children = 0;
             
             // echo li with this function
-            $output .= $this->categoryLink($h, $category, ''); 
+            $output .= $this->categoryLink($h, $category, '', $children); 
 
             // call function to loop back on this with $parentCats['p_' . $category->category_id]
             if ($children > 0) {
-                $output .= "<ul class='children'>";
+                if ($h->vars['categories_settings_nav_style'] == 'style2') $output .= "<ul class='children dropdown-menu'>"; else $output .= "<ul class='children'>";
                 $output .= $this->loopCats($h, $parentCats, $category->category_id);
                 $output .= "</ul>";
             }
@@ -362,7 +385,7 @@ class Categories
      * @param string $output  
      * @return string $output 
      */ 
-    public function categoryLink($h, $category, $output) 
+    public function categoryLink($h, $category, $output, $children = 0) 
     { 
         if (FRIENDLY_URLS == "true") {  
             $link = $category->category_safe_name;  
@@ -387,7 +410,13 @@ class Categories
         $category_name = stripslashes(urldecode($category->category_name));
         $category_name = htmlentities($category_name, ENT_QUOTES,'UTF-8');
         
-        $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category_name . "</a>\n";
+        if ($children && $h->vars['categories_settings_nav_style'] == 'style2') {            
+            //$output .= '<li class="divider-vertical"></li>';
+            $output .= '<li class="dropdown">';
+            $output .= '<a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $category_name . ' <b class="caret"></b></a>'; 
+        } else {                            
+            $output .= '<li' . $active . '><a href="' . $h->url(array('category'=>$link)) .'">' . $category_name . "</a>\n";
+        }
         
         return $output; 
     } 
