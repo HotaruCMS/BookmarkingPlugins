@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-
+if (1==1) {
 $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
@@ -95,3 +95,69 @@ $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: non
     </div> <!-- close comment -->
 
     <div class="clear"></div>
+    
+    <?php } else { ?>
+    
+    
+    <div id='activity'>
+    <ul class='activity_items'>
+        <?php 
+            
+                    //if (!$act->postSafe($h, $action)) { continue; } // skip if postis buried or pending
+//                    $user_id = $action->useract_userid;
+                    $user = $h->getUser($h->comment->author);
+                    
+                    $username = $h->getUserNameFromId($h->comment->author);
+                    
+        // switch on user role
+                    switch ($user->user_role) {
+                        case 'admin':
+                            $label = 'label-blue'; 
+                            break;
+                        case 'bookmark':
+                            $label = 'label-orange'; 
+                            break;
+                        case 'vote':
+                            $label = 'label-green'; 
+                            break;
+                        default:
+                            $label = 'label-gray';
+                            break;
+                    }
+        ?>
+        
+        <li class="info-box gray">
+            <div class="avatarBox">
+                
+                <?php if($h->isActive('avatar')) { ?>
+                            <div class='avatar_small'>
+                                <?php $h->setAvatar($h->comment->author, 32, 'g', 'img-circle'); echo $h->linkAvatar(); ?>
+                            </div>
+                        <?php } ?>
+                
+            </div>
+            <div class="info">
+              <span class="name media">
+                  <span class="media-object pull-left label <?php echo $label; ?>" style="margin-top:4px;"><?php echo strtoupper($user->user_role); ?></span>
+                  <div class="media-body">
+                      <strong class=""><?php echo ucfirst($username); ?></strong> <?php echo nl2br($h->comment->content); ?>
+  <!--                  : in <strong>iPad apps Paid</strong>-->
+
+
+                <span class="time pull-right"><i class="icon-time"></i> <?php echo time_ago(strtotime($h->comment->date)); ?></span>
+                <div>in <a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>">
+                      <?php echo $h->post->title; ?>
+                      </a>
+                  </div>
+                </span>
+            </div>
+            </div>
+          </li>
+          <?php //print_r($action); ?>
+        
+        
+            
+    </ul>
+</div>
+     
+ <?php } ?>
