@@ -42,6 +42,8 @@ class CategoriesSettings
        
 	echo '<form name="categories_settings_form" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=categories" method="post">';
 		
+        echo '<input type="checkbox" name ="categories_nav_show" value="categories_nav_show" '.$categories_settings['categories_nav_show'].'>&nbsp;'.$h->lang('categories_settings_nav_show'). '<br />';
+		
        	echo $h->lang['categories_setting_nav_style'].'&nbsp;<select name ="categories_nav_style">
 			<option selected="yes">'.$categories_settings['categories_nav_style'].'</option>
                         <option>style1</option>
@@ -72,6 +74,7 @@ class CategoriesSettings
                 $categories_settings['categories_nav_style'] = $h->cage->post->getAlnum('categories_nav_style');
         }      
 
+        $categories_settings['categories_nav_show'] = $h->cage->post->keyExists('categories_nav_show') ? 'checked' : '';
 
         if ($error == 1)
         {

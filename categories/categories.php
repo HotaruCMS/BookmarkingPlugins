@@ -2,7 +2,7 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 1.9
+ * version: 2.0
  * folder: categories
  * class: Categories
  * type: categories
@@ -43,6 +43,7 @@ class Categories
            $categories_settings = $h->getSerializedSettings();
 
            if (!isset($categories_settings['categories_nav_style'])) { $categories_settings['categories_nav_style'] = 'style1'; }
+           if (!isset($categories_settings['categories_nav_show'])) { $categories_settings['categories_nav_show'] = 'checked'; }
 
            // Update plugin settings
            $h->updateSetting('categories_settings', serialize($categories_settings));
@@ -106,6 +107,7 @@ class Categories
     {
         $categories_settings = $h->getSerializedSettings();
         $h->vars['categories_settings_nav_style'] = isset($categories_settings['categories_nav_style']) ? $categories_settings['categories_nav_style'] : 'style1';
+        $h->vars['categories_settings_nav_show'] = isset($categories_settings['categories_nav_show']) ? $categories_settings['categories_nav_show'] : 'checked';
         
         if ($h->vars['categories_settings_nav_style'] == 'style1') { 
             $h->includeJs('categories', 'suckerfish');            
@@ -316,36 +318,40 @@ class Categories
      */
     public function header_end($h)
     {
-        $output = '';     
-        
-        $sql    = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
-        $query = $h->db->prepare($sql);
-        $h->smartCache('on', 'categories', 60, $query); // start using cache
-        $categories = $h->db->get_results($query);
-        $h->smartCache('off'); // stop using cache
-        
-        // set the initial level Id as 1 for the top - as long as that never changes to be ALL
-        // TODO
-        // newly installed category plugin should always have cat1 = all but could it get changed for some reason?
-        // should we look up 'all' and return its id to be safe?
-        $topLevelId = 1;
-        $parentCats = array();
-        
-        // loop through the results and populate an array with the current top cats
-        foreach ($categories as $category) {
-                if (strtolower($category->category_id) != 1) {
-                    $parentCats['p_' . $category->category_parent][] = $category;                                    
-                }
-        }
-        
-        // TODO
-        // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
-        $h->vars['output'] = $this->loopCats($h, $parentCats, $topLevelId, '');
-        
-        if ($h->vars['categories_settings_nav_style'] == 'style2') {
-            $h->template('category_bar_2');
+        if ($h->vars['categories_settings_nav_show'] == 'checked') {
+            $output = '';     
+
+            $sql    = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
+            $query = $h->db->prepare($sql);
+            $h->smartCache('on', 'categories', 60, $query); // start using cache
+            $categories = $h->db->get_results($query);
+            $h->smartCache('off'); // stop using cache
+
+            // set the initial level Id as 1 for the top - as long as that never changes to be ALL
+            // TODO
+            // newly installed category plugin should always have cat1 = all but could it get changed for some reason?
+            // should we look up 'all' and return its id to be safe?
+            $topLevelId = 1;
+            $parentCats = array();
+
+            // loop through the results and populate an array with the current top cats
+            foreach ($categories as $category) {
+                    if (strtolower($category->category_id) != 1) {
+                        $parentCats['p_' . $category->category_parent][] = $category;                                    
+                    }
+            }
+
+            // TODO
+            // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
+            $h->vars['output'] = $this->loopCats($h, $parentCats, $topLevelId, '');
+
+            if ($h->vars['categories_settings_nav_style'] == 'style2') {
+                $h->template('category_bar_2');
+            } else {
+                $h->template('category_bar');
+            }
         } else {
-            $h->template('category_bar');
+                echo '<br/>';
         }
     }
     
