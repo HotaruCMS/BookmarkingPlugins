@@ -88,7 +88,7 @@ class UserSignin
                         header("Location: " . BASEURL);
                     }
                     die(); exit;
-                } 
+                }                                                 
                 break;
             case 'cookies':                
                 // clear cookies for entire domain, not just subdomain                
@@ -158,12 +158,91 @@ class UserSignin
     {
         if ($h->currentUser->loggedIn) {
             
-            if ($h->pageName == 'logout') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
-            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
-            
+//            if ($h->pageName == 'logout') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
+//            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
+//            
             if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
                 $h->adminNav();
             }
+            ?>
+            
+             <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">
+                    <span id="nav_usersettings">
+                        <span class="hide">
+                            User Settings
+                        </span>
+                    </span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-caret">
+                      <span class="caret-outer"></span>
+                      <span class="caret-inner"></span>
+                    </li>
+
+                    <li class="current-user" data-name="profile">
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>                        
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_editProfile')); ?>" class="account-nav account-nav-small">
+                        <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page' => 'edit-profile' , 'user' => $h->currentUser->name)); ?>" class="account-nav account-nav-small">
+                        <?php } ?>
+                        <div class="content">
+                              
+                           <?php   if($h->isActive('avatar')) {
+					$h->setAvatar($h->currentUser->id, 32, 'g', 'img-circle');
+					echo  $h->getAvatar();                                       
+				}
+                            ?>
+                                                                                        
+                              <b class="fullname"><?php echo $h->currentUser->name; ?></b>
+                              <small class="metadata">
+                                  Edit profile
+                              </small>
+                            </div>
+                         
+                        </a>
+                    </li>
+
+                    <?php $h->pluginHook('usermenu_top'); ?>
+                    
+                    <?php if ($h->isActive('messaging')) { ?>
+                    <li class="divider"></li>
+
+                    <li class="messages" data-name="messages">
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#inbox')) ?>">
+                          <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page'=>'inbox', 'user' => $h->currentUser->name)) ?>">
+                          <?php } ?>
+                        <span class=""></span>
+                        Messages
+                      </a>
+                    </li>                    
+                    <?php } ?>                  
+
+                    <li class="divider"></li>
+
+                    <li>
+                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
+                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_settings')) ?>" data-nav="messages">
+                         <?php } else { ?>
+                            <a href="<?php echo $h->url(array('page'=>'user-settings', 'user' => $h->currentUser->name )); ?>">
+                         <?php } ?>
+                            Settings
+                        </a>
+                    </li>
+  
+                    <li>
+                      <a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>">Sign out</a>                   
+                    </li>
+
+                </ul>
+
+            </li>
+            
+            
+            <?php
         } else {    
             
             // Allow other plugins to override the Login / Register links
@@ -332,6 +411,17 @@ class UserSignin
             }
             return false;
         }
+        
+        /**
+        * TODO
+        * remove by v.1.6.0
+        * resetting cookies here domain wide since we are logged out anyway and about to set them, no harm in resetting cookies for the moment ?
+        */
+        $parsed = parse_url(SITEURL); 
+        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
+        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
+        /**
+        *****************************/
         
         $h->currentUser->setCookie($h, $remember);
         $h->currentUser->loggedIn = true;

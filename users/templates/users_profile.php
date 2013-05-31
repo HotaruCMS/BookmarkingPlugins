@@ -38,7 +38,7 @@ $profile = $h->vars['profile'];
     </div>
     
     <div class="clear"></div>
-
+    
     <?php $h->pluginHook('profile'); ?>
     
 </div>

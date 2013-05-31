@@ -2,7 +2,7 @@
 /**
  * name: Users
  * description: Provides profile, settings and permission pages
- * version: 2.2
+ * version: 2.3
  * folder: users
  * type: users
  * class: Users

@@ -38,8 +38,7 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     
     <?php $h->pluginHook('user_signin_login_pre_login_form'); ?>
     
-    <div class='user_login_reg'>
-    <?php //echo $h->lang["user_signin_login_instructions"]; ?>
+    <div class='user_login_reg'>    
     
         <form name='login_form' class='form-signin' action='<?php echo BASEURL; ?>index.php' method='post'>
             
@@ -51,7 +50,7 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
                 <input type="checkbox" name="remember" value="1" <?php echo $remember_check; ?>/> <?php echo $h->lang["user_signin_login_form_submit_remember"]; ?>
             </label>   
             
-            <strong>Having problems logging in?</strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies">clear cookies on this domain</a>
+            <strong><?php echo $h->lang('user_signin_login_problems_cookie'); ?></strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies"><?php echo $h->lang('user_signin_login_clear_cookie'); ?></a>
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-large btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>

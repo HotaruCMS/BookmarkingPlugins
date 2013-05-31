@@ -108,4 +108,7 @@ $lang['user_signin_register_emailconf_success'] = "Your email address has been s
 $lang['user_signin_register_emailconf_success_login'] = "Click here to log in.";
 $lang['user_signin_register_emailconf_fail'] = "Unable to confirm your email address. Please try the link again.";
 
+$lang['user_signin_login_problems_cookie'] = "Having problems logging in?";
+$lang['user_signin_login_clear_cookie'] = "clear cookies on this domain";
+
 ?>

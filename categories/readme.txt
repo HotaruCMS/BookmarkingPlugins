@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.0 2013/05/31 - shibuya246 - Add style choice and display ON/OFF switch to admin settings. Add new template
 v.1.9 2010/07/30 - Nick - Parent category tab gets active status when viewing sub category or post.  
 v.1.8 2010/07/27 - Nick - Fix for url friendly post pages breaking with non-alphanumeric category safe names.
 v.1.7 2010/06/07 - Nick - Applied htmlentities to ampersands in posts, i.e. "posted in Food &amp; Drink"

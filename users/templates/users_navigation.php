@@ -123,6 +123,7 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
         </div>
         <?php } ?>
     </div>
+     </div> 
 <?php } else {
      ?>
     
@@ -141,11 +142,7 @@ if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
      </ul>
     <?php } ?>
     </div>
-    
-    
-    
+          
 <?php    
 }
 ?>
-    
-</div>
