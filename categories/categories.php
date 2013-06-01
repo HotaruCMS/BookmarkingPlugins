@@ -334,6 +334,9 @@ class Categories
             $topLevelId = 1;
             $parentCats = array();
 
+            // if there are no categories set up yet (watch for the default all category in db as well)
+            if (!$categories || count($categories) == 1) { echo '<br/>'; return false; }
+            
             // loop through the results and populate an array with the current top cats
             foreach ($categories as $category) {
                     if (strtolower($category->category_id) != 1) {
