@@ -70,7 +70,7 @@ $user->getUserBasic($h, $h->post->author);
         <?php echo time_ago($h->post->date); ?>
         <?php $h->pluginHook('show_post_author_date'); ?>
         <?php
-            if (($h->pageName != 'submit3') 
+            if (($h->pageName != 'submit3') && $h->isActive('submit')
                 && (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
                 || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id)))) { 
                 echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 

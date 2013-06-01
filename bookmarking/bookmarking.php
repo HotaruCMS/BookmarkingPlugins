@@ -501,34 +501,37 @@ class Bookmarking
         
         // check if we're looking at a category
         if ($h->subPage == 'category') { 
-            $category = $h->vars['category_id'];
+            $h->vars['bookmarking']['filterText'] = $h->vars['category_id'];
+            $h->vars['bookmarking']['filter'] = 'category';
         } 
         
         // check if we're looking at a tag
         if ($h->subPage == 'tags') { 
-            $tag = $h->vars['tag'];
+            $h->vars['bookmarking']['filterText'] = $h->vars['tag'];
+            $h->vars['bookmarking']['filter'] = 'tag';
         } 
         
         // check if we're looking at a media type
         if ($h->cage->get->keyExists('media')) { 
-            $media = $h->cage->get->testAlnumLines('media');
+            $h->vars['bookmarking']['filterText'] = $h->cage->get->testAlnumLines('media');
+            $h->vars['bookmarking']['filter'] = 'media';
         } 
         
         // check if we're looking at a user
         if ($h->cage->get->keyExists('user')) { 
-            $user = $h->cage->get->testUsername('user');
+            $h->vars['bookmarking']['filterText'] = $h->cage->get->testUsername('user');
+            $h->vars['bookmarking']['filter'] = 'user';
         } 
         
         // check if we're looking at a sorted page
         if ($h->cage->get->keyExists('sort')) { 
-            $sort = $h->cage->get->testAlnumLines('sort');
+            $h->vars['bookmarking']['filterText'] = $h->cage->get->testAlnumLines('sort');
+            $h->vars['bookmarking']['filter'] = 'sort';
         } 
         
         // POPULAR LINK
-        if (isset($category)) { $url = $h->url(array('page'=>'popular', 'category'=>$category));
-         } elseif (isset($tag)) { $url = $h->url(array('page'=>'popular', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'popular', 'media'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'popular', 'user'=>$user));
+        if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
+            $url = $h->url(array('page'=>'popular', $h->vars['bookmarking']['filter']=>$h->vars['bookmarking']['filterText']));        
          } else { $url = $h->url(array('page'=>'popular',)); } 
         $h->vars['popular_link'] = $url;
          
@@ -538,11 +541,9 @@ class Bookmarking
         } else { $h->vars['popular_active'] = ""; }
         
         // UPCOMING LINK
-        if (isset($category)) { $url = $h->url(array('page'=>'upcoming', 'category'=>$category));
-         } elseif (isset($tag)) { $url = $h->url(array('page'=>'upcoming', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'upcoming', 'media'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'upcoming', 'user'=>$user));
-         } else { $url = $h->url(array('page'=>'upcoming')); }
+        if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
+            $url = $h->url(array('page'=>'upcoming', $h->vars['bookmarking']['filter']=>$h->vars['bookmarking']['filterText']));        
+         } else { $url = $h->url(array('page'=>'upcoming',)); } 
         $h->vars['upcoming_link'] = $url;
         
         // UPCOMING ACTIVE OR INACTIVE
@@ -551,12 +552,10 @@ class Bookmarking
         } else { $h->vars['upcoming_active'] = ""; }
         
         // LATEST LINK
-        if (isset($category)) { $url = $h->url(array('page'=>'latest', 'category'=>$category));
-         } elseif (isset($tag)) { $url = $h->url(array('page'=>'latest', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'latest', 'media'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'latest', 'user'=>$user));
-         } else { $url = $h->url(array('page'=>'latest')); }
-        $h->vars['latest_link'] = $url;
+        if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
+            $url = $h->url(array('page'=>'latest', $h->vars['bookmarking']['filter']=>$h->vars['bookmarking']['filterText']));        
+         } else { $url = $h->url(array('page'=>'latest',)); } 
+        $h->vars['latest_link'] = $url;               
 
         // LATEST ACTIVE OR INACTIVE
         if ($pagename == 'latest' && !isset($sort)) { 
@@ -564,12 +563,10 @@ class Bookmarking
         } else { $h->vars['latest_active'] = ""; }
         
         // ALL LINK
-        if (isset($category)) { $url = $h->url(array('page'=>'all', 'category'=>$category));
-         } elseif (isset($tag)) { $url = $h->url(array('page'=>'all', 'tag'=>$tag));
-         } elseif (isset($media)) { $url = $h->url(array('page'=>'all', 'media'=>$media));
-         } elseif (isset($user)) { $url = $h->url(array('page'=>'all', 'user'=>$user));
-         } else { $url = $h->url(array('page'=>'all')); }
-        $h->vars['all_link'] = $url;
+        if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
+            $url = $h->url(array('page'=>'all', $h->vars['bookmarking']['filter']=>$h->vars['bookmarking']['filterText']));        
+         } else { $url = $h->url(array('page'=>'all',)); } 
+        $h->vars['all_link'] = $url; 
 
         // ALL ACTIVE OR INACTIVE
         if ($pagename == 'all' && !isset($sort)) { 

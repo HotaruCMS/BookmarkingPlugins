@@ -24,6 +24,8 @@
  * @link      http://www.hotarucms.org/
  */
 
+$linkArray = array('popular', 'latest', 'upcoming', 'all');
+
 ?>
 <div style="padding:15px 25px;" class="hero-unit">    
         <?php if (1==0) {  // !isset($postCount) || $postCount < 1 // need to find postCount for total posts not just this section?>
@@ -39,9 +41,20 @@
             <?php }
         } else { ?>
             <div id='bookmarking_no_posts'>
-                <h2><?php echo $h->lang['bookmarking_no_posts']; ?></h2>
+                <h3><?php echo $h->lang('bookmarking_cant_find_anything'); ?></h3> 
+                <p><?php echo $h->lang("bookmarking_extend_your_search"); ?></p>
+                <ul>
+                    <?php foreach ($linkArray as $link) {
+                        $href = $link . '_link';
+                        $name = 'bookmarking_sort_' . $link;
+                        echo '<li><a href="' . $h->vars[$href] . '">' . $h->lang($name) . '</a>';
+                        if ($link == 'all' && isset($h->vars['bookmarking']['filter'])) echo' <span class="label label-info">' . $h->countPostsFilter(0,0,$h->vars['bookmarking']['filter'], $h->vars['bookmarking']['filterText'], $link) . '</span>';
+                            echo '</li>';
+                    } ?>
+                </ul>
                 <?php if ($h->isActive('submit')) { ?>
-                    <p>You can add new posts to this section here</p>            
+                    <br/>
+                    <p>You can also add new posts to this section here</p>            
                     <p><a href="<?php echo $h->url(array('page'=>'submit')); ?>" class="btn btn-primary">Submit</a></p>
             <?php } ?>
             </div>

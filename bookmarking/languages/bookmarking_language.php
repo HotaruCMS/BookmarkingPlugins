@@ -18,6 +18,9 @@ $lang["bookmarking_top_30_days"] = "Top Posts (last 30 Days)";
 $lang["bookmarking_top_365_days"] = "Top Posts (last 365 Days)";
 $lang["bookmarking_top_all_time"] = "Top Posts (All-Time)";
 $lang["bookmarking_no_posts"] = "No posts found.";
+$lang["bookmarking_cant_find_anything"] = "Can't find anything here?";
+$lang["bookmarking_extend_your_search"] = "Try the following filters to extend your search";
+
 
 /* Post */
 $lang["bookmarking_post_edit"] = "Edit";
@@ -52,6 +55,7 @@ $lang['bookmarking_users_settings_post'] = SITE_NAME . " post";
 /* Sort & Filter */
 $lang["bookmarking_sort_by"] = "Sort by:";
 $lang["bookmarking_sort_recently_popular"] = "Popular";
+$lang["bookmarking_sort_popular"] = "Popular";
 $lang["bookmarking_sort_upcoming"] = "Upcoming";
 $lang["bookmarking_sort_latest"] = "Latest";
 $lang["bookmarking_sort_new"] = "Latest"; // same as latest, but necessary
