@@ -248,7 +248,7 @@ class Categories
     { 
         $crumbs = '';
                 
-        if ($h->subPage == 'category') // the pageType is "list"
+        if ($h->subPage == 'category' && isset($h->vars['category_parent'])) // the pageType is "list"
         {
             $parent_id = $h->vars['category_parent'];
             if ($parent_id > 1) {
