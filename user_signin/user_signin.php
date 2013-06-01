@@ -161,7 +161,8 @@ class UserSignin
 //            if ($h->pageName == 'logout') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
 //            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
 //            
-            if ($h->currentUser->getPermission('can_access_admin') == 'yes') {
+            if ($h->currentUser->getPermission('can_access_admin') == 'yes') {                
+                if ($h->isDebug) { print $h->debugNav(); }
                 $h->adminNav();
             }
             ?>
