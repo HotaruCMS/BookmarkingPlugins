@@ -33,9 +33,9 @@ for ($i=1; $i<=$blocks; $i++) {
 ?>
     <div id="table_list">
     
-    <table>
+    <table class="table table-bordered">
     
-    <tr class='table_a'><td colspan=6><?php echo $h->lang["widgets_ordering_title"] . " " . $i; ?> </td></tr>
+    <tr class='table_a info'><td colspan=6><?php echo $h->lang["widgets_ordering_title"] . " " . $i; ?> </td></tr>
     <tr class='table_headers'>
     <td><?php echo $h->lang["widgets_ordering_block_enabled"]; ?></td>
     <td><?php echo $h->lang["widgets_ordering_block_name"]; ?></td>
