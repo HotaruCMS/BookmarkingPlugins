@@ -67,7 +67,7 @@ $user->getUserBasic($h, $h->post->author);
 		}
 		?>
 
-        <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
+        <?php echo time_ago($h->post->date); ?>
         <?php $h->pluginHook('show_post_author_date'); ?>
         <?php
             if (($h->pageName != 'submit3') 

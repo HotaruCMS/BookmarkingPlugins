@@ -83,7 +83,7 @@ class WhoVoted
         {
             $output .= "<div id='who_voted'>\n";
             if ($show_title) {
-                $output .= "<h2 id='who_voted_title'>" . $h->lang['who_voted'] . "</h2>";
+                $output .= "<h3 id='who_voted_title'>" . $h->lang['who_voted'] . "</h3>";
             }
         
             $output .= "<div id='who_voted_content'>\n";

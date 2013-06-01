@@ -554,7 +554,7 @@ class Comments
                 
         echo "<!--  START COMMENTS_WRAPPER -->\n";
         echo "<div class='comments_wrapper'>\n";
-        echo "<h2>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h2>\n";
+        echo "<h3>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h3>\n";
             
         // IF PAGINATING COMMENTS:
         if ($h->comment->pagination)

@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
-if (1==1) {
+if (1==0) {
 $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: none;' : ''; // comments are shown unless they have X negative votes
 ?>
     <a id="c<?php echo $h->comment->id; ?>"></a>
@@ -45,8 +45,7 @@ $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: non
                         $username = $h->getUserNameFromId($h->comment->author);
                         echo $h->lang['comments_written_by'] . " ";
                         echo "<a href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>, ";
-                        echo time_difference(unixtimestamp($h->comment->date), $h->lang) . " ";
-                        echo $h->lang['comments_time_ago'] . ".";
+                        echo time_ago($h->comment->date);                        
                         if ($display) { echo "<a href='#' class='comment_show_hide'>" . $h->lang['comments_show_hide'] . "</a>"; }
                 ?>
                 </div>
@@ -144,7 +143,7 @@ $display = ($h->comment->votes_down >= $h->vars['comment_hide']) ? 'display: non
   <!--                  : in <strong>iPad apps Paid</strong>-->
 
 
-                <span class="time pull-right"><i class="icon-time"></i> <?php echo time_ago(strtotime($h->comment->date)); ?></span>
+                <span class="time pull-right"><i class="icon-time"></i> <?php echo time_ago($h->comment->date); ?></span>
                 <div>in <a href="<?php echo $h->url(array('page'=>$h->post->id)); ?>">
                       <?php echo $h->post->title; ?>
                       </a>

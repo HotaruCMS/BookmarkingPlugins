@@ -312,15 +312,14 @@ class Users
                         if ($h->isActive('user_manager')) {
                             $crumbs .= '<li><a href="' . BASEURL . 'admin_index.php?search_value=' . $h->vars['user']->name . '&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search#tab_settings">' . $h->lang['user_man_link'] . '</a></li>';
 
-                        $h->pluginHook('profile_navigation_restricted');
-                        
-            $crumbs .= '</ul>' .
-            '</div>' .  
-            '</div>';
-         } 
-        
-   }
-                        
+                            $h->pluginHook('profile_navigation_restricted');                        
+                         }        
+                         
+                $crumbs .= '</ul>' .
+                  '</div>' .  
+                  '</div>';
+        }
+
         return $crumbs;
     }
     

@@ -209,8 +209,8 @@ class relatedPosts
 				return $this->noRelatedPosts($h);
 		} 
 
-		$output = "<div class='related_posts_container'><h2 id='related_posts_title'>" . $h->lang['related_posts'] . "</h2>";
-	
+		$output = "<div class='related_posts_container'><h3 id='related_posts_title'>" . $h->lang['related_posts'] . "</h3>";
+
 		$output .= "<ul class='related_posts'>\n";
 		foreach ($results as $item) {
 				$h->readPost(0, $item); // needed for the url function
@@ -253,7 +253,7 @@ class relatedPosts
 		}
 		$output .= "</ul>\n";
 		$output .= "</div>\n";		
-		$output .= "<br class=\"clear\" />";
+		$output .= "<div class=\"clear\" ></div>";
 
 		return $output;
 	}
