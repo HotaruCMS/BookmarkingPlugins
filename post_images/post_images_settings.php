@@ -59,7 +59,8 @@ class PostImagesSettings
 		$show_in_related_posts = $post_images_settings['show_in_related_posts'];
 		$show_in_posts_widget = '';
 		$show_in_posts_widget = $post_images_settings['show_in_posts_widget'];
-			
+		$post_images_pullRight = isset($post_images_settings['pullRight']) ? $post_images_settings['pullRight'] : '';	
+                
 		// start form
 		echo "<form name='post_images_settings_form' ";
 		echo "action='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=post_images' method='post'>\n";
@@ -99,12 +100,15 @@ class PostImagesSettings
 		echo '<br /><select name="sitethumbshot_size"><option value="T" label="T" '.$t.'></option><option value="S" label="S" '.$s.'></option><option value="M" label="M" '.$m.'></option></select> <i>required if sitethumbshot is chosen</i></p>';
 		// show in related posts?
 		echo '<h3>' . $h->lang['post_images_settings_related_posts_heading'] . '</h3>';
-		echo $h->lang['post_images_settings_related_posts'];
-		echo "<p><input type='checkbox' name='show_in_related_posts' value='show_in_related_posts' " . $show_in_related_posts . " ></p>";
+		
+		echo "<p>" . $h->lang['post_images_settings_related_posts'] . "<input type='checkbox' name='show_in_related_posts' value='show_in_related_posts' " . $show_in_related_posts . " ></p>";
 		// show in posts widget?
-		echo $h->lang['post_images_settings_posts_widget'];
-		echo "<p><input type='checkbox' name='show_in_posts_widget' value='show_in_posts_widget' " . $show_in_posts_widget . " ></p>";
-		echo "<br />";
+		
+		echo "<p>" . $h->lang['post_images_settings_posts_widget'] . "<input type='checkbox' name='show_in_posts_widget' value='show_in_posts_widget' " . $show_in_posts_widget . " ></p>";
+                
+                echo "<p>" . $h->lang['post_images_settings_pullRight'] . "<input type='checkbox' name='post_images_pullRight' value='post_images_pullRight' " . $post_images_pullRight . " ></p>";
+		
+                echo "<br />";
 		// end form
 		echo "<br />";
 		echo "<input type='hidden' name='submitted' value='true' />\n";
@@ -140,6 +144,12 @@ class PostImagesSettings
 		else {
 			$post_images_settings['show_in_posts_widget'] = 'unchecked';
 			}
+               if ($h->cage->post->keyExists('post_images_pullRight')) {
+			$post_images_settings['pullRight'] = 'checked';
+			}
+		else {
+			$post_images_settings['pullRight'] = 'unchecked';
+			}         
 		
 		// if bitly is chosen but either of the login or api key fields are empty, set error, don't save
 		if ($post_images_settings['default'] == 'sitethumbshot' &&

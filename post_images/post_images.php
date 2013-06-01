@@ -56,7 +56,9 @@ class PostImages
 		if (!isset($post_images_settings['wepsnapr_size'])) { $post_images_settings['sitethumbshot_size'] = 'T'; }
 		if (!isset($post_images_settings['show_in_related_posts'])) { $post_images_settings['show_in_related_posts'] = 'unchecked'; }
 		if (!isset($post_images_settings['show_in_posts_widget'])) { $post_images_settings['show_in_posts_widget'] = 'unchecked'; }
-		$h->updateSetting('post_images_settings', serialize($post_images_settings));
+		if (!isset($post_images_settings['post_images_pullRight'])) { $post_images_settings['post_images_pullRight'] = 'unchecked'; }		
+                
+                $h->updateSetting('post_images_settings', serialize($post_images_settings));
 
 		$folder = BASE . '/content/images/post_images/';
 		if(!is_dir($folder)){

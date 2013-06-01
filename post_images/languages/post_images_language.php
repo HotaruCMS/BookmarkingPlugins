@@ -22,6 +22,8 @@ $lang['post_images_settings_sitethumbshot_size'] = 'Size of your sitethumbshot s
 $lang['post_images_settings_related_posts_heading'] = 'Related Posts and Post Images';
 $lang['post_images_settings_related_posts'] = 'Show images in the output of the related posts plugin?';
 $lang['post_images_settings_posts_widget'] = 'Show images in the output of the posts widget plugin?';
+$lang['post_images_settings_pullRight'] = 'Align images to right for posts?';
+
 
 $lang['post_images_form_intro'] = '<b>Choose Images</b><br />You can click one of the images below or add a new image to the list by using "Copy Image Location" in your browser and then paste that link here. Leave the field blank if you dont want an image.';
 $lang['post_images_ie_msg'] = 'Try using Chrome, Firefox, Safari or Opera for automatically fetched images!';
