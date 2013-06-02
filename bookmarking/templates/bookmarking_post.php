@@ -35,50 +35,46 @@ $user->getUserBasic($h, $h->post->author);
 <div class="show_post vote_button_space media" id="show_post_<?php echo $h->post->id ?>" >
 
     <?php $h->pluginHook('show_post_pre_title'); ?>
-
-    <?php   // Show avatars if enabled (requires an avatars plugin)
-        if($h->isActive('avatar')) {
-            $h->setAvatar($user->id, 32);
-            echo $h->wrapAvatar();
-        }
-    ?>
-        
     <div class="media-body">
+        <?php   // Show avatars if enabled (requires an avatars plugin)
+            if($h->isActive('avatar')) {
+                $h->setAvatar($user->id, 32);
+                echo $h->wrapAvatar();
+            }
+        ?>
+        
         <div class="show_post_title media-heading">
-        <?php if (!$h->vars['editorial']) { ?> 
-            <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
-        <?php } else { ?>
-            <?php echo $h->post->title; ?>
-        <?php } ?>
-        <?php $h->pluginHook('show_post_title'); ?>
-    </div>
+            <?php if (!$h->vars['editorial']) { ?> 
+                <a href='<?php echo $h->post->origUrl; ?>' <?php echo $h->vars['target']; ?> class="click_to_source" rel="nofollow"><?php echo $h->post->title; ?></a>
+            <?php } else { ?>
+                <?php echo $h->post->title; ?>
+            <?php } ?>
+            <?php $h->pluginHook('show_post_title'); ?>
+        </div>
 
         <div class="show_post_author_date">
-        <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
+            <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
 
-		<?php 
-		if ($user->name)
-		{
-			echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
-		}
-		else
-		{
-			echo $h->lang['main_anonymous'];
-		}
-		?>
+            <?php 
+            if ($user->name) {		
+                echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
+            } else {				
+                echo $h->lang['main_anonymous'];
+            }
+            ?>
 
-        <?php echo time_ago($h->post->date); ?>
-        <?php $h->pluginHook('show_post_author_date'); ?>
-        <?php
+            <?php echo time_ago($h->post->date); ?>
+            <?php $h->pluginHook('show_post_author_date'); ?>
+            <?php
             if (($h->pageName != 'submit3') && $h->isActive('submit')
                 && (($h->currentUser->getPermission('can_edit_posts') == 'yes') 
                 || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id)))) { 
                 echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
             }
-        ?> 
-    </div>
-        
+            ?> 
         </div>
+        
+    
     
         <?php if ($h->vars['use_content']) { ?>
             <div class="show_post_content">
@@ -93,12 +89,12 @@ $user->getUserBasic($h, $h->post->author);
             </ul>
         </div>
     
-	<div class="clear"></div>
-        
-    <div class="show_post_extras">
-        <?php $h->pluginHook('show_post_extras'); ?>
+        <div class="clear"></div>
+
+        <div class="show_post_extras">
+            <?php $h->pluginHook('show_post_extras'); ?>
+        </div>
     </div>
-    
 </div>
 
 <?php $h->pluginHook('show_post_middle'); ?>

@@ -36,8 +36,6 @@ class BookmarkingSettings
             $this->saveSettings($h); 
         }    
         
-        //echo "<h1>" . $h->lang["bookmarking_settings_header"] . "</h1>\n";
-        
         $h->showMessage(); // Saved / Error message
         
         // Get settings from database if they exist...
@@ -121,8 +119,7 @@ class BookmarkingSettings
         $posts_per_page = $h->cage->post->testInt('posts_per_page'); 
         if (!$posts_per_page) { 
             $posts_per_page = $bookmarking_settings['posts_per_page']; 
-        }
-        
+        }        
     
         // RSS Redirecting
         if ($h->cage->post->keyExists('rss_redirect')) { 
@@ -152,8 +149,6 @@ class BookmarkingSettings
             $default_page = 'popular';
         }
 
-
-    
         $h->pluginHook('bookmarking_save_settings');
         
         $bookmarking_settings['posts_per_page'] = $posts_per_page;
@@ -168,7 +163,6 @@ class BookmarkingSettings
         $h->messageType = "green";
         
         return true;    
-    }
-    
+    }    
 }
 ?>

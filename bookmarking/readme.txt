@@ -13,6 +13,7 @@ Instructions
 
 Changelog
 ---------
+v.0.6 2013/06/01 - shibuya246,Nick - a few css updates and hook for custom filters
 v.0.5 2010/08/10 - Nick - Edits to CSS and templates to allow for posts by "Anonymous" users
 		   	- Fix for blank post type on settings page when no posts in database
 v.0.4 2010/07/20 - Nick - Edits to CSS for sort/filter links

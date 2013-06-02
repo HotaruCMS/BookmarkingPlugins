@@ -2,7 +2,7 @@
 /**
  * name: Bookmarking
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.5
+ * version: 0.6
  * folder: bookmarking
  * class: Bookmarking
  * type: base
@@ -150,32 +150,18 @@ class Bookmarking
 		} // close switch
 		
 		// user defined settings:
-		
-		if (!$h->currentUser->settings) { 
-			// logged out users get the default settings:
-			$h->currentUser->settings = $h->getDefaultSettings('site');
-		}
+                
+		// logged out users get the default settings:
+		if (!$h->currentUser->settings) { $h->currentUser->settings = $h->getDefaultSettings('site'); }
 		
 		// open links in a new tab?
-		if ($h->currentUser->settings['new_tab']) { 
-			$h->vars['target'] = 'target="_blank"'; 
-		} else { 
-			$h->vars['target'] = ''; 
-		}
+		$h->vars['target'] = $h->currentUser->settings['new_tab'] ? 'target="_blank"' : ''; 
 		
 		// open link to the source or the site post?
-		if ($h->currentUser->settings['link_action']) { 
-			$h->vars['link_action'] = 'source'; 
-		} else { 
-			$h->vars['link_action'] = ''; 
-		}
+                $h->vars['link_action'] = $h->currentUser->settings['link_action'] ? 'source' : ''; 
 		
 		// editorial (story with an internal link)
-		if (strstr($h->post->origUrl, BASEURL)) { 
-			$h->vars['editorial'] = true;
-		} else { 
-			$h->vars['editorial'] = false; 
-		} 
+		$h->vars['editorial'] = strstr($h->post->origUrl, BASEURL) ? true: false;
 		
 		// get settings from Submit 
 		if (!isset($h->vars['submit_settings'])) {
@@ -402,18 +388,10 @@ class Bookmarking
     public function user_settings_pre_save($h)
     {
         // Open posts in a new tab?
-        if ($h->cage->post->getAlpha('new_tab') == 'yes') { 
-            $h->vars['settings']['new_tab'] = "checked"; 
-        } else { 
-            $h->vars['settings']['new_tab'] = "";
-        }
+        $h->vars['settings']['new_tab'] = $h->cage->post->getAlpha('new_tab') == 'yes' ? 'checked' : ''; 
         
         // List links open source url or post page?
-        if ($h->cage->post->getAlpha('link_action') == 'source') { 
-            $h->vars['settings']['link_action'] = "checked"; 
-        } else { 
-            $h->vars['settings']['link_action'] = "";
-        }
+        $h->vars['settings']['link_action'] = $h->cage->post->getAlpha('link_action') == 'source' ? 'checked' : ''; 
     }
     
     
@@ -477,9 +455,7 @@ class Bookmarking
         if ($page_type != 'list' && $page_type != 'user' && $page_type != 'profile') { return false; }
         
         // go set up the links
-        $this->setUpSortLinks($h);
-        
-
+        $this->setUpSortLinks($h);        
     }
     
     
@@ -546,10 +522,8 @@ class Bookmarking
          } else { $url = $h->url(array('page'=>'upcoming',)); } 
         $h->vars['upcoming_link'] = $url;
         
-        // UPCOMING ACTIVE OR INACTIVE
-        if ($pagename == 'upcoming' && !isset($sort)) { 
-            $h->vars['upcoming_active'] = "class='active'";
-        } else { $h->vars['upcoming_active'] = ""; }
+        // UPCOMING ACTIVE OR INACTIVE        
+        $h->vars['upcoming_active'] = $pagename == 'upcoming' && !isset($sort) ? "class='active'" : '';
         
         // LATEST LINK
         if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
@@ -557,10 +531,8 @@ class Bookmarking
          } else { $url = $h->url(array('page'=>'latest',)); } 
         $h->vars['latest_link'] = $url;               
 
-        // LATEST ACTIVE OR INACTIVE
-        if ($pagename == 'latest' && !isset($sort)) { 
-            $h->vars['latest_active'] = "class='active'";
-        } else { $h->vars['latest_active'] = ""; }
+        // LATEST ACTIVE OR INACTIVE        
+        $h->vars['latest_active'] = $pagename == 'latest' && !isset($sort) ? "class='active'" : '';
         
         // ALL LINK
         if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
@@ -568,10 +540,8 @@ class Bookmarking
          } else { $url = $h->url(array('page'=>'all',)); } 
         $h->vars['all_link'] = $url; 
 
-        // ALL ACTIVE OR INACTIVE
-        if ($pagename == 'all' && !isset($sort)) { 
-            $h->vars['all_active'] = "class='active'";
-        } else { $h->vars['all_active'] = ""; }
+        // ALL ACTIVE OR INACTIVE        
+        $h->vars['all_active'] = $pagename == 'all' && !isset($sort) ? "class='active'" : '';
         
         // 24 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-24-hours', 'category'=>$category));
@@ -581,10 +551,8 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-24-hours')); }
         $h->vars['24_hours_link'] = $url;
 
-        // 24 HOURS ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-24-hours') { 
-            $h->vars['top_24_hours_active'] = "class='active'";
-        } else { $h->vars['top_24_hours_active'] = ""; }
+        // 24 HOURS ACTIVE OR INACTIVE        
+        $h->vars['top_24_hours_active'] = isset($sort) && $sort == 'top-24-hours' ? "class='active'" : '';
         
         // 48 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-48-hours', 'category'=>$category));
@@ -594,10 +562,8 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-48-hours')); }
         $h->vars['48_hours_link'] = $url;
 
-        // 48 HOURS ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-48-hours') { 
-            $h->vars['top_48_hours_active'] = "class='active'";
-        } else { $h->vars['top_48_hours_active'] = ""; }
+        // 48 HOURS ACTIVE OR INACTIVE        
+        $h->vars['top_48_hours_active'] = isset($sort) && $sort == 'top-48-hours' ? "class='active'" : '';
         
         // 7 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-7-days', 'category'=>$category));
@@ -607,10 +573,8 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-7-days')); }
         $h->vars['7_days_link'] = $url;
 
-        // 7 DAYS ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-7-days') { 
-            $h->vars['top_7_days_active'] = "class='active'";
-        } else { $h->vars['top_7_days_active'] = ""; }
+        // 7 DAYS ACTIVE OR INACTIVE        
+        $h->vars['top_7_days_active'] = isset($sort) && $sort == 'top-7-days' ? "class='active'" : '';
         
         // 30 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-30-days', 'category'=>$category));
@@ -620,10 +584,8 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-30-days')); }
         $h->vars['30_days_link'] = $url;
 
-        // 30 DAYS ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-30-days') { 
-            $h->vars['top_30_days_active'] = "class='active'";
-        } else { $h->vars['top_30_days_active'] = ""; }
+        // 30 DAYS ACTIVE OR INACTIVE        
+        $h->vars['top_30_days_active'] = isset($sort) && $sort == 'top-30-days' ? "class='active'" : '';
         
         // 365 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-365-days', 'category'=>$category));
@@ -633,10 +595,8 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-365-days')); }
         $h->vars['365_days_link'] = $url;
 
-        // 365 DAYS ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-365-days') { 
-            $h->vars['top_365_days_active'] = "class='active'";
-        } else { $h->vars['top_365_days_active'] = ""; }
+        // 365 DAYS ACTIVE OR INACTIVE        
+        $h->vars['top_365_days_active'] = isset($sort) && $sort == 'top-365-days' ? "class='active'" : '';
         
         // ALL TIME LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-all-time', 'category'=>$category));
@@ -646,11 +606,11 @@ class Bookmarking
          } else { $url = $h->url(array('sort'=>'top-all-time')); }
         $h->vars['all_time_link'] = $url;
         
-        // ALL TIME ACTIVE OR INACTIVE
-        if (isset($sort) && $sort == 'top-all-time') { 
-            $h->vars['top_all_time_active'] = "class='active'";
-        } else { $h->vars['top_all_time_active'] = ""; }
+        // ALL TIME ACTIVE OR INACTIVE        
+        $h->vars['top_all_time_active'] = isset($sort) && $sort == 'top-all-time' ? "class='active'" : '';
         
+        $h->pluginHook('bookmarking_sort_filter'); // allow custom filters
+        //
         // display the sort links
         $h->template('bookmarking_sort_filter');
     }

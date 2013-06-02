@@ -37,13 +37,12 @@ foreach ($h->vars['pagedResults']->items as $post) {
             
         <?php $h->pluginHook('show_post_pre_title'); ?>
         <div class="media-body">
-        <?php   // Show avatars if enabled (requires an avatars plugin)
-            if($h->isActive('avatar')) {
-                $h->setAvatar($user->id, 32);
-                echo $h->wrapAvatar();
-            }
-        ?>
-        
+            <?php   // Show avatars if enabled (requires an avatars plugin)
+                if($h->isActive('avatar')) {
+                    $h->setAvatar($user->id, 32);
+                    echo $h->wrapAvatar();
+                }
+            ?>        
         
             <div class="show_post_title media-heading">
                 <?php if ($h->vars['link_action'] == 'source') { 
@@ -58,28 +57,24 @@ foreach ($h->vars['pagedResults']->items as $post) {
             <div class="show_post_author_date">    
                 <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
 
-                            <?php 
-                            if ($user->name)
-                            {
-                                    echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
-                            }
-                            else
-                            {
-                                    echo $h->lang['main_anonymous'];
-                            }
-                            ?>
+                <?php 
+                if ($user->name) {
+                    echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
+                } else {
+                    echo $h->lang['main_anonymous'];
+                }
+                ?>
 
                 <?php echo time_ago($h->post->date);?>
                 <?php $h->pluginHook('show_post_author_date'); ?>
                 <?php 
-                    if ($h->isActive('submit') && ($h->currentUser->getPermission('can_edit_posts') == 'yes') 
+                    if ($h->currentUser->getPermission('can_edit_posts') == 'yes'
                         || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
                         echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
                     }
                 ?> 
             </div>
-        
-            
+                    
         <?php if ($h->vars['use_content']) { ?>
             <div class="show_post_content">
                 <?php $h->pluginHook('show_post_content_list'); ?>
@@ -103,8 +98,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
         <div class="show_post_extras">
             <?php $h->pluginHook('show_post_extras'); ?>
         </div>
-</div>
-	
+    </div>	
             
     </div>
     
