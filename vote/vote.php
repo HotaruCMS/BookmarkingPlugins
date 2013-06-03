@@ -161,22 +161,25 @@ class Vote
      */
     public function pre_show_post($h)
     {
-		// Get settings from the database if they exist...
-		$vote_settings = unserialize($h->getSetting('vote_settings'));
-		$h->vars['vote_anon_vote'] = $vote_settings['vote_anon_vote'];
+        // Get settings from the database if they exist...
+        $vote_settings = unserialize($h->getSetting('vote_settings'));
+        $h->vars['vote_anon_vote'] = $vote_settings['vote_anon_vote'];
 
         $h->vars['flagged'] = false;
         if (($h->pageType == 'post') && ($h->post->status == 'new') && ($h->vars['useAlerts'] == "checked"))
 		{
-            // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
+            /**
+             * CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
+             * 
+             */
             if ($h->cage->get->keyExists('alert') && $h->currentUser->loggedIn) {
-                // Check if already flagged...
+                // Check if already flagged by this user
                 $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %d LIMIT 1";
                 $flagged = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, -999));
+                
                 if (!$flagged) {
                     $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d, %d)";
                     $h->db->query($h->db->prepare($sql, $h->post->id, $h->currentUser->id, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', -999, $h->cage->get->testInt('alert'), $h->currentUser->id));
-                    
                     $h->pluginHook('vote_flag_insert');
                 }
                 else
@@ -186,9 +189,10 @@ class Vote
                 }
             }
             
-            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS                  
-            
-            // Check if already flagged...
+            /**
+             * CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS    
+             * 
+             */
             $sql = "SELECT * FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_rating = %d";
             $flagged = $h->db->get_results($h->db->prepare($sql, $h->post->id, -999));
             if ($flagged) {
@@ -284,7 +288,7 @@ class Vote
         if ($h->post->status == "new" && ($h->vars['useAlerts'] == "checked")) {
             echo "<div class='alert_choices' style='display: none;'>";
                 echo $h->lang["vote_alert_reason_title"] . "<br />";
-                echo "<ul>";
+                echo "<ul class='nav nav-pills'>";
                 echo "<li><a href='" . $h->url(array('page'=>$h->post->id, 'alert'=>1)) . "'>" . $h->lang["vote_alert_reason_1"]  . "</a></li>\n";
                 echo "<li><a href='" . $h->url(array('page'=>$h->post->id, 'alert'=>2)) . "'>" . $h->lang["vote_alert_reason_2"]  . "</a></li>\n";
                 echo "<li><a href='" . $h->url(array('page'=>$h->post->id, 'alert'=>3)) . "'>" . $h->lang["vote_alert_reason_3"]  . "</a></li>\n";
