@@ -171,7 +171,7 @@ class Tags
         }
         
         foreach ($tags as $tag) {
-            echo "<li><a class='label' href='" . $h->url(array('tag' => str_replace(' ', '_', trim($tag)))) . "'>" . trim($tag) . "</a></li>";
+            echo "<li><a class='label' href='" . $h->url(array('tag' => str_replace(' ', '_', urlencode(trim($tag))))) . "'>" . trim($tag) . "</a></li>";
         }
         
         if (!$raw) {
