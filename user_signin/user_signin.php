@@ -162,8 +162,8 @@ class UserSignin
 //            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
 //            
             if ($h->currentUser->getPermission('can_access_admin') == 'yes') {                
-                if ($h->isDebug) { print $h->debugNav(); }
-                $h->adminNav();
+                if ($h->isDebug && function_exists($h->debugNav())) { print $h->debugNav(); }
+                if (function_exists($h->adminNav())) $h->adminNav();
             }
             ?>
             
