@@ -2,7 +2,7 @@
 /**
  * name: StopSpam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.6
+ * version: 0.7
  * folder: stop_spam
  * class: StopSpam
  * type: antispam
@@ -76,29 +76,22 @@ class StopSpam
         $this->ssType = $h->getSetting('stop_spam_type');
         
         // get user info:
-        $username = $h->currentUser->name;
+        //$username = $h->currentUser->name;
+        $username = ''; // dont check on username as it is too narrow a filter
         $email = $h->currentUser->email;
         $ip = $h->cage->server->testIp('REMOTE_ADDR');
         
         // If any variable is empty or the IP is "localhost", skip using this plugin.
-        if (!$username || !$email || !$ip || ($ip == '127.0.0.1')) { return false; }
+        if (!$email || !$ip || ($ip == '127.0.0.1')) { return false; }
 
         // Include our StopSpam class:
         require_once(PLUGINS . 'stop_spam/libs/StopSpam.php');
         $spam = new StopSpamFunctions();
         
-        $json = $spam->checkSpammers($username, $email, $ip);        
-        $result = json_decode($json);
-         
-        if ($result->success == true) {
-            
-            $flags = array();
-            
-            // we also get back confidence and frequency, last seen if we are interested
-            if (isset($result->ip)) array_push($flags, 'IP address');    
-            if (isset($result->username)) array_push($flags, 'username');
-            if (isset($result->email)) array_push($flags, 'email address');
+        $json = $spam->checkSpammers($username, $email, $ip); 
+        $flags = $spam->flagSpam($json);
         
+        if ($flags) {        
             // store flags - used when type is "go_pending"
             $h->vars['reg_flags'] = $flags;
             
@@ -120,7 +113,7 @@ class StopSpam
      */
     public function users_register_pre_add_user($h)
     {
-        if ($h->vars['reg_flags']) {
+        if (isset($h->vars['reg_flags'])) {
             $h->currentUser->role = 'pending';
         }
     }
@@ -135,11 +128,9 @@ class StopSpam
     {
         $last_insert_id = $vars[0];
         
-        if ($h->currentUser->vars['reg_flags']) {
+        if (isset($h->vars['reg_flags'])) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
-            $h->db->query($h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->currentUser->vars['reg_flags']), $last_insert_id));
-            print $h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->currentUser->vars['reg_flags']), $last_insert_id);
-            die();
+            $h->db->query($h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->vars['reg_flags']), $last_insert_id));           
         }
         
         /* Registration continues as normal, so the user may have to validate their email address. */
@@ -173,13 +164,18 @@ class StopSpam
         $h->vars['stop_spam_flags'] = $flags;
         
         if ($flags) {
+            
             $flags = unserialize($flags);
             $title = $h->lang['stop_spam_flagged_reasons'];
-            foreach ($flags as $flag) {
-                $title .= $flag . ", ";
+            
+            if ($flags) {
+                foreach ($flags as $flag) {
+                    $title .= $flag . ", ";
+                }
+                $title = rstrtrim($title, ", ");
+                $icons .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/flag_red.png' title='" . $title . "'>";
             }
-            $title = rstrtrim($title, ", ");
-            $icons .= " <img src = '" . BASEURL . "content/plugins/user_manager/images/flag_red.png' title='" . $title . "'>";
+            
             $h->vars['user_manager_role'] = array($icons, $user_role, $user);
         }
     }
@@ -203,12 +199,16 @@ class StopSpam
         
         if ($flags) {
             $flags = unserialize($flags);  
-            $output .= "<br /><b>" . $h->lang['stop_spam_flagged_reasons'] . "</b><span style='color: red;'>";
-            foreach ($flags as $flag) {
-                $output .= $flag . ", ";
+            
+            if ($flags) {
+                $output .= "<br /><b>" . $h->lang['stop_spam_flagged_reasons'] . "</b><span style='color: red;'>";
+                foreach ($flags as $flag) {
+                    $output .= $flag . ", ";
+                }
+                $output = rstrtrim($output, ", ");
+                $output .= "</span>";
             }
-            $output = rstrtrim($output, ", ");
-            $output .= "</span>";
+            
             $h->vars['user_manager_details'] = array($output);
         }
     }

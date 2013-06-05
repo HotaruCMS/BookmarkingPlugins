@@ -23,26 +23,31 @@ class StopSpamFunctions
 
         //Load the data from remote server using file into memory.
         $json = file("http://www.stopforumspam.com/api?" . $sendArgs . '&f=json');                
-               
+
         if (is_array($json)) return $json[0]; else return $json;       
     }
+       
     
-
-    /**
-     * Use the above function
-     */
-    public function isSpammer($username, $email, $ip)
+    public function flagSpam($json)
     {
-        // Get the Json results from remote site
-        $result = $this->checkSpammers($username, $email, $ip);
-        //Is he reported?
-        if ($result['success'] == true) {
-            //He is a spammer
-            return true;
-        } else {
-            //He is not reported as a spammer
-            return false;
-        }
+            $result = json_decode($json);
+            
+            if (!$result || !isset($result->success) || !$result->success) { $h->messages[$h->lang('stop_spam_failed_test')] = 'red'; return false; }
+            
+            $appears_email = isset($result->email->appears) ? $result->email->appears : false;
+            $appears_ip = isset($result->ip->appears) ? $result->ip->appears : false;
+            
+            $confidence_email = isset($result->email->confidence) ? $result->email->confidence : 0;
+            $confidence_ip = isset($result->ip->confidence) ? $result->ip->confidence : 0;                       
+            
+            $confidence_settings = 10;
+            
+            $flags = array();
+            if ($appears_email && $confidence_email >= $confidence_settings)  array_push($flags, 'email address');    
+            //if (isset($result->username->appears) && $result->username->appears) array_push($flags, 'username');
+            if ($appears_ip && $confidence_ip >= $confidence_settings) array_push($flags, 'IP address');            
+
+            return $flags;
     }
     
     

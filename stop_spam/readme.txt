@@ -26,6 +26,7 @@ Notes
 
 Changelog
 ---------
+v.0.7 2013/06/06 - shibuya246 - further update to check spam function call and flags
 v.0.6 2013/06/05 - shibuya246 - Combined 3 queries into 1 for faster speed. Added spam test form in admin settings
 v.0.5 2013/04/26 - shibuya246 - Added extra hook for older versions of hotaru
 v.0.4 2010/04/14 - Nick - Renamed httprequest file and class to avoid clash with a PHP extension

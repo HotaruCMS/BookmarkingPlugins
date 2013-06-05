@@ -85,8 +85,8 @@ class StopSpamSettings
         
         echo "<form name='stop_spam_test_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=stop_spam' method='post'>\n";
                            
-        echo '<div class="input-prepend"><span class="add-on">@</span><input class="span8" id="stop_spam_test_username" name="stop_spam_test_username" type="text" placeholder="Username"></div>';
-        echo '<br/>';
+        //echo '<div class="input-prepend"><span class="add-on">@</span><input class="span8" id="stop_spam_test_username" name="stop_spam_test_username" type="text" placeholder="Username"></div>';
+        //echo '<br/>';
         echo '<div class="input-prepend"><span class="add-on"><i class="icon-envelope"></i></span><input class="span8" id="stop_spam_test_email" name="stop_spam_test_email" type="email" placeholder="Email"></div>';
          echo '<br/>';
         echo '<div class="input-prepend"><span class="add-on">::</span><input class="span8" id="stop_spam_test_ip" name="stop_spam_test_ip" type="text" placeholder="IP Address"></div>';
@@ -115,24 +115,15 @@ class StopSpamSettings
         require_once(PLUGINS . 'stop_spam/libs/StopSpam.php');
         $spam = new StopSpamFunctions();
         
-        $json = $spam->checkSpammers($username, $email, $ip);        
-        $result = json_decode($json);
-//      debug        
-//      print "<br/>****<br/><Br/>";
-//      print_r($result);
+        $json = $spam->checkSpammers($username, $email, $ip);
+        $flags = $spam->flagSpam($json);
         
-        if (!$result) { $h->messages[$h->lang('stop_spam_failed_test')] = 'red'; return false; }
-        
-        if ($result->success == true) {
-            $flags = array();
-            // we also get back confidence and frequency, last seen if we are interested
-            if (isset($result->ip)) array_push($flags, 'IP address');    
-            if (isset($result->username)) array_push($flags, 'username');
-            if (isset($result->email)) array_push($flags, 'email address');
-            $msg = implode(', ', $flags);
-            $h->messages[$h->lang('stop_spam_test_result') . ' : ' . $msg] = 'alert-info';
+        $msg = implode(', ', $flags);
+            
+        if ($flags) {
+            $h->messages[$h->lang('stop_spam_test_result') . ' : ' . $msg] = 'alert-danger';
         } else {
-            $h->messages[$h->lang('stop_spam_test_negative')];
+            $h->messages[$h->lang('stop_spam_test_negative')] = 'alert-info';
         }
        
     }
