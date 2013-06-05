@@ -2,12 +2,12 @@
 /**
  * name: StopSpam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.5
+ * version: 0.6
  * folder: stop_spam
  * class: StopSpam
  * type: antispam
  * requires: users 1.1
- * hooks: install_plugin, user_signin_register_check_blocked, users_register_check_blocked, users_register_pre_add_user, users_register_post_add_user, users_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings
+ * hooks: install_plugin, user_signin_register_check_blocked, users_register_check_blocked, users_register_pre_add_user, user_signin_register_pre_add_user, users_register_post_add_user, user_signin_register_post_add_user, users_email_conf_post_role, user_signin_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings, 
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -52,8 +52,21 @@ class StopSpam
      */
     public function user_signin_register_check_blocked($h)
     {
-        $this->user_register_check_blocked($h);
+        $this->users_register_check_blocked($h);
     }
+    public function user_signin_register_pre_add_user($h)
+    {
+        $this->users_register_pre_add_user($h);
+    }
+    public function user_signin_register_post_add_user($h, $vars)
+    {
+        $this->users_register_post_add_user($h, $vars);
+    }
+    public function user_signin_email_conf_post_role($h)
+    {
+        $this->users_email_conf_post_role($h);
+    }
+    
     
     /**
      * Checks user against the StopForumSpam.com blacklist
@@ -73,30 +86,19 @@ class StopSpam
         // Include our StopSpam class:
         require_once(PLUGINS . 'stop_spam/libs/StopSpam.php');
         $spam = new StopSpamFunctions();
-        $ip_blacklisted = $spam->isSpammer('ip', $ip);
-        $username_blacklisted = $spam->isSpammer('username', $username);
-        $email_blacklisted = $spam->isSpammer('email', $email);
         
-        $spammer = false;
-        $flags = array();
+        $json = $spam->checkSpammers($username, $email, $ip);        
+        $result = json_decode($json);
+         
+        if ($result->success == true) {
+            
+            $flags = array();
+            
+            // we also get back confidence and frequency, last seen if we are interested
+            if (isset($result->ip)) array_push($flags, 'IP address');    
+            if (isset($result->username)) array_push($flags, 'username');
+            if (isset($result->email)) array_push($flags, 'email address');
         
-        if ($ip_blacklisted) {
-            array_push($flags, 'IP address');
-            $spammer = true;
-        }
-        
-        if ($username_blacklisted) {
-            array_push($flags, 'username');
-            $spammer = true;
-        }
-        
-        if ($email_blacklisted) {
-            array_push($flags, 'email address');
-            $spammer = true;
-        }
-        
-        if ($spammer)
-        { 
             // store flags - used when type is "go_pending"
             $h->vars['reg_flags'] = $flags;
             
@@ -136,6 +138,8 @@ class StopSpam
         if ($h->currentUser->vars['reg_flags']) {
             $sql = "INSERT INTO " . TABLE_USERMETA . " (usermeta_userid, usermeta_key, usermeta_value, usermeta_updateby) VALUES(%d, %s, %s, %d)";
             $h->db->query($h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->currentUser->vars['reg_flags']), $last_insert_id));
+            print $h->db->prepare($sql, $last_insert_id, 'stop_spam_flags', serialize($h->currentUser->vars['reg_flags']), $last_insert_id);
+            die();
         }
         
         /* Registration continues as normal, so the user may have to validate their email address. */

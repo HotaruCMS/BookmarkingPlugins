@@ -35,9 +35,11 @@ class StopSpamSettings
         // If the form has been submitted, go and save the data...
         if ($h->cage->post->getAlpha('submitted') == 'true') { 
             $this->saveSettings($h); 
-        }
-        
-        echo "<h1>" . $h->lang["stop_spam_settings_header"] . "</h1>\n";
+        }  
+
+        if ($h->cage->post->getAlpha('tested') == 'true') { 
+            $this->testSpam($h); 
+        } 
           
         // Get settings from database if they exist...
         $stop_spam_key = $h->getSetting('stop_spam_key');
@@ -57,6 +59,8 @@ class StopSpamSettings
             $go_pending = ''; 
             $block_reg = 'checked'; 
         }
+        
+        $h->showMessages();
             
         echo "<form name='stop_spam_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=stop_spam' method='post'>\n";
         
@@ -71,10 +75,68 @@ class StopSpamSettings
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='submit' class='btn btn-primary' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
+        echo "</form>\n";
+        
+        
+        echo "<h3>" . $h->lang["stop_spam_test_title"] . "</h3>";        
+        echo "<p>" . $h->lang["stop_spam_test_instructions"] . "</p><br />";
+        
+        echo "<form name='stop_spam_test_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=stop_spam' method='post'>\n";
+                           
+        echo '<div class="input-prepend"><span class="add-on">@</span><input class="span8" id="stop_spam_test_username" name="stop_spam_test_username" type="text" placeholder="Username"></div>';
+        echo '<br/>';
+        echo '<div class="input-prepend"><span class="add-on"><i class="icon-envelope"></i></span><input class="span8" id="stop_spam_test_email" name="stop_spam_test_email" type="email" placeholder="Email"></div>';
+         echo '<br/>';
+        echo '<div class="input-prepend"><span class="add-on">::</span><input class="span8" id="stop_spam_test_ip" name="stop_spam_test_ip" type="text" placeholder="IP Address"></div>';
+                
+        echo "<br />\n";    
+        echo "<input type='hidden' name='tested' value='true' />\n";
+        echo "<input type='submit' class='btn' value='Test' />\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
+    
+    
+    /**
+     * Test Spam
+     * 
+     */
+    public function testSpam($h)
+    {
+        $username = $h->cage->post->testAlnumLines('stop_spam_test_username');
+        $email = $h->cage->post->testEmail('stop_spam_test_email');
+        $ip = $h->cage->post->testIp('stop_spam_test_ip');
+       
+        if (!$username && !$email && !$ip) { $h->messages[$h->lang('stop_spam_no_test_data')] = 'red'; return false; }
+
+        // Include our StopSpam class:
+        require_once(PLUGINS . 'stop_spam/libs/StopSpam.php');
+        $spam = new StopSpamFunctions();
+        
+        $json = $spam->checkSpammers($username, $email, $ip);        
+        $result = json_decode($json);
+//      debug        
+//      print "<br/>****<br/><Br/>";
+//      print_r($result);
+        
+        if (!$result) { $h->messages[$h->lang('stop_spam_failed_test')] = 'red'; return false; }
+        
+        if ($result->success == true) {
+            $flags = array();
+            // we also get back confidence and frequency, last seen if we are interested
+            if (isset($result->ip)) array_push($flags, 'IP address');    
+            if (isset($result->username)) array_push($flags, 'username');
+            if (isset($result->email)) array_push($flags, 'email address');
+            $msg = implode(', ', $flags);
+            $h->messages[$h->lang('stop_spam_test_result') . ' : ' . $msg] = 'alert-info';
+        } else {
+            $h->messages[$h->lang('stop_spam_test_negative')];
+        }
+       
+    }
+    
     
     
      /**

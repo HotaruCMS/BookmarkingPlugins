@@ -37,4 +37,12 @@ $lang["stop_spam_settings_key"] = "Enter your Stop Forum Spam API key:";
 $lang["stop_spam_settings_go_pending"] = "Put blacklisted users into moderation";
 $lang["stop_spam_settings_block_reg"] = "Stop blacklisted users from registering";
 
+/* Spam Test on admin settings */
+$lang["stop_spam_test_title"] = 'Spam test';
+$lang["stop_spam_test_instructions"] = "You can test for spam here. It wont add anything to your database";
+$lang["stop_spam_no_test_data"] = "No test data was provided";
+$lang["stop_spam_failed_test"] = "Error, no data was returned";
+$lang["stop_spam_test_result"] = "This data is spam";
+$lang["stop_spam_test_negative"] = "This data passed the test";
+
 ?>
