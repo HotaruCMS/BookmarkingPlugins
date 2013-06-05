@@ -2,7 +2,7 @@
 /**
 * name: RSS Autoreader
 * description: Enables reading of RSS feeds and populating database
-* version: 1.1
+* version: 1.2
 * folder: autoreader
 * class: Autoreader
 * type: autoreader
@@ -43,7 +43,7 @@ require_once(PLUGINS . 'autoreader/libs/autoreader_functions.php');    // commen
 
 class Autoreader
 {
-	var $version = '1.0';
+	var $version = '1.2';
 	var $newsetup = true;  // set to true only if this version requires db changes from last version
 	var $wpo_help = false;
 
@@ -54,9 +54,9 @@ class Autoreader
 	public function install_plugin($h)
 	{                
 		// Default settings
-	$autoreader_settings = $h->getSerializedSettings();
+                $autoreader_settings = $h->getSerializedSettings();
 
-	$settings = array( 'wpo_log' => true,
+                $settings = array( 'wpo_log' => true,
 			'wpo_log_stdout' => false,
 			'wpo_unixcron' => false,
 			'wpo_cacheimages' => 0,
@@ -66,13 +66,13 @@ class Autoreader
 			'wpo_premium' => false
 		);
 
-	foreach ($settings as $setting => $value) {
-		if (!isset($autoreader_settings[$setting])) { $autoreader_settings[$setting] = $value; }
-	}
+                foreach ($settings as $setting => $value) {
+                        if (!isset($autoreader_settings[$setting])) { $autoreader_settings[$setting] = $value; }
+                }
 
-	$h->updateSetting('autoreader_settings', serialize($autoreader_settings));
+                $h->updateSetting('autoreader_settings', serialize($autoreader_settings));
 
-		$this->activate($h);
+		$this->activate($h, true);
 	}
 
 
@@ -220,15 +220,15 @@ class Autoreader
 
             $wpo = new WPOTools();
             $arFuncs = new AutoReaderFuncs();
-            
+
             $arFuncs->getSettings($h);
 
-	// only re-install if there is new version or plugin has been uninstalled
-	if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
-	{        
-		# autoreader_campaign
+            // only re-install if there is new version or plugin has been uninstalled
+            if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
+            {        
+                # autoreader_campaign
 		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign']));
-		if (!$exists) {
+		if (!$exists) {                   
 				$h->db->query ( "CREATE TABLE " . $this->db['campaign'] . " (
 										id int(11) unsigned NOT NULL auto_increment,
 										title varchar(255) NOT NULL default '',
@@ -244,7 +244,7 @@ class Autoreader
 										allowpings tinyint(1) default '1',
 										dopingbacks tinyint(1) default '1',
 										max smallint(3) default '10',
-				trunc smallint(5) default '200',
+                                                                                trunc smallint(5) default '200',
 										linktosource tinyint(1) default '0',
 										count int(11) default '0',
 										lastactive datetime NOT NULL default '0000-00-00 00:00:00',
