@@ -43,7 +43,7 @@ require_once(PLUGINS . 'autoreader/libs/autoreader_functions.php');    // commen
 
 class Autoreader
 {
-	var $version = '1.2';
+	var $version = '1.3';
 	var $newsetup = true;  // set to true only if this version requires db changes from last version
 	var $wpo_help = false;
 
@@ -227,9 +227,9 @@ class Autoreader
             if($force_install || ! $h->getPluginVersion() || $h->getPluginVersion() != $this->version)   
             {        
                 # autoreader_campaign
-		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign']));
+		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $arFuncs->db['campaign']));
 		if (!$exists) {                   
-				$h->db->query ( "CREATE TABLE " . $this->db['campaign'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['campaign'] . " (
 										id int(11) unsigned NOT NULL auto_increment,
 										title varchar(255) NOT NULL default '',
 										active tinyint(1) default '1',
@@ -255,21 +255,21 @@ class Autoreader
 		}
 	else {
 		//update for 0.1 versions
-		$sql = "ALTER TABLE " . $this->db['campaign'] . " MODIFY COLUMN posttype enum('new','pending','top') NOT NULL default 'pending'";
+		$sql = "ALTER TABLE " . $arFuncs->db['campaign'] . " MODIFY COLUMN posttype enum('new','pending','top') NOT NULL default 'pending'";
 		$h->db->query($h->db->prepare($sql));
 
 		// update for 0.2 versions
 		$exists = $h->db->column_exists('autoreader_campaign', 'trunc');
 		if (!$exists) {
-		$sql = "ALTER TABLE " . $this->db['campaign'] . " ADD trunc smallint(5) NOT NULL DEFAULT '200' AFTER max";
+		$sql = "ALTER TABLE " . $arFuncs->db['campaign'] . " ADD trunc smallint(5) NOT NULL DEFAULT '200' AFTER max";
 		$h->db->query($h->db->prepare($sql));
 		}
 	}
 
 	# autoreader_campaign_category
-		$exists = $h->db->table_exists( str_replace(DB_PREFIX, "", $this->db['campaign_category']));
+		$exists = $h->db->table_exists( str_replace(DB_PREFIX, "", $arFuncs->db['campaign_category']));
 		if (!$exists) {
-				$h->db->query ( "CREATE TABLE " . $this->db['campaign_category'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['campaign_category'] . " (
 							id int(11) unsigned NOT NULL auto_increment,
 							category_id int(11) NOT NULL,
 							campaign_id int(11) NOT NULL,
@@ -279,9 +279,9 @@ class Autoreader
 		}
 
 		# autoreader_campaign_feed
-		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_feed']));
+		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $arFuncs->db['campaign_feed']));
 		if (!$exists) {
-				$h->db->query ( "CREATE TABLE " . $this->db['campaign_feed'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['campaign_feed'] . " (
 										id int(11) unsigned NOT NULL auto_increment,
 											campaign_id int(11) NOT NULL default '0',
 											url varchar(255) NOT NULL default '',
@@ -298,9 +298,9 @@ class Autoreader
 		}
 
 		# autoreader_campaign_post
-		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_post']));
+		$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $arFuncs->db['campaign_post']));
 		if (!$exists) {
-				$h->db->query ( "CREATE TABLE " . $this->db['campaign_post'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['campaign_post'] . " (
 									id int(11) unsigned NOT NULL auto_increment,
 										campaign_id int(11) NOT NULL,
 										feed_id int(11) NOT NULL,
@@ -312,9 +312,9 @@ class Autoreader
 		}
 
 			# autoreader_campaign_word
-			$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['campaign_word']));
+			$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $arFuncs->db['campaign_word']));
 			if (!$exists) {
-				$h->db->query ( "CREATE TABLE " . $this->db['campaign_word'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['campaign_word'] . " (
 										id int(11) unsigned NOT NULL auto_increment,
 											campaign_id int(11) NOT NULL,
 											word varchar(255) NOT NULL default '',
@@ -328,9 +328,9 @@ class Autoreader
 			}
 
 			# autoreader_log
-			$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $this->db['log']));
+			$exists = $h->db->table_exists(str_replace(DB_PREFIX, "", $arFuncs->db['log']));
 			if (!$exists) {
-				$h->db->query ( "CREATE TABLE " . $this->db['log'] . " (
+				$h->db->query ( "CREATE TABLE " . $arFuncs->db['log'] . " (
 										id int(11) unsigned NOT NULL auto_increment,
 											message mediumtext NOT NULL default '',
 											created_on datetime NOT NULL default '0000-00-00 00:00:00',
@@ -363,7 +363,7 @@ class Autoreader
 	*/
 	public function tablesExist($h)
 	{
-		foreach($this->db as $table)
+		foreach($arFuncs->db as $table)
 		{
 			if(!  $h->db->query("SELECT * FROM {$table}"))
 				return false;

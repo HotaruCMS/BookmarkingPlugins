@@ -20,7 +20,7 @@ This plugin currently will not work in any version of IE
 
 Changelog
 ---------
-v.1.2 2013/06/06 - shibuya246 - updated version number that was forgotten to be updated
+v.1.2 2013/06/06 - Nick - fix db error on install
 v.1.1 2013/04/28 - shibuya246 - update for PHP deprecated functions and static calls
 v.1.0.1 2011/04/21 - mabujo - another fix for ampersand bug and slight makeTitleFriendly method improvement.
 v.1.0 2011/04/20 - mabujo - added new makeTitleFriendly method to contain all the title utf-8 encoding fixes.

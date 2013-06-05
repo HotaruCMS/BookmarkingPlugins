@@ -5,9 +5,14 @@ require_once(PLUGINS . 'autoreader/libs/tools.class.php');  // comment out when 
 
 class AutoReaderFuncs
 {
+        public $db = array();
+        public $cachepath = '';
+        public $cron_url = '';
+        public $cron_command = '';
+        
 	public function getSettings($h)
 	{
-                $arFuncs = new AutoreaderFuncs();
+                //$arFuncs = new AutoreaderFuncs();
 		
                 $h->vars['autoreader_settings'] = $h->getSerializedSettings('autoreader');
 
@@ -25,7 +30,7 @@ class AutoReaderFuncs
 
 		# Cron command / url
 		$this->cron_url = BASEURL . 'admin_index.php?page=plugin_settings&plugin=autoreader&template=cron&code=' .   $h->vars['autoreader_settings']['wpo_croncode'];
-		$this->cron_command = '*/20 * * * * '. $arFuncs->getCommand() . ' ' . $this->cron_url;
+		$this->cron_command = '*/20 * * * * '. $this->getCommand() . ' ' . $this->cron_url;
 	}
 
 	/*
