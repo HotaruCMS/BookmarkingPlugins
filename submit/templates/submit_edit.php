@@ -34,7 +34,7 @@ $h->pluginHook('submit_2_assign');
     
     <?php echo $h->lang["submit_edit_instructions"]; ?>
 
-    <form name='submit_edit_post' action='<?php echo BASEURL; ?>index.php?page=edit_post' method='post'>
+    <form name='submit_edit_post' id='submit_edit_form' action='<?php echo BASEURL; ?>index.php?page=edit_post' method='post'>
     <table>
     <tr>
         <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
@@ -112,8 +112,9 @@ $h->pluginHook('submit_2_assign');
     <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
     <input type='hidden' name='edit_post' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    
+        
     <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
+
     </table>
     </form>
     <?php $h->pluginHook('image_upload'); ?>
