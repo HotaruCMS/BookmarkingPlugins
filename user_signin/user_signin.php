@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.7
+ * version: 0.8
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -633,7 +633,7 @@ class UserSignin
             return true;
         }
         
-        $h->pluginHook('user_register_check_blocked');  // Stop Spam is one plugin that uses this
+        $h->pluginHook('user_signin_register_check_blocked');  // Stop Spam is one plugin that uses this
         if (isset($h->vars['block']) && $h->vars['block'] == true) { return true; }
 
         return false;   // not blocked

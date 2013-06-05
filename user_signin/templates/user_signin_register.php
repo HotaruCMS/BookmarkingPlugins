@@ -45,7 +45,7 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
     <div class='user_login_reg'>
     <?php echo $h->lang["user_signin_register_instructions"]; ?>
             
-        <form name='register_form' action='<?php echo BASEURL; ?>index.php?page=register' method='post'>    
+        <form name='register_form' action='<?php echo $h->url(array('page'=>'register')); ?>' method='post'>    
         <table>
         <tr><td>
             <?php echo $h->lang["user_signin_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' />

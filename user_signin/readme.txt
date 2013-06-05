@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2013/05/03 - shibuya246 - Plugin hook updated
 v.0.7 2010/08/06 - Nick - Minor fix for &amp; in urls when redirecting from login to submit step 2
 v.0.6 2010/04/27 - Nick - Fix for unnecessary ReCaptcha-related errors on the settings page 
 v.0.5 2010/04/01 - Nick - Built-in reCaptcha removed in favor of separate reCaptcha plugin (user_signin_register template updated)
