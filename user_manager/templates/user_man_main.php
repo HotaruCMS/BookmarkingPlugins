@@ -30,9 +30,6 @@ if (!isset($h->vars['user_man_rows'])) { $h->vars['user_man_rows'] = ''; }
 if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 ?>
 
-<!-- TITLE FOR USER MANAGER -->
-<h2><?php echo $h->lang["user_man"]; ?></h2>
-
 <?php echo $h->lang["user_man_desc"]; ?>
 
 <?php echo " [<a href='" . BASEURL . "admin_index.php?user_filter=pending&plugin=user_manager&page=plugin_settings&type=filter'>" . $h->lang["user_man_num_pending"] . $h->vars['num_pending'] . "</a>]"; ?>
@@ -49,13 +46,11 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 <table><tr><td>
 
 <form name='user_man_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='get'>
-    <h3><?php echo $h->lang["user_man_search"]; ?></h3>
-    <table>
-        <tr class='table_headers'>
-            <td><input type='text' size=30 name='search_value' value='<?php echo $h->vars['search_term']; ?>' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $h->lang['user_man_search_button']; ?>' /></td>
-        </tr>
-    </table>
+    <h4><?php echo $h->lang["user_man_search"]; ?></h4>
+
+	<input type='text' size=30 name='search_value' value='<?php echo $h->vars['search_term']; ?>' />
+	<input class='submit btn' type='submit' value='<?php echo $h->lang['user_man_search_button']; ?>' />
+
     <input type='hidden' name='plugin' value='user_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='search' />
@@ -65,44 +60,42 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 </td><td>
 
 <form name='user_man_filter_form' action='<?php echo BASEURL; ?>admin_index.php?plugin=user_manager' method='get'>
-    <h3><?php echo $h->lang["user_man_filter"]; ?></h3>
-    <table>
-        <tr class='table_headers'>
-            <td><select name='user_filter'>
-                <option style='font-weight: bold;' value='<?php echo $h->vars['user_filter']; ?>'><?php echo make_name($h->vars['user_filter'], '_'); ?></option>
-                <option value='' disabled>-----</option>
-                <option value='all'><?php echo $h->lang['user_man_filter_all']; ?></option>
-                <option value='not_killspammed'><?php echo $h->lang['user_man_filter_not_killspammed']; ?></option>
-                <option value='' disabled>-----</option>
-                <option value='newest'><?php echo $h->lang['user_man_filter_newest']; ?></option>
-                <option value='oldest'><?php echo $h->lang['user_man_filter_oldest']; ?></option>
-                <option value='last_visited'><?php echo $h->lang['user_man_filter_last_visited']; ?></option>
-                <option value='' disabled>-----</option>
-		<option value='content_pending'><?php echo $h->lang['user_man_filter_content_pending']; ?></option>
-                <option value='' disabled>-----</option>
-                <?php 
-                if ($h->vars['roles']) {
-                    foreach ($h->vars['roles'] as $status) {
-                        if ($status != 'unsaved' && $status != 'deleted') { 
-                            echo "<option value=" . $status . ">" . make_name($status, '_') . "</option>\n";
-                        }
+    <h4><?php echo $h->lang["user_man_filter"]; ?></h4>
+
+       <select name='user_filter'>
+            <option style='font-weight: bold;' value='<?php echo $h->vars['user_filter']; ?>'><?php echo make_name($h->vars['user_filter'], '_'); ?></option>
+            <option value='' disabled>-----</option>
+            <option value='all'><?php echo $h->lang['user_man_filter_all']; ?></option>
+            <option value='not_killspammed'><?php echo $h->lang['user_man_filter_not_killspammed']; ?></option>
+            <option value='' disabled>-----</option>
+            <option value='newest'><?php echo $h->lang['user_man_filter_newest']; ?></option>
+            <option value='oldest'><?php echo $h->lang['user_man_filter_oldest']; ?></option>
+            <option value='last_visited'><?php echo $h->lang['user_man_filter_last_visited']; ?></option>
+            <option value='' disabled>-----</option>
+	<option value='content_pending'><?php echo $h->lang['user_man_filter_content_pending']; ?></option>
+            <option value='' disabled>-----</option>
+            <?php 
+            if ($h->vars['roles']) {
+                foreach ($h->vars['roles'] as $status) {
+                    if ($status != 'unsaved' && $status != 'deleted') { 
+                        echo "<option value=" . $status . ">" . make_name($status, '_') . "</option>\n";
                     }
                 }
-                ?>
-            </select></td>
+            }
+            ?>
+        </select>
 
-            <td><select name='um_limit'>
-				<?php $values = array(20, 30, 50, 100, 250);
-					foreach ($values as $v) {
-						$selected = ($v == $h->vars['um_limit']) ? "selected='selected'" : "";
-						echo "<option $selected>$v</option>";
-					}
-				?>
-            </select></td>
+        <select name='um_limit'>
+			<?php $values = array(20, 30, 50, 100, 250);
+				foreach ($values as $v) {
+					$selected = ($v == $h->vars['um_limit']) ? "selected='selected'" : "";
+					echo "<option $selected>$v</option>";
+				}
+			?>
+        </select>
 
-            <td><input class='submit' type='submit' value='<?php echo $h->lang['user_man_filter_button']; ?>' /></td>
-        </tr>
-    </table>
+        <input class='submit btn' type='submit' value='<?php echo $h->lang['user_man_filter_button']; ?>' />
+
     <input type='hidden' name='plugin' value='user_manager' />
     <input type='hidden' name='page' value='plugin_settings' />
     <input type='hidden' name='type' value='filter' />
@@ -113,76 +106,75 @@ if (!isset($h->vars['user_man_navi'])) { $h->vars['user_man_navi'] = ''; }
 
 <form name='user_man_checkbox_form' style='margin: 0px; padding: 0px;' action='<?php echo BASEURL; ?>admin_index.php?plugin=user_manager' method='get'>
     
-<div id="table_list">
-	<fieldset>
-    <table>
-    <tr class='table_headers'>
-        <td><?php echo $h->lang["user_man_id"]; ?></td>
-        <td><?php echo $h->lang["user_man_role"]; ?></td>
-        <td><?php echo $h->lang["user_man_username"]; ?></td>
-        <td><?php echo $h->lang["user_man_joined"]; ?></td>
-        <td><?php echo $h->lang["user_man_account"]; ?></td>
-        <td><?php echo $h->lang["user_man_perms"]; ?></td>
-        <td><input type="checkbox" name="checkall" id="checkall"></td>
-    </tr>
-            <?php echo $h->vars['user_man_rows']; ?>
-    </table>
-    </fieldset>
-</div>
+	<div id="table_list">
+	    <table class="table table-bordered">
+	    <tr class='table_headers info'>
+	        <td><?php echo $h->lang["user_man_id"]; ?></td>
+	        <td><?php echo $h->lang["user_man_role"]; ?></td>
+	        <td><?php echo $h->lang["user_man_username"]; ?></td>
+	        <td><?php echo $h->lang["user_man_joined"]; ?></td>
+	        <td><?php echo $h->lang["user_man_account"]; ?></td>
+	        <td><?php echo $h->lang["user_man_perms"]; ?></td>
+	        <td><input type="checkbox" name="checkall" id="checkall"></td>
+	    </tr>
+	            <?php echo $h->vars['user_man_rows']; ?>
+	    </table>
+	</div>
+	
+	<?php echo $h->vars['user_man_navi']; // pagination ?>
+	<br />
 
-<div class='user_man_pre_submit'>
-    <p class="user_man_pre_submit_instruct"><?php echo $h->lang['user_man_when_killspam_delete']; ?></p>
-    <input type='checkbox' name='addblockedlist'> 
-    <?php echo $h->lang['user_man_add_blocked_list']; ?>
-    <?php $h->pluginHook('user_manager_pre_submit_button'); ?>
-</div>
+	<div class="row">
+	
+		<div class='span7 offset1 user_man_pre_submit well'>
+		    <p class="user_man_pre_submit_instruct"><?php echo $h->lang['user_man_when_killspam_delete']; ?></p>
+		    <input type='checkbox' name='addblockedlist'> 
+		    <?php echo $h->lang['user_man_add_blocked_list']; ?>
+		    <?php $h->pluginHook('user_manager_pre_submit_button'); ?>
+		</div>
 
-<div class='user_man_submit_button'>
-        <table>
-            <tr class='table_headers'>
-                <td><select name='checkbox_action'>
-                    <option value='member'><?php echo $h->lang["user_man_set_member"]; ?></option>
-                    <option value='moderator'><?php echo $h->lang["user_man_set_moderator"]; ?></option>
-                    <option value='supermod'><?php echo $h->lang["user_man_set_supermod"]; ?></option>
-                    <option value='admin'><?php echo $h->lang["user_man_set_admin"]; ?></option>
-                    <option value='' disabled>-----</option>
-
-					<?php 
-						$roles = $h->getRoles('custom');
-						if ($roles) {
-							foreach ($roles as $r) {
-								echo "<option value=" . $r . ">" . $h->lang["user_man_set_role"] . "'" . $r . "'</option>\n";
-							}
-							echo "<option value='' disabled>-----</option>\n";
+		<div class='span4 user_man_submit_button'>
+	
+	        <select name='checkbox_action'>
+	            <option value='member'><?php echo $h->lang["user_man_set_member"]; ?></option>
+	            <option value='moderator'><?php echo $h->lang["user_man_set_moderator"]; ?></option>
+	            <option value='supermod'><?php echo $h->lang["user_man_set_supermod"]; ?></option>
+	            <option value='admin'><?php echo $h->lang["user_man_set_admin"]; ?></option>
+	            <option value='' disabled>-----</option>
+	
+				<?php 
+					$roles = $h->getRoles('custom');
+					if ($roles) {
+						foreach ($roles as $r) {
+							echo "<option value=" . $r . ">" . $h->lang["user_man_set_role"] . "'" . $r . "'</option>\n";
 						}
-					?>
-
-                    <option value='undermod'><?php echo $h->lang["user_man_set_undermod"]; ?></option>
-                    <option value='pending'><?php echo $h->lang["user_man_set_pending"]; ?></option>
-                    <option value='suspended'><?php echo $h->lang["user_man_set_suspended"]; ?></option>
-                    <option value='banned'><?php echo $h->lang["user_man_set_banned"]; ?></option>
-                    <option value='' disabled>-----</option>
-                    <option style='color: red; font-weight: bold;' value='killspammed'><?php echo $h->lang["user_man_set_killspammed"]; ?></option>
-                    <option value='' disabled>-----</option>
-                    <option style='color: red; font-weight: bold;' value='deleted'><?php echo $h->lang["user_man_set_delete"]; ?></option>
-                    </select>
-                </td>
-                <td><input class='submit' type='submit' value='<?php echo $h->lang['user_man_checkbox_action']; ?>' /></td>
-            </tr>
-        </table>
-        <input type='hidden' name='plugin' value='user_manager' />
-        <input type='hidden' name='page' value='plugin_settings' />
-		<input type='hidden' name='user_filter' value='<?php echo $h->vars['user_filter']; ?>' />
-		<input type='hidden' name='pg' value='<?php echo $h->cage->get->testInt('pg'); ?>' />
-		<input type='hidden' name='um_limit' value='<?php echo $h->vars['um_limit']; ?>' />
-		<?php if ($h->cage->get->sanitizeTags('search_value')) { ?>
-			<input type='hidden' name='search_value' value='<?php echo $h->cage->get->sanitizeTags('search_value'); ?>' />
-		<?php } ?>
-        <input type='hidden' name='type' value='checkboxes' />
-        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    </form>
-</div>
-
-<div class='clear'></div>
-
-<?php echo $h->vars['user_man_navi']; // pagination ?>
+						echo "<option value='' disabled>-----</option>\n";
+					}
+				?>
+	
+	            <option value='undermod'><?php echo $h->lang["user_man_set_undermod"]; ?></option>
+	            <option value='pending'><?php echo $h->lang["user_man_set_pending"]; ?></option>
+	            <option value='suspended'><?php echo $h->lang["user_man_set_suspended"]; ?></option>
+	            <option value='banned'><?php echo $h->lang["user_man_set_banned"]; ?></option>
+	            <option value='' disabled>-----</option>
+	            <option style='color: red; font-weight: bold;' value='killspammed'><?php echo $h->lang["user_man_set_killspammed"]; ?></option>
+	            <option value='' disabled>-----</option>
+	            <option style='color: red; font-weight: bold;' value='deleted'><?php echo $h->lang["user_man_set_delete"]; ?></option>
+	        </select>
+	
+			<input class='submit btn' type='submit' value='<?php echo $h->lang['user_man_checkbox_action']; ?>' />
+	
+	        <input type='hidden' name='plugin' value='user_manager' />
+	        <input type='hidden' name='page' value='plugin_settings' />
+			<input type='hidden' name='user_filter' value='<?php echo $h->vars['user_filter']; ?>' />
+			<input type='hidden' name='pg' value='<?php echo $h->cage->get->testInt('pg'); ?>' />
+			<input type='hidden' name='um_limit' value='<?php echo $h->vars['um_limit']; ?>' />
+			<?php if ($h->cage->get->sanitizeTags('search_value')) { ?>
+				<input type='hidden' name='search_value' value='<?php echo $h->cage->get->sanitizeTags('search_value'); ?>' />
+			<?php } ?>
+	        <input type='hidden' name='type' value='checkboxes' />
+	        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+		</div>
+		
+	</div>
+</form>
