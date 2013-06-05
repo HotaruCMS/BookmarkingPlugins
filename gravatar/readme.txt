@@ -10,25 +10,17 @@ Instructions
 ------------
 1. Upload the "gravatar" folder to your plugins folder. 
 2. Install it from Plugin Management in Admin. 
+3. Choose the default avatar in Plugin Settings / Gravatar.
 
 Changing the default Gravatar
 -----------------------------
-By default, the plugin will fall back on the default_80.png image in the /gravatar/images folder. You can override this by making your own default_80.png image and putting it in your theme's images folder.
+If a user doesn't have a Gravatar account that matches their email address, then Gravatar will send back the default avatar you use choose in Plugin Settings. If you want to provide a customized avatar, create an 80px .png image called "default_80.png" and put it in your theme's images folder. Then select "custom" from the choice of default avatars in Plugin Settings / Gravatar. Note that it's a little bit faster to use Gravatar's own default images than your own.
 
-Option: Random default avatars
-------------------------------
-If most of your users don't have Gravatar accounts, you might prefer to enable this feature. Open gravatar.php and change $random_default to near the top of the file as follows:
-
-	0: Off - the default avatar will not be randomized
-	
-	1: Normal - shows a random avatar per user, per page. E.g. user "max_99" has the same avatar in all places on the page
-	
-	2: Extreme - shows a random avatar per user per instance. E.g. user "max_99" has different avatars on the same page
-
-The images are only used when a user does *not* have a Gravatar account. The images can be found in the /gravatar/images folder and were taken from http://www.phpbbhacks.com/avatars.php. You can change the images, the number of images, and their filenames. 
+NOTE: For users of previous versions of this plugin, please note that the collection of random avatars from v.1.0 is no longer used. In fact, v.1.1 doesn't even have an images folder. You can delete the /plugins/gravatar/images folder from your site if you wish.
 
 Changelog
 ---------
+v.1.1 2013/06/03 - Nick - Uses Gravatar's random default avatars
 v.1.0 2010/07/06 - Nick - Added option to randomize the default avatar
 v.0.9 2010/04/03 - Nick - Removed requirement to have the Users plugin enabled
 v.0.8 2010/02/10 - Nick - Added ability to test if a user has a Gravatar

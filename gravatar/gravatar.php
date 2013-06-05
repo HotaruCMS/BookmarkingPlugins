@@ -2,11 +2,11 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 1.0
+ * version: 1.1
  * folder: gravatar
  * class: Gravatar
  * type: avatar
- * hooks: avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar
+ * hooks: install_plugin, avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -46,19 +46,32 @@
 
 class Gravatar
 {
-	/* Set $random_default as follows:
+	/* 
+		$default can be set as follows on the Gravatar Settings page:
 	
-		0: Off - the default avatar will not be randomized
-		
-		1: Normal - shows a random avatar per user, per page
-					e.g. user "max_99" has the same avatar in all places on the page
-		
-		2: Extreme - shows a random avatar per user per instance
-					e.g. user "max_99" has different avatars on the same page
+		custom: your own default_80.png image in your theme images folder (if not present, default_80.png in /gravatar/images is used).
+		mm: (mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)
+		identicon: a geometric pattern based on an email hash
+		monsterid: a generated 'monster' with different colors, faces, etc
+		wavatar: generated faces with differing features and backgrounds
+		retro: awesome generated, 8-bit arcade-style pixelated faces
+		blank: a transparent PNG image
 	*/
 	
-	private $random_default = 0; 
+	private $default = 'identicon'; 
 
+
+	/**
+	 * Install Gravatar settings if they don't already exist
+	 */
+	public function install_plugin($h)
+	{
+		// Default settings 
+		$gravatar_settings = $h->getSerializedSettings();
+		if (!isset($gravatar_settings['default_avatar'])) { $gravatar_settings['default_avatar'] = "identicon"; }
+		$h->updateSetting('gravatar_settings', serialize($gravatar_settings));
+	}
+	
 	
     /**
      * Set global $h vars for this avatar
@@ -77,13 +90,18 @@ class Gravatar
     
     
     /**
-     * return the avatar with no surrounding HTML div
+     * test for existence and if there, return the avatar with no surrounding HTML div
+     *
+     * @param string $email - email of avatar user
+     * @param int $size - size (1 ~ 512 pixels)
+     * @param string $rating - g, pg, r or x
+     * @param bool - test for existence?
      *
      * @return return the avatar
      */
     public function avatar_test_avatar($h)
     {
-        $grav_url = $this->buildGravatarUrl($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating'], '404');
+        $grav_url = $this->buildGravatarUrl($h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating'], TRUE);
 
         $headers = @get_headers($grav_url);
         if (preg_match("|200|", $headers[0])) {
@@ -99,6 +117,10 @@ class Gravatar
      */
     public function avatar_get_avatar($h)
     {
+    	// get default from settings
+		$h->vars['gravatar_settings'] = $h->getSerializedSettings('gravatar');
+		$this->default = $h->vars['gravatar_settings']['default_avatar'];
+        	
         $grav_url = $this->buildGravatarUrl($h, $h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
         $img_url = $this->buildGravatarImage($grav_url, $h->vars['avatar_size'], $h->vars['avatar_img_class']);
         return $img_url;
@@ -111,35 +133,45 @@ class Gravatar
      * @param string $email - email of avatar user
      * @param int $size - size (1 ~ 512 pixels)
      * @param string $rating - g, pg, r or x
+     * @param string $d the Gravatar "default" parameter - 404 just tests for existence
      * @return string - html for image
      */
-    public function buildGravatarUrl($h, $email = '', $size = 32, $rating = 'g', $default = '')
+    public function buildGravatarUrl($h, $email = '', $size = 32, $rating = 'g', $test = FALSE)
     {
-        if ($default != '404') {
-        
-        	// get a random avatar if enabled
-        	if ($this->random_default) {
-        		$random_avatar = $this->getRandomDefaultAvatar($h);
-        		$default_image = BASEURL . "content/plugins/gravatar/images/" . $random_avatar;
-        	}
-        	
-        	// Look in the theme's images folder for a default avatar before using the one in the Gravatar images folder
-        	elseif (file_exists(THEMES . THEME . "images/default_80.png"))
+    	/*	3 cases:
+    	
+    		1. If testing for existence, send Gravatar d=404
+    		2. If using a custom avatar, send Gravatar its location
+    		3. Otherwise, use the default Gravatar image specified in plugin settings for Gravatar
+    	*/
+    	
+    	if ($test)
+    	{
+    		$d = '404';
+    	}
+        elseif ($this->default === 'custom')
+        {         	
+        	// Look in the theme's images folder for a custom default avatar before using the one in the Gravatar images folder
+        	if (file_exists(THEMES . THEME . "images/default_80.png"))
         	{
                 $default_image = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+                $d = urlencode($default_image); // Gravatar will redirect back and use this custom avatar
             } 
             
-            // get the default avatar from the Gravatar images folder
+            // otherwise use the Gravatar "Mystery Man" default avatar
             else 
             { 
-                $default_image = BASEURL . "content/plugins/gravatar/images/default_80.png"; 
-            }
-            
-            $default = urlencode($default_image);
+                $d = 'mm';
+            }            
+        }
+        else
+        {
+        	$d = $this->default;
         }
         
+        // build the gravatar url
         $grav_url = "http://www.gravatar.com/avatar/".md5( strtolower($email) ).
-            "?d=". $default .
+            "?d=". $d.
             "&amp;size=" . $size . 
             "&amp;r=" . $rating;
         
@@ -165,34 +197,6 @@ class Gravatar
         $img_url = "<img class='avatar" . $class . "' width='" . $size . "' height='" . $size . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
         return $img_url;
     }
-
-
-    /**
-     * Get a Random Avatar (used when the user doesn'thave gravatar)
-     */
-	public function getRandomDefaultAvatar($h)
-	{
-		$user = $h->vars['avatar_user_id'];
-		
-		// have we already given this user an avatar on this page?
-		if (isset($h->vars['avatar_set'][$user]) && ($this->random_default != 2)) {
-			return $h->vars['avatar_set'][$user];
-		}
-		
-		// if not, fetch all avatar names (if we don't already have them)
-		if (!isset($h->vars['random_avatars'])) {
-			$folder = BASE . "content/plugins/gravatar/images/";
-			$h->vars['random_avatars'] = getFilenames($folder, $type='short');
-		}
-		
-		// pick a random image
-		$avatar = array_rand($h->vars['random_avatars']);
-		
-		// assign it to this user (only for this page view)
-		$h->vars['avatar_set'][$user] = $h->vars['random_avatars'][$avatar];
-
-		return $h->vars['avatar_set'][$user];
-	}
 }
 
 ?>
