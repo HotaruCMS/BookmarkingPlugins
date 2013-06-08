@@ -797,9 +797,9 @@ class Comments
     public function submit_2_fields($h)
     {
         if ($h->post->subscribe) { $subscribe = 'checked'; } else { $subscribe = ''; } 
-        echo "<tr><td colspan='3'>\n";
+        echo "<div class='well'>\n";
         echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . "> " . $h->lang['submit_subscribe']; 
-        echo "</tr>";
+        echo "</div>";
     }
     
     
@@ -810,9 +810,9 @@ class Comments
     {
         if ($h->post->comments == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
-        echo "<tr><td colspan='3'>\n";
+        echo "<div class='well'>\n";
         echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $h->lang['submit_form_enable_comments']; 
-        echo "</tr>";
+        echo "</div>";
     }
     
     

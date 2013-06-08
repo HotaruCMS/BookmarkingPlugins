@@ -65,7 +65,8 @@ foreach ($h->vars['pagedResults']->items as $post) {
                 }
                 ?>
 
-                <?php echo time_ago($h->post->date);?>
+                <?php echo time_difference(unixtimestamp($h->post->date), $h->lang) . " " . $h->lang["bookmarking_post_ago"]; ?>
+                <?php //echo time_ago($h->post->date);?>
                 <?php $h->pluginHook('show_post_author_date'); ?>
                 <?php 
                     if ($h->currentUser->getPermission('can_edit_posts') == 'yes'
