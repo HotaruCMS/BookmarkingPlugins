@@ -53,7 +53,7 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
             <strong><?php echo $h->lang('user_signin_login_problems_cookie'); ?></strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies"><?php echo $h->lang('user_signin_login_clear_cookie'); ?></a>
             
             <div class="form-actions">
-                <button type="submit" class="btn btn-large btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
+                <button type="submit" class="btn btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
             </div>
             
             <input type='hidden' name='page' value='login'>
