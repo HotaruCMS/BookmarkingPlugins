@@ -22,13 +22,13 @@ class StopSpamFunctions
         if (!$sendArgs) return false;
 
         //Load the data from remote server using file into memory.
-        $json = file("http://www.stopforumspam.com/api?" . $sendArgs . '&f=json');                
+        $json = @file("http://www.stopforumspam.com/api?" . $sendArgs . '&f=json');                
 
         if (is_array($json)) return $json[0]; else return $json;       
     }
        
     
-    public function flagSpam($json)
+    public function flagSpam($h, $json)
     {
             $result = json_decode($json);
             

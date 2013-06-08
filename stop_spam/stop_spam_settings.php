@@ -116,7 +116,7 @@ class StopSpamSettings
         $spam = new StopSpamFunctions();
         
         $json = $spam->checkSpammers($username, $email, $ip);
-        $flags = $spam->flagSpam($json);
+        $flags = $spam->flagSpam($h, $json);
         
         $msg = implode(', ', $flags);
             

@@ -89,7 +89,7 @@ class StopSpam
         $spam = new StopSpamFunctions();
         
         $json = $spam->checkSpammers($username, $email, $ip); 
-        $flags = $spam->flagSpam($json);
+        $flags = $spam->flagSpam($h, $json);
         
         if ($flags) {        
             // store flags - used when type is "go_pending"
