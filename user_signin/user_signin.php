@@ -235,7 +235,7 @@ class UserSignin
                     </li>
   
                     <li>
-                      <a href="<?php echo $h->url(array('page'=>'admin_logout'), 'admin'); ?>">Sign out</a>                   
+                      <a href="<?php echo $h->url(array('page'=>'logout')); ?>">Sign out</a>                   
                     </li>
 
                 </ul>
