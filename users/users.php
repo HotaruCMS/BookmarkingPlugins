@@ -500,7 +500,7 @@ class Users
     public function admin_theme_main_stats($h, $vars)
     {        
         $ui = new UserInfo();
-        $stats = $ui->stats($h);
+        $stats = $ui->stats($h); //, 'today');
 
 		//var_dump($stats);
 	
@@ -521,7 +521,7 @@ class Users
 	
 						switch ($stat_type) {
 						    case 'all':
-							$user_count = array_sum($users);						
+							$user_count = isset($users) ? array_sum($users) : '';						
 							break;
 						    default:
 							if (isset($users[$stat_type])) { $user_count = $users[$stat_type]; } else { $user_count = 0; }
