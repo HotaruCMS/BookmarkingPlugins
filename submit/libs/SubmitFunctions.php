@@ -136,9 +136,11 @@ class SubmitFunctions
                     if (!$url) { break; }
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     $h->vars['submitted_data']['submit_editorial'] = false;
-                    $title = $this->fetchTitle($url);
-                    if (!$title) { $title = $h->lang["submit_not_found"]; }
+                    $meta = $this->fetchMeta($url);                    
+                    if (!isset($meta) || !$meta['title']) $title = $h->lang["submit_not_found"]; else $title = $meta['title'];
                     $h->vars['submitted_data']['submit_title'] = $title;
+                    if (!isset($meta) || !$meta['description']) $description = ''; else $description = $meta['description'];                     
+                    $h->vars['submitted_data']['submit_content'] = $description;
                     
                 // is a url submitted via the url? (i.e. EVB or Bookmarklet)
                 } elseif ($h->cage->get->keyExists('url')) { 
@@ -146,9 +148,11 @@ class SubmitFunctions
                     if (!$url) { break; }
                     $h->vars['submitted_data']['submit_orig_url'] = $url;
                     $h->vars['submitted_data']['submit_editorial'] = false;
-                    $title = $this->fetchTitle($url);
-                    if (!$title) { $title = $h->lang["submit_not_found"]; }
+                    $meta = $this->fetchMeta($url);
+                    if (!isset($meta) || !$meta['title']) $title = $h->lang["submit_not_found"]; else $title = $meta['title'];
                     $h->vars['submitted_data']['submit_title'] = $title;
+                    if (!isset($meta) || !$meta['description']) $description = ''; else $description = $meta['description'];                     
+                    $h->vars['submitted_data']['submit_content'] = $description;
                 }
                 break;
                 
@@ -768,6 +772,41 @@ class SubmitFunctions
         return $title;
     }
     
+    
+    /**
+     * gets the meta data from a website
+     */
+    public function fetchMeta($url = '')
+    {
+        if (!$url) return false;
+       
+        // check whether we have http at the zero position of the string
+        if (strpos($url, 'http://') !== 0 && strpos($url, 'https://') !== 0) $url = 'http://' . $url;          
+           
+        $fp = @fopen( $url, 'r' );
+
+        if (!$fp) return false;
+        
+        $content = '';
+
+        while( !feof( $fp ) ) {
+            $buffer = trim( fgets( $fp, 4096 ) );
+            $content .= $buffer;
+        }
+
+        $start = '<title>';
+        $end = '<\/title>';
+
+        preg_match( "/$start(.*)$end/s", $content, $match );
+        $title = isset($match) ? $match[1] : ''; 
+
+        $metatagarray = get_meta_tags( $url );
+
+        $keywords = isset($metatagarray[ "keywords" ]) ? $metatagarray[ "keywords" ] : '';
+        $description = isset($metatagarray[ "description" ]) ? $metatagarray[ "description" ] : '';
+
+        return array('title' => $title, 'keywords' => $keywords, 'description' => $description);
+    }
     
     /**
      * Prevents posts being given existing page names, e.g. profile and login
