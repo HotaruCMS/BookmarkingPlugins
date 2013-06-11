@@ -798,7 +798,7 @@ class Comments
     {
         if ($h->post->subscribe) { $subscribe = 'checked'; } else { $subscribe = ''; } 
         echo "<div class='well'>\n";
-        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . "> " . $h->lang['submit_subscribe']; 
+        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . "> " . $h->lang('submit_subscribe'); 
         echo "</div>";
     }
     
@@ -811,7 +811,7 @@ class Comments
         if ($h->post->comments == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
         echo "<div class='well'>\n";
-        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $h->lang['submit_form_enable_comments']; 
+        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $h->lang('submit_form_enable_comments'); 
         echo "</div>";
     }
     
