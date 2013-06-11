@@ -25,8 +25,8 @@
  */
 
 /* check for account updates */
-    $h->vars['checks'] = $h->vars['user']->updateAccount($h);
-    $h->vars['user']->name = $h->vars['checks']['username_check'];           
+//    $h->vars['checks'] = $h->vars['user']->updateAccount($h);
+//    $h->vars['user']->name = $h->vars['checks']['username_check'];           
  
 // ****************** was in users page at theme_index_top
 
