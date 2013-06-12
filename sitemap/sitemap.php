@@ -26,7 +26,7 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    Justin Tiearney <admin@obzerver.com>
- * @copyright Copyright (c) 2010
+ * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://obzerver.com
  */  

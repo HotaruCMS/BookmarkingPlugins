@@ -20,7 +20,7 @@
  * @category  Content Management System
  * @package   HotaruCMS
  * @author    shibuya246 <admin@hotarucms.org>
- * @copyright Copyright (c) 2009, Hotaru CMS
+ * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
