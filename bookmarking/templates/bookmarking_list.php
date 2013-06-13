@@ -26,8 +26,10 @@
 
 foreach ($h->vars['pagedResults']->items as $post) {
     $h->readPost(0, $post);
-    $user = new UserBase();
-    $user->getUserBasic($h, $h->post->author);
+//    $user = new UserBase();
+//    $user->getUserBasic($h, $h->post->author);
+    //print_r($h->post);
+    //85 .11 7.1MB
 ?>
 
 <!-- POST -->
@@ -39,7 +41,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
         <div class="media-body">
             <?php   // Show avatars if enabled (requires an avatars plugin)
                 if($h->isActive('avatar')) {
-                    $h->setAvatar($user->id, 32);
+                    $h->setAvatar($h->post->author, 32);
                     echo $h->wrapAvatar();
                 }
             ?>        
@@ -58,8 +60,8 @@ foreach ($h->vars['pagedResults']->items as $post) {
                 <?php echo " " . $h->lang["bookmarking_post_posted_by"] . " "; ?>
 
                 <?php 
-                if ($user->name) {
-                    echo "<a href='" . $h->url(array('user' => $user->name)) . "'>" . $user->name . "</a>";
+                if ($h->post->authorname) {
+                    echo "<a href='" . $h->url(array('user' => $h->post->authorname)) . "'>" . $h->post->authorname . "</a>";
                 } else {
                     echo $h->lang['main_anonymous'];
                 }
@@ -70,7 +72,7 @@ foreach ($h->vars['pagedResults']->items as $post) {
                 <?php $h->pluginHook('show_post_author_date'); ?>
                 <?php 
                     if ($h->currentUser->getPermission('can_edit_posts') == 'yes'
-                        || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $user->id))) { 
+                        || (($h->currentUser->getPermission('can_edit_posts') == 'own') && ($h->currentUser->id == $h->post->author))) { 
                         echo "<a class='show_post_edit' href='" . BASEURL . "index.php?page=edit_post&amp;post_id=" . $h->post->id . "'>" . $h->lang["bookmarking_post_edit"] . "</a>"; 
                     }
                 ?> 

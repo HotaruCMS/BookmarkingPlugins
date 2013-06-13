@@ -86,8 +86,8 @@ class BookmarkingFunctions
         }
         
         // defaults
-        if (!isset($h->vars['select'])) { $h->vars['select'] = '*'; }
-        if (!isset($h->vars['orderby'])) { $h->vars['orderby'] = 'post_date DESC'; }
+        if (!isset($h->vars['select'])) { $h->vars['select'] = 'P.*, U.user_username'; }
+        if (!isset($h->vars['orderby'])) { $h->vars['orderby'] = 'P.post_date DESC'; }
         $limit = 0; 
         $all = true;
         
@@ -119,7 +119,7 @@ class BookmarkingFunctions
             false,
             true
         );
-
+        
         if ($return == 'query') { 
             if (isset($prepare_array[1])) {
                 return $h->db->prepare($prepare_array);
