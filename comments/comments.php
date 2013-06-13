@@ -164,9 +164,9 @@ class Comments
                     $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
                     
                     // redirect back to thread:
-                    $h->post = new Post();
-                    $h->readPost($h->comment->postId);
-                    header("Location: " . $h->url(array('page'=>$h->post->id)));    // Go to the post
+                    //$h->post = new Post();
+                    //$h->readPost($h->comment->postId);
+                    header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                 }
             }
@@ -190,7 +190,7 @@ class Comments
                     $h->comment->postId = $h->cage->get->testInt('pid');  // post id
                     
                     // redirect back to thread:
-                    $h->readPost($h->comment->postId);
+                    //$h->readPost($h->comment->postId);
                     header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                 }
@@ -760,9 +760,9 @@ class Comments
      */
     public function showSingleComment($h, $comment = NULL)
     {
-        $h->readPost($comment->comment_post_id);
+        //$h->readPost($comment->comment_post_id);
         // don't show this comment if its post is buried or pending:
-        if ($h->post->status == 'buried' || $h->post->status == 'pending') { return false; }
+        //if ($h->post->status == 'buried' || $h->post->status == 'pending') { return false; }
         
         $this->displayComment($h, $comment, true);
         return true;
@@ -912,10 +912,10 @@ class Comments
         
         if ($comments) {
 			foreach ($comments as $comment) {
-                $h->readPost($comment->comment_post_id);
+                                //$h->readPost($comment->comment_post_id);
                 
 				$data = array();
-				$data['title'] = ($user) ? 	$h->lang["comment_rss_comment_on"].$h->post->title : $h->getUserNameFromId($comment->comment_user_id).$h->lang["comment_rss_commented_on"].$h->post->title;
+				$data['title'] = ($user) ? $h->lang["comment_rss_comment_on"].$h->post->title : $h->getUserNameFromId($comment->comment_user_id).$h->lang["comment_rss_commented_on"].$h->comment->postTitle;
 				$data['link'] = $h->url(array('page' => $comment->comment_post_id))."#c".$comment->comment_id;
 				$data['date'] = $comment->comment_date;
 				$data['description'] = $comment->comment_content;
