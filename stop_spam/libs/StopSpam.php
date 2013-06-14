@@ -28,6 +28,12 @@ class StopSpamFunctions
     }
        
     
+    /**
+     * Use results from remote server and return flags for Hotaru
+     * @param type $h
+     * @param type $json
+     * @return boolean|array
+     */
     public function flagSpam($h, $json)
     {
             $result = json_decode($json);
