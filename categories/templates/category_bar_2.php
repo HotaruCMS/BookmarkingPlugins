@@ -6,7 +6,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <small><a class="brand" style="text-shadow: 0px 2px 3px #eee; font-weight: 100; font-size:16px;" href="#">Categories</a></small>
+<!--      <small><a class="brand" style="text-shadow: 0px 2px 3px #eee; font-weight: 100; font-size:16px;" href="#">Categories</a></small>-->
       <div class="nav-collapse">
         <ul class="nav">          
           
