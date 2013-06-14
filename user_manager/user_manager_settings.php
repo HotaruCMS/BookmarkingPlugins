@@ -702,41 +702,44 @@ class UserManagerSettings
             $h->vars['user_man_email'] = $email;
         }
         
+        if (!$h->isActive('user_signin')) { $h->messages['user_signing plugin not installed'] = 'red'; $error=1; }
+        
+        if ($error) return false;
+        
         // process new user
-        if (!$error) {
-            $us = new UserSignin();
-            $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
-            $exists = $h->userExists(0, $username, $email);
-            if (!$blocked && ($exists == 'no')) {
-                
-                // SUCCESS!!!
-                $userAuth = new UserAuth();
-                $userAuth->name = $username;
-                $userAuth->email = $email;
-                $userAuth->emailValid = 1;
-                $userAuth->password = random_string(10); // temporary until user is created
-                $userAuth->addUserBasic($h);
-                $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
-                
-                // send password!
-                $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
-                $userAuth->newRandomPassword($h, $last_insert_id, $passconf);
-                $h->messages[$h->lang['user_man_add_success_password_sent']] = 'green';
-                
-                $user = ''; $email = ''; // clear the form.
-                
-            } elseif ($exists == 'id') {
-                $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
-    
-            } elseif ($exists == 'name') {
-                $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
-    
-            } elseif ($exists == 'email') {
-                $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
-                
-            } elseif ($blocked) {
-                $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
-            }
+        require_once PLUGINS . 'user_signin/user_signin.php';
+        $us = new UserSignin();
+        $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
+        $exists = $h->userExists(0, $username, $email);
+        if (!$blocked && ($exists == 'no')) {
+
+            // SUCCESS!!!
+            $userAuth = new UserAuth();
+            $userAuth->name = $username;
+            $userAuth->email = $email;
+            $userAuth->emailValid = 1;
+            $userAuth->password = random_string(10); // temporary until user is created
+            $userAuth->addUserBasic($h);
+            $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
+
+            // send password!
+            $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
+            $userAuth->newRandomPassword($h, $last_insert_id, $passconf);
+            $h->messages[$h->lang['user_man_add_success_password_sent']] = 'green';
+
+            $user = ''; $email = ''; // clear the form.
+
+        } elseif ($exists == 'id') {
+            $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
+
+        } elseif ($exists == 'name') {
+            $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
+
+        } elseif ($exists == 'email') {
+            $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
+
+        } elseif ($blocked) {
+            $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
         }
     }
     
