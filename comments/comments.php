@@ -2,12 +2,12 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 2.6
+ * version: 2.7
  * folder: comments
  * class: Comments
  * type: comments
  * requires: users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission, profile_content
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission, profile_content, api_start
  *
  * PHP version 5
  *
@@ -33,6 +33,8 @@
 
 class Comments
 {
+    protected $folder = 'comments';
+    
     /**
      * Install or Upgrade
      */
@@ -164,8 +166,8 @@ class Comments
                     $h->comment->setPendingCommentTree($h,$cid);   // set all responses to 'pending', too.
                     
                     // redirect back to thread:
-                    //$h->post = new Post();
-                    //$h->readPost($h->comment->postId);
+                    $h->post = new Post();
+                    $h->readPost($h->comment->postId);
                     header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                 }
@@ -190,7 +192,7 @@ class Comments
                     $h->comment->postId = $h->cage->get->testInt('pid');  // post id
                     
                     // redirect back to thread:
-                    //$h->readPost($h->comment->postId);
+                    $h->readPost($h->comment->postId);
                     header("Location: " . $h->url(array('page'=>$h->comment->postId)));    // Go to the post
                     die();
                 }
@@ -207,14 +209,14 @@ class Comments
         $h->comment->thisForm = $h->comment->formStatus($h, 'select'); // returns 'open' or 'closed'
         if (($h->comment->thisForm != 'open') || ($h->comment->allForms != 'checked')) { return false; }
 
-		// return false if not logged in
-		if (!$h->currentUser->loggedIn) { return false; }
+        // return false if not logged in
+        if (!$h->currentUser->loggedIn) { return false; }
 
-		// return false if not posting or editing a comment
+        // return false if not posting or editing a comment
         if (($h->cage->post->getAlpha('comment_process') != 'newcomment') && 
             ($h->cage->post->getAlpha('comment_process') != 'editcomment')) { return false; }
 
-		// start filling the comment object
+        // start filling the comment object
         if ($h->cage->post->keyExists('comment_content')) {
             $h->comment->content = sanitize($h->cage->post->getHtmLawed('comment_content'), 'tags', $h->comment->allowableTags);
         }
@@ -255,14 +257,14 @@ class Comments
             if ($safe) {
                 // A user can unsubscribe by submitting an empty comment, so...
                 if ($h->comment->content != '')
-				{
-					// if Hotaru is older than 1.4.1, don't use preAddComment because it's part of AddComment
+                {
+                    // if Hotaru is older than 1.4.1, don't use preAddComment because it's part of AddComment
 					if (version_compare($h->version, '1.4.1') < 0)
 					{
 						$result = $h->comment->addComment($h);
 					} else {
 						$result = $this->preAddComment($h); // used for setting comment status
-	                    $h->comment->addComment($h);
+                                                $h->comment->addComment($h);
 					}
 
                     // notify chosen mods of new comment by email if enabled and UserFunctions file exists
@@ -629,7 +631,7 @@ class Comments
             return false;
         }
 
-		$this->lastCommentForm($h);
+        $this->lastCommentForm($h);
     }
     
     
@@ -926,6 +928,41 @@ class Comments
 
 		$h->rss($title, $link, $description, $items);
         exit;
+    }
+    
+    
+    /**
+     * 
+     */
+    public function api_start($h, $action)
+    {        
+        // Get settings from database if they exist...
+        $activity_settings = $h->getSerializedSettings($this->folder);
+        
+        // check if its a POST, GET, UPDATE or DELETE
+        
+        // check whether the $action for this api method is ON/OFF
+        $api_settings = $h->miscdata('apiSettings');
+        //if (!$api_settings[$this->folder . '.' . $action]) return false;
+        
+        // params
+        $limit = $h->cage->get->testInt('limit');
+        
+        switch ($action) {
+            case 'getAll':
+                // call query
+                
+                $result = '';
+                break;
+
+            default:
+                sendResponse(501, sprintf(
+			'Mode <b>%s</b> is not implemented for <b>%s</b>',
+			$action, $this->folder) );
+                break;
+        }
+        
+        echo sendResponse(200,json_encode($result), 'application/json');
     }
     
     

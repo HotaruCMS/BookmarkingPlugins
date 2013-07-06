@@ -707,7 +707,7 @@ class UserManagerSettings
         if ($error) return false;
         
         // process new user
-        require_once PLUGINS . 'user_signin/user_signin.php';
+        require_once (PLUGINS . 'user_signin/user_signin.php');
         $us = new UserSignin();
         $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
         $exists = $h->userExists(0, $username, $email);
@@ -777,6 +777,7 @@ class UserManagerSettings
         
         if ($userid) {
             // send email validation request
+            require_once (PLUGINS . 'user_signin/user_signin.php');
             $us = new UserSignin();
             $us->sendConfirmationEmail($h, $userid);
             $h->messages[$h->lang['user_man_email_validation_request_sent']] = 'green';
