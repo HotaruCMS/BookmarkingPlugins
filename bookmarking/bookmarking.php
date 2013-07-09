@@ -6,7 +6,7 @@
  * folder: bookmarking
  * class: Bookmarking
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation, post_rss_feed_items
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation, api_call, post_rss_feed_items
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -613,6 +613,38 @@ class Bookmarking
         //
         // display the sort links
         $h->template('bookmarking_sort_filter');
+    }
+    
+    
+    /**
+     * Return data for REST apiCall
+     */
+    public function api_call($h, $action)
+    {                        
+        $h->vars['bookmarking_settings'] = $h->getSerializedSettings('bookmarking');
+        
+        // check if its a POST, GET, UPDATE or DELETE
+
+        // get the BookmarkingFunctions class
+        $funcs = $this->getBookmarkingFunctions($h);
+                
+        // check for params
+        $limit = $h->cage->get->KeyExists('limit') ? $h->cage->get->testInt('limit') : 30;        
+        
+        switch ($action) {
+            case 'get':
+                // call query
+                $post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
+                $post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used				
+                $result = $h->pagination($post_query, $post_count, $limit, 'posts');
+                break;
+
+            default:
+                return false;
+                break;
+        }
+        
+        return $result;
     }
     
     

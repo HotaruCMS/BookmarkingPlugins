@@ -7,7 +7,7 @@
  * class: Comments
  * type: comments
  * requires: users 1.1
- * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission, profile_content, api_start
+ * hooks: install_plugin, theme_index_top, header_include, admin_header_include_raw, theme_index_main, show_post_extra_fields, post_show_post, admin_plugin_settings, admin_sidebar_plugin_settings, submit_2_fields, submit_edit_admin_fields, post_delete_post, profile_navigation, admin_theme_main_stats, breadcrumbs, submit_functions_process_submitted, submit_2_process_submission, profile_content, api_call
  *
  * PHP version 5
  *
@@ -934,35 +934,30 @@ class Comments
     /**
      * 
      */
-    public function api_start($h, $action)
+    public function api_call($h, $action)
     {        
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings($this->folder);
         
         // check if its a POST, GET, UPDATE or DELETE
-        
-        // check whether the $action for this api method is ON/OFF
-        $api_settings = $h->miscdata('apiSettings');
-        //if (!$api_settings[$this->folder . '.' . $action]) return false;
-        
+
         // params
         $limit = $h->cage->get->testInt('limit');
         
         switch ($action) {
-            case 'getAll':
+            case 'get':
                 // call query
-                
-                $result = '';
-                break;
+                $comments_count = $h->comment->getAllCommentsCount($h);
+                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');			
+                $result = $h->pagination($comments_query, $comments_count, $limit, 'comments');
+                break;                               
 
             default:
-                sendResponse(501, sprintf(
-			'Mode <b>%s</b> is not implemented for <b>%s</b>',
-			$action, $this->folder) );
+                return false;
                 break;
         }
         
-        echo sendResponse(200,json_encode($result), 'application/json');
+        return $result;
     }
     
     
