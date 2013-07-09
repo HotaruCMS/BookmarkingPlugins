@@ -1,0 +1,116 @@
+/* activity */
+
+/* WIDGET */
+.activity_widget_item { margin: 0.3em 0 0.3em 0; }
+.activity_widget_avatar { display: inline; padding: 0.2em; }
+.activity_widget_content { display: inline; }
+
+/* USER PROFILE & ACTIVITY PAGE */
+.activity_item { margin: 0.3em 0 0.3em 0; }
+.activity_avatar { display: inline; padding: 0.2em; }
+.activity_content { display: inline; }
+
+
+
+
+
+
+
+
+.info-box {
+    padding: 0;
+-webkit-border-radius: 2px;
+-moz-border-radius: 2px;
+-ms-border-radius: 2px;
+-o-border-radius: 2px;
+border-radius: 2px;
+min-height: auto;
+margin-right: 0;
+margin-left: 54px;
+margin-right: 15px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+-ms-border-radius: 3px;
+-o-border-radius: 3px;
+border-radius: 3px;
+margin-top: 15px;
+margin-bottom: 15px;
+-webkit-box-shadow: 0 1px 3px -1px rgba(0,0,0,0.1);
+-moz-box-shadow: 0 1px 3px -1px rgba(0,0,0,0.1);
+box-shadow: 0 1px 3px -1px rgba(0,0,0,0.1);
+position: relative;
+background: #fafeff;
+border: 1px solid #b5cdd7;
+-webkit-box-sizing: content-box;
+-moz-box-sizing: content-box;
+box-sizing: content-box;
+}
+
+
+
+.avatarBox {
+position: absolute;
+top: 0;
+ left: -50px;
+}
+
+.avatarBox img {
+
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+}
+
+.info {
+    background: #fafafa;
+    padding: 5px 10px;
+    color: #949494;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.label {
+    background-size: 100%;
+background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#7fb3d4),color-stop(100%,#599cc7));
+background-image: -webkit-linear-gradient(top,#7fb3d4,#599cc7);
+background-image: -moz-linear-gradient(top,#7fb3d4,#599cc7);
+background-image: -o-linear-gradient(top,#7fb3d4,#599cc7);
+background-image: linear-gradient(top,#7fb3d4,#599cc7);
+-webkit-box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
+-moz-box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
+box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
+}
+
+.label-blue {
+    background: #599cc7;
+}
+
+.label-green {
+    background: #6eb056;
+}
+
+.label-orange {
+    background: #faa732;
+}
+
+.name strong {
+    color: #636363;
+    margin-right: 6px;
+}
+
+.indent {
+margin-left: 10px;
+}
+
+.activity_items {
+    list-style: none;
+    font-size: 13px;
+}
+
+.time {
+     font-size: 11px;
+}
+
