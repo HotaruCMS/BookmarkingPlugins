@@ -61,19 +61,22 @@ class Categories
         if ($h->cage->get->keyExists('category'))
         { 
             $category = $h->cage->get->noTags('category');
+            
             if (is_numeric($category)) {
-                // category is numeric
-                $h->vars['category_id'] = $category;
-                $h->vars['category_name'] = $h->getCatName($category);
-                $h->vars['category_safe_name'] = $h->getCatSafeName($category);
-				$h->vars['category_parent'] = $h->getCatParent($category);
-            } else {
-                // category should be a safe name
-                $h->vars['category_id'] = $h->getCatId($category);
-                $h->vars['category_name'] = $h->getCatName($h->vars['category_id']);
-                $h->vars['category_safe_name'] = $h->getCatSafeName($h->vars['category_id']);
-				$h->vars['category_parent'] = $h->getCatParent($h->vars['category_id']);
+                $catInfo = $h->getCatFullData($category);
+            } else {               
+                $catInfo = $h->getCatFullData(0, $category);
             }
+            
+            if ($catInfo) {
+                $h->vars['category_id'] = isset($catInfo->category_id) ? $catInfo->category_id : '';
+                $h->vars['category_name'] = isset($catInfo->category_name) ? $catInfo->category_name : '';
+                $h->vars['category_safe_name'] = isset($catInfo->category_safe_name) ? $catInfo->category_safe_name : '';
+                $h->vars['category_parent'] = isset($catInfo->category_parent) ? $catInfo->category_parent : '';
+                $h->vars['category_desc'] = isset($catInfo->category_desc) ? $catInfo->category_desc : '';
+                $h->vars['category_keywords'] = isset($catInfo->category_keywords) ? $catInfo->category_keywords : '';
+            }
+            
             $h->pageTitle = $h->vars['category_name'];
             if (!$h->pageName) { $h->pageName = 'popular'; }
             if ($h->pageName == $h->home) { $h->pageTitle .=  '[delimiter]' . SITE_NAME; }
@@ -86,11 +89,13 @@ class Categories
 
             /*  if $h->pageName is set, then there must be an odd number of query vars where
                 the first one is the page name. Let's see if it's a category safe name... */
-            $sql = "SELECT category_id, category_name FROM " . TABLE_CATEGORIES . " WHERE category_safe_name = %s LIMIT 1";
-            $exists = $h->db->get_row($h->db->prepare($sql, urlencode($h->pageName)));
-            if ($exists) {
-                $h->vars['category_id'] = $exists->category_id;
-                $h->vars['category_name'] = $exists->category_name;
+            $catInfo = $h->getCatFullData(0, $h->pageName);
+            
+            if ($catInfo) {
+                $h->vars['category_id'] = isset($catInfo->category_id) ? $catInfo->category_id : '';
+                $h->vars['category_name'] = isset($catInfo->category_name) ? $catInfo->category_name : ''; 
+                $h->vars['category_desc'] = isset($catInfo->category_desc) ? $catInfo->category_desc : '';
+                $h->vars['category_keywords'] = isset($catInfo->category_keywords) ? $catInfo->category_keywords : '';     
                 $h->vars['category_safe_name'] = $h->pageName;
                 $h->pageTitle = $h->vars['category_name'];
                 $h->subPage = 'category';  // overwrite the current pageName which is the category name
@@ -167,21 +172,22 @@ class Categories
     
     /**
      * Also changes meta when browsing a category page
+     * Since we have already loaded data in theme_index_top we can use vars here
      */
     public function header_meta($h)
     {    
         if ($h->subPage == 'category')
         { 
-            $cat_meta = $h->getCatMeta($h->vars['category_id']);
+            //$cat_meta = $h->getCatMeta($h->vars['category_id']);
             
-            if (isset($cat_meta->category_desc)) {
-                echo '<meta name="description" content="' . urldecode($cat_meta->category_desc) . '" />' . "\n";
+            if (isset($h->vars['category_desc'])) {
+                echo '<meta name="description" content="' . urldecode($h->vars['category_desc']) . '" />' . "\n";
             } else {
                 echo '<meta name="description" content="' . $h->lang('header_meta_description') . '" />' . "\n";  // default meta tags
             }
             
-            if (isset($cat_meta->category_keywords)) {
-                echo '<meta name="keywords" content="' . urldecode($cat_meta->category_keywords) . '" />' . "\n";
+            if (isset($h->vars['category_keywords'])) {
+                echo '<meta name="keywords" content="' . urldecode($h->vars['category_keywords']) . '" />' . "\n";
             } else {
                 echo '<meta name="description" content="' . $h->lang('header_meta_keywords') . '" />' . "\n";  // default meta tags
             }
@@ -296,6 +302,7 @@ class Categories
     { 
         if ($h->post->category != 1) { 
 
+            // if we are on a category page then do we need to get the category name each time?
             $cat_name = $h->getCatName($h->post->category);
             $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
             
@@ -321,11 +328,7 @@ class Categories
         if ($h->vars['categories_settings_nav_show'] == 'checked') {
             $output = '';     
 
-            $sql    = "SELECT category_id, category_parent, category_safe_name, category_name FROM " . TABLE_CATEGORIES . " ORDER BY category_parent, category_order ASC";
-            $query = $h->db->prepare($sql);
-            $h->smartCache('on', 'categories', 60, $query); // start using cache
-            $categories = $h->db->get_results($query);
-            $h->smartCache('off'); // stop using cache
+            $categories = $h->getCatFullData();
 
             // set the initial level Id as 1 for the top - as long as that never changes to be ALL
             // TODO

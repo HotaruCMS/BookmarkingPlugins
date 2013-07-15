@@ -244,6 +244,8 @@ class CategoryManagerSettings
 				$h->template('cat_man_main', 'category_manager');
 				break;
 		}
+                
+                $h->setCatMemCache();
 		
 		return true;
     }
@@ -386,7 +388,7 @@ class CategoryManagerSettings
             $new_name = $h->cage->post->sanitizeTags($category->category_id);
             if ($new_name != "") {
                 $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_name = %s, category_safe_name = %s, category_updateby = %d WHERE category_id = %d";
-                $h->db->query($h->db->prepare($sql, urlencode($new_name), urlencode(make_url_friendly($new_name)), $h->currentUser->id, $category->category_id));
+                $h->db->query($h->db->prepare($sql, $new_name, make_url_friendly($new_name), $h->currentUser->id, $category->category_id));
             }
         }
     }
@@ -574,7 +576,7 @@ class CategoryManagerSettings
     function saveMeta($h, $id, $desc, $words)
     {
         $sql = "UPDATE " . TABLE_CATEGORIES . " SET category_desc = %s, category_keywords = %s, category_updateby = %d WHERE category_id = %d";
-        $h->db->query($h->db->prepare($sql, urlencode($desc), urlencode($words), $h->currentUser->id, $id)); 
+        $h->db->query($h->db->prepare($sql, $desc, $words, $h->currentUser->id, $id)); 
     }
     
     
