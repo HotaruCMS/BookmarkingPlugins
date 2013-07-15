@@ -70,11 +70,29 @@ class Bookmarking
 	 */
 	public function theme_index_top($h)
 	{
-		$this->determinePage($h);
-		// run all other theme_index_top functions except this one
-		$h->pluginHook('theme_index_top', '', array(), array('bookmarking'));
-		$this->finalizePage($h);
-		return "skip";
+            switch ($h->pageName)
+            {
+                case 'ajax_bookmarking':
+
+                    $fromId = $h->cage->get->testInt('fromId'); 
+                    $csrf = $h->cage->get->testAlnum('csrf');
+//                    $act_query = $h->getLatestActivity(0, 0, 'query', $fromId);
+//                    $items = $h->db->get_results($act_query);
+
+                    $h->vars['pagedResults'] = new stdClass();
+                    //$h->vars['pagedResults']->items = $items;                
+                    //$h->template('activity');
+                    die();
+                default:
+                    
+                    $this->determinePage($h);
+                    // run all other theme_index_top functions except this one
+                    $h->pluginHook('theme_index_top', '', array(), array('bookmarking'));
+                    $this->finalizePage($h);
+                    return "skip";
+            }
+            
+            return false;   // should not reach here
 	}
 	
 
