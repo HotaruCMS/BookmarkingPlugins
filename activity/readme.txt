@@ -15,6 +15,7 @@ Instructions
 
 Changelog
 ---------
+v.1.4 2013/07/16 - shibuya246 - update for followers plugin to show recent activity
 v.1.3 2013/07/08 - valMETNG - striptags in Activity Functions
 v.1.2 2013/06/16 - shibuya246 - Rework the Activity page to reduce queries
 v.1.1 2010/08/08 - Nick - Fix for no avatar showing in widget for anonymous users (needs Hotaru 1.4.1)
