@@ -26,14 +26,6 @@
 
 ?>
 
-<?php if (1==0) { ?>
-<h3><?php echo $h->lang['activity_title']; ?>
-    <a href="<?php echo $h->url(array('page'=>'rss_activity'))?>" title="<?php echo $h->lang['activity_title_anchor_title']; ?>">
-    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" width="16" height="16" alt="rss" /></a>
-</h3>
-<?php } ?>
-
-
 <?php 
 require_once(PLUGINS . 'activity/libs/ActivityFunctions.php');
 $act = new ActivityFunctions();

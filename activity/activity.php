@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 1.3
+ * version: 1.4
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -340,7 +340,7 @@ class Activity
         $latestActivity = $h->getLatestActivity(1, $params[0]);
         
         $action = $latestActivity[0];	
-               
+                       
         return $action;			 
     }
     
@@ -509,11 +509,11 @@ class Activity
         // gets query and total count for pagination
         $act_query = $h->getLatestActivity(0, $userid, 'query');
         $act_count = $h->getLatestActivity(0, $userid, 'count');
-        
+
         // pagination 
         $h->vars['pagedResults'] = $h->pagination($act_query, $act_count, $activity_settings['number'], 'useractivity');
         
-        $h->template('activity_profile');
+        $h->template('activity_profile');                
     }
     
     

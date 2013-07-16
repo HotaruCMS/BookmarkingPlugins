@@ -173,6 +173,12 @@ class ActivityFunctions
            } elseif  ($item->useract_key2 === 'post') {
                    $post_id = $item->useract_value2;
            }
+           
+           $result = $this->postSafe($h, $item);
+            if (is_array($result)) {
+                $title = $result[0];
+                $url = $result[1];
+            }
 
            // Comment
            if ($item->useract_key == 'comment') {
@@ -181,17 +187,14 @@ class ActivityFunctions
                $comment_title = truncate($comment_title, 80, true);
            }
 
-           //$h->post->vars['catSafeName'] =  $h->getCatSafeName($h->post->category);
            // content
-           $post_title = stripslashes(html_entity_decode(urldecode($item->title), ENT_QUOTES,'UTF-8'));
+           $post_title = isset($title) ? stripslashes(html_entity_decode(urldecode($title), ENT_QUOTES,'UTF-8')) : '';
            // not using $h->url as it loads post and category from db which takes time
            if (FRIENDLY_URLS == "true") {
-               $title_link = SITEURL . $item->url;
+               $title_link = isset($url) ? SITEURL . $url : '';
            } else {
                $title_link = SITEURL . 'index.php?page=' . $post_id;
            }
-           //$title_link = $h->url(array('page'=>intval($post_id)));
-           //$title_link = SITEURL . "index.php?page=" . $post_id;
 
            $result = $this->activitySwitch($h, $item);
 
