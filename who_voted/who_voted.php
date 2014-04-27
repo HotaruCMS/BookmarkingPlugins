@@ -103,7 +103,7 @@ class WhoVoted
         {
             // Show "No other posts found with matching tags"
             $output .= "<div id='who_voted'>\n";
-            $output = "<div id='who_voted_content'>\n";
+            $output .= "<div id='who_voted_content'>\n";
             $output .= $h->lang['who_voted_no_results'];
             $output .= "</div>\n";
             $output .= "</div>\n";
