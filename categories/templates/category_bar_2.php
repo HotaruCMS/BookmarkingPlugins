@@ -1,14 +1,16 @@
-<div class="navbar">
+<div class="navbar" role="navigation">
   <div class="navbar-inner">
     <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-<!--      <small><a class="brand" style="text-shadow: 0px 2px 3px #eee; font-weight: 100; font-size:16px;" href="#">Categories</a></small>-->
-      <div class="nav-collapse">
-        <ul class="nav">          
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">        
           
             <?php $h->pluginHook('category_bar_start'); ?>
             <?php echo $h->vars['output']; ?>
