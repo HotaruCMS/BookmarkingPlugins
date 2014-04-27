@@ -657,8 +657,8 @@ class UserSignin
         $sql = "UPDATE " . TABLE_USERS . " SET user_email_conf = %s WHERE user_id = %d";
         $h->db->query($h->db->prepare($sql, $email_conf, $user->id));
         
-        $line_break = "\r\n\r\n";
-        $next_line = "\r\n";
+        $line_break = "<br/><br/>\r\n\r\n";
+        $next_line = "<br/>\r\n";
         
         // send email
         $subject = $h->lang['user_signin_register_emailconf_subject'];
@@ -668,7 +668,8 @@ class UserSignin
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_click'];
         $body .= $line_break;
-        $body .= BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
+        $link = BASEURL . "index.php?page=emailconf&plugin=users&id=" . $user->id . "&conf=" . $email_conf;
+        $body .= "<a href='" . $link . "'>" . $link . "</a>";
         $body .= $line_break;
         $body .= $h->lang['user_signin_register_emailconf_body_regards'];
         $body .= $next_line;
