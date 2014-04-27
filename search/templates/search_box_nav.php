@@ -25,9 +25,11 @@
  */
 
 ?>
-    <form class="navbar-search pull-right" accept-charset="UTF-8" name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'>     
-        <input name="search" id="search_input" type="text" class="search-query span2" placeholder="<?php echo $h->lang('search_text'); ?>">
-        <input name="utf8" type="hidden" value="✓">
-        <input type="hidden" id="dosearch" />
+    <form class="navbar-form navbar-right" accept-charset="UTF-8" name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'>     
+        <div class="form-group">
+            <input name="search" id="search_input" type="text" class="form-control" placeholder="<?php echo $h->lang('search_text'); ?>">
+            <input name="utf8" type="hidden" value="✓">
+            <input type="hidden" id="dosearch" />
+        </div>
     </form>
    
