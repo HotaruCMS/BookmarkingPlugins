@@ -2,7 +2,7 @@
 /**
  * name: Activity
  * description: Show recent activity
- * version: 1.4
+ * version: 1.6
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
@@ -356,29 +356,7 @@ class Activity
         // Get latest activity
         $activity = $h->getLatestActivity($activity_settings['widget_number']);
         
-        // build link that will link the widget title to all activity...
-        
-        $anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
-        $title = "<a href='" . $h->url(array('page'=>'activity')) . "' title='" . $anchor_title . "'>";
-        $title .= $h->lang['activity_title'] . "</a>";
-        
-        if (isset($activity) && !empty($activity)) {
-            
-            $output = "<h2 class='widget_head activity_widget_title'>\n";
-            $link = BASEURL;
-            $output .= $title;
-            $output .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "' title='" . $anchor_title . "'>\n";
-            $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' width='16' height='16' alt='RSS' />\n</a>"; // RSS icon
-            $output .= "</h2>\n"; 
-                
-            $output .= "<ul class='widget_body activity_widget_items'>\n";
-            
-            $output .= $this->getWidgetActivityItems($h, $activity, false);
-            $output .= "</ul>\n\n";
-        }
-        
-        // Display the whole thing:
-        if (isset($output) && $output != '') { echo $output; }
+        $h->template('activity_widget');                 
     }
     
     
@@ -585,7 +563,7 @@ class Activity
             $items = array();
 
             if ($activity) {
-                    $actFuncs = $actFuncs = $this->getActivityFunctions();
+                    $actFuncs = $this->getActivityFunctions();
                     foreach ($activity as $act) 
                     {
                             // Post used in Hotaru's url function

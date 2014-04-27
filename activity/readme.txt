@@ -15,6 +15,8 @@ Instructions
 
 Changelog
 ---------
+v.1.6 2013/08/19 - shibuya246 - move widget code to template to allow customization
+v.1.5 2013/08/02 - shibuya246 - fix from valMETNG for when Post or Comment not present
 v.1.4 2013/07/16 - shibuya246 - update for followers plugin to show recent activity
 v.1.3 2013/07/08 - valMETNG - striptags in Activity Functions
 v.1.2 2013/06/16 - shibuya246 - Rework the Activity page to reduce queries

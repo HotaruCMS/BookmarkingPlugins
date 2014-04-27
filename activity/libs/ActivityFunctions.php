@@ -46,23 +46,26 @@ class ActivityFunctions
             $post = $h->db->get_row($h->db->prepare($sql, $postid));
 
             // return status
-            if ($post->post_status == 'buried' || $post->post_status == 'pending') { 
-                return false;
-            } else {
-                return array($post->post_title, urldecode($post->post_url));
+            if (isset($post))
+            {                
+                if ($post->post_status == 'buried' || $post->post_status == 'pending') { 
+                        return false;
+                } else {
+                        return array($post->post_title, urldecode($post->post_url));
+                }
             }
-        } elseif  ($item->useract_key2 == 'comment') {        
-            //print_r($item);
+        } elseif  ($item->useract_key2 == 'comment') {
             $commentId = $item->useract_value2;
             $sql = "SELECT C.comment_content, C.comment_post_id, P.* FROM " . TABLE_COMMENTS . " AS C LEFT JOIN " . TABLE_POSTS . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_id = %d";
             $comment = $h->db->get_row($h->db->prepare($sql, $commentId));
-            //print_r($comment);
-            //print $h->db->prepare($sql, $commentId);
-			$comment_title = urlencode(strip_tags(urldecode($comment->comment_content)));
-            $comment_url = '';
-            $post_url = $comment->post_url . '#c' . $commentId;
-            //comment_post_id
-            return array($comment_title, $post_url);            
+
+            if (isset($comment))
+            {
+                $comment_title = urlencode(strip_tags(urldecode($comment->comment_content)));
+                $post_url = $comment->category_safe_name . '/' . $comment->post_url . '#c' . $commentId;
+                //comment_post_id
+                return array($comment_title, $post_url);
+            }           
         }
         
         
