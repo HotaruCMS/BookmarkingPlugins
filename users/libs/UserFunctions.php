@@ -41,7 +41,7 @@ class UserFunctions
         $line_break = "\r\n\r\n";
         $next_line = "\r\n";
         
-        $user = new UserBase();
+        $user = UserBase::instance();
         
         switch ($type) {
             case 'user':

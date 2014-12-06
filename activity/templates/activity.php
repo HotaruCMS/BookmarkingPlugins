@@ -66,7 +66,10 @@ if ($h->vars['pagedResults']->items) {
 
                 <?php if($h->isActive('avatar')) { ?>
                             <div class='avatar_small'>
-                                <?php $h->setAvatar($user_id, 32, 'g', 'img-circle'); echo $h->linkAvatar(); ?>
+                                <?php 
+                                    $h->setAvatar($user_id, 32, 'g', 'img-circle', $action->user_email, $action->user_username); 
+                                    echo $h->linkAvatar(); 
+                                ?>
                             </div>
                         <?php } ?>
 
@@ -75,7 +78,7 @@ if ($h->vars['pagedResults']->items) {
               <span class="name">
                   <span class="label <?php echo $label; ?>"><?php echo strtoupper($action->useract_key); ?></span> 
                   <strong class="indent">
-                      <?php if ($user_id == 0) { echo $h->lang['activity_anonymous']; } else {
+                      <?php if ($user_id == 0) { echo $h->lang('activity_anonymous'); } else {
                             echo "<a class='activity_user' href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>";
                         }?>
                   </strong> <?php echo $act->activityContent($h, $action); ?>

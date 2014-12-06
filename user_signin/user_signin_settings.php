@@ -56,16 +56,16 @@ class UserSigninSettings
         if (!$email_notify) { $email_notify = ''; }
         if (!$email_mods) { $email_mods = array(); }
         
-        echo "<form name='user_signin_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=user_signin' method='post'>\n";
+        echo "<form role='form' name='user_signin_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=user_signin' method='post'>\n";
         
-        echo "<p>" . $h->lang["user_signin_settings_instructions"] . "</p><br />";
+        echo "<p>" . $h->lang["user_signin_settings_instructions"] . "</p>";
         
-        echo "<b>" . $h->lang["user_signin_settings_registration"] . "</b><br /><br />";
+        echo "<b>" . $h->lang["user_signin_settings_registration"] . "</b><br />";
         
-        $thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
-        echo "<input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_enable"] . "<br /><br />\n";    
+        //$thisdomain =  rstrtrim(str_replace("http://", "", BASEURL), '/');
+        echo "<div class='checkbox'><label class='checkbox-inline'><input type='checkbox' name='rc_enabled' value='enabled' " . $recaptcha_enabled . " >&nbsp;&nbsp;" . $h->lang["user_signin_settings_recaptcha_enable"] . "</label></div>\n";    
 
-        echo "<input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_conf"] . "<br /><br />\n";
+        echo "<div class='checkbox'><label class='checkbox-inline'><input type='checkbox' name='emailconf' value='emailconf' " . $emailconf_enabled . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_conf"] . "</label></div>\n";
 
         // reg_status radio buttons:
         switch ($reg_status) {
@@ -91,7 +91,7 @@ class UserSigninSettings
             echo " " . $h->lang["user_signin_settings_reg_status_member"] . " &nbsp;<br /><br />\n";
                 
         // email_notify:
-        echo "<input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_notify"] . "<br /><br />\n";
+        echo "<div class='checkbox'><label class='checkbox-inline'><input type='checkbox' name='email_notify' value='email_notify' id='email_notify' " . $email_notify . ">&nbsp;&nbsp;" . $h->lang["user_signin_settings_email_notify"] . "</label></div>\n";
     
         $admins = $h->getMods('can_access_admin', 'yes');
         if (!$email_notify) { $show_admins = 'display: none;'; } else { $show_admins = ''; }
@@ -138,7 +138,7 @@ class UserSigninSettings
                 
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $h->lang["user_signin_settings_save"] . "' />\n";
+        echo "<button class='btn btn-primary' type='submit'>" . $h->lang["user_signin_settings_save"] . "</button>\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }

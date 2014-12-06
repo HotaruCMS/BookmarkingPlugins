@@ -8,7 +8,7 @@ if(isset($h->post->vars['img']) && strlen($h->post->vars['img']) > 0){
 		// Make it 0.1 compatible and add SITEURL
 		$img = SITEURL.'content/images/post_images/' . preg_replace('/.*content\/images\/post_images\//','',$img);
 	}
-        $img = '<img class="media-object" src="'.$img.'" alt="Image of '. $h->post->title.'" title="Image of '. $h->post->title.'" width="' . $h->vars['post_images_settings']['w'] . '" height="' . $h->vars['post_images_settings']['h'] . '" />';
+        $img = '<img class="media-object img-rounded" src="'.$img.'" alt="Image of '. $h->post->title.'" title="Image of '. $h->post->title.'" width="' . $h->vars['post_images_settings']['w'] . '" height="' . $h->vars['post_images_settings']['h'] . '" />';
 	$pull = !isset($h->vars['post_images_settings']['pullRight']) ||  $h->vars['post_images_settings']['pullRight'] == 'unchecked' ? 'post_image_wrapper' : 'pull-right';  
         ?>
 

@@ -38,46 +38,61 @@ if ($h->cage->post->getInt('remember') == 1){ $remember_check = "checked"; } els
     
     <?php $h->pluginHook('user_signin_login_pre_login_form'); ?>
     
-    <div class='user_login_reg'>    
+    <div class='well col-md-6 col-md-offset-3 user_login_reg'>    
     
-        <form name='login_form' class='form-signin' action='<?php echo BASEURL; ?>index.php' method='post'>
+        <form role="form" name='login_form' class='form-signin' action='<?php echo BASEURL; ?>index.php' method='post'>
             
-            <input id="prependedInput" type="text" name="username" placeholder="<?php echo $h->lang["user_signin_login_form_submit_username"]; ?>" value="<?php echo $username_check; ?>">
-            <br/>
-            <input  id="prependedInput" type="password" name="password" placeholder="<?php echo $h->lang["user_signin_login_form_submit_password"]; ?>" value="<?php echo $password_check; ?>">
-            
-            <label class="checkbox">
-                <input type="checkbox" name="remember" value="1" <?php echo $remember_check; ?>/> <?php echo $h->lang["user_signin_login_form_submit_remember"]; ?>
-            </label>   
-            
-            <strong><?php echo $h->lang('user_signin_login_problems_cookie'); ?></strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies"><?php echo $h->lang('user_signin_login_clear_cookie'); ?></a>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
+            <div class="form-group">
+                <input id="prependedInput" class="form-control" type="text" name="username" placeholder="<?php echo $h->lang["user_signin_login_form_submit_username"]; ?>" value="<?php echo $username_check; ?>">
             </div>
             
+            <div class="form-group">
+                <input  id="prependedInput" class="form-control" type="password" name="password" placeholder="<?php echo $h->lang["user_signin_login_form_submit_password"]; ?>" value="<?php echo $password_check; ?>">
+            </div>
+            
+            <div class="checkbox">
+                <label class="checkbox-inline ">
+                    <input type="checkbox" name="remember" <?php echo $remember_check; ?>/> <?php echo $h->lang["user_signin_login_form_submit_remember"]; ?>
+                </label> 
+            </div>  
+            
+            <button type="submit" class="btn btn-primary"><?php echo $h->lang['user_signin_login_form_submit']; ?></button>
+            
+            <hr>
+            <div class="form-group">
+                <strong><?php echo $h->lang('user_signin_login_problems_cookie'); ?></strong> <a href="<?php echo BASEURL; ?>index.php?page=cookies"><?php echo $h->lang('user_signin_login_clear_cookie'); ?></a>
+            </div>
             <input type='hidden' name='page' value='login'>
             <input type='hidden' name='return' value='<?php echo $return_check; ?>'>
             <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-
-            <a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
         </form>
+        
+            <hr>
+            <div class="form-group">
+                <i class="fa fa-key"></i>&nbsp;<a href="#" class="forgot_password"><?php echo $h->lang["user_signin_login_forgot_password"]; ?></a>
+            </div>
+            
+            <form role="form" id="forgot_password_form" style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>
+                
+                <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_1']; ?>
+                
+                <div class="form-group">
+                    <label for="signinemail"><?php echo $h->lang["user_signin_account_email"]; ?></label>
+                    <input type='text' size=30 name='email' value='<?php echo $email_check; ?>' />                 
+                </div>
+                
+                <button type='submit' class='btn btn-warning submit' ><?php echo $h->lang['user_signin_login_forgot_password_submit']; ?></button>    
+                
+                <input type='hidden' name='forgotten_password' value='true'>
+                <input type='hidden' name='page' value='login'>
+                <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+                
+                <div>
+                <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_2']; ?>
+                </div>
+            </form>
+        
 	
     </div>
     
     
-    
-    <form id="forgot_password_form" style="display: none;" name='forgot_password_form' action='<?php echo BASEURL; ?>index.php' method='post'>
-        <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_1']; ?>
-    <table>
-        <tr>
-        <td><?php echo $h->lang["user_signin_account_email"]; ?>&nbsp; </td>
-        <td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' /></td>
-        <td><input type='submit' class='submit' value='<?php echo $h->lang['user_signin_login_forgot_password_submit']; ?>' /></td>
-        </tr>            
-    </table>
-    <input type='hidden' name='forgotten_password' value='true'>
-    <input type='hidden' name='page' value='login'>
-    <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-        <?php echo $h->lang['user_signin_login_forgot_password_submit_instruct_2']; ?>
-    </form>

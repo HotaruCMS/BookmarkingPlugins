@@ -34,19 +34,19 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
     <?php if (isset($h->vars['bookmarking_settings']['sort_bar_dropdown']) && $h->vars['bookmarking_settings']['sort_bar_dropdown'] != 'checked') { ?> 
         <ul class="sort_menu">
     
-        <li <?php echo $h->vars['popular_active']; ?>>
+        <li class="<?php echo $h->vars['popular_active']; ?>">
             <a href="<?php echo $h->vars['popular_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_recently_popular"]; ?></a></li>
 
-        <li <?php echo $h->vars['upcoming_active']; ?>>
+        <li class="<?php echo $h->vars['upcoming_active']; ?>">
             <a href="<?php echo $h->vars['upcoming_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_upcoming"]; ?></a></li>
         
-        <li <?php echo $h->vars['latest_active']; ?>>
+        <li class="<?php echo $h->vars['latest_active']; ?>">
             <a href="<?php echo $h->vars['latest_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_latest"]; ?></a></li>
         
-        <li <?php echo $h->vars['all_active']; ?>>
+        <li class="<?php echo $h->vars['all_active']; ?>">
             <a href="<?php echo $h->vars['all_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_all"]; ?></a></li>
         
@@ -54,29 +54,29 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
         <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <?php echo $h->lang["bookmarking_sort_best_from"]; ?></li>
         
-        <li <?php echo $h->vars['top_24_hours_active']; ?>>
+        <li class="<?php echo $h->vars['top_24_hours_active']; ?>">
             <a href="<?php echo $h->vars['24_hours_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_1_day"]; ?></a></li>
         
         <!-- Doesn't fit in the default theme
-        <li <?php echo $h->vars['top_48_hours_active']; ?>>
+        <li class="<?php echo $h->vars['top_48_hours_active']; ?>">
             <a href="<?php echo $h->vars['48_hours_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_2_days"]; ?></a></li>
         -->
         
-        <li <?php echo $h->vars['top_7_days_active']; ?>>
+        <li class="<?php echo $h->vars['top_7_days_active']; ?>">
             <a href="<?php echo $h->vars['7_days_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_7_days"]; ?></a></li>
         
-        <li <?php echo $h->vars['top_30_days_active']; ?>>
+        <li class="<?php echo $h->vars['top_30_days_active']; ?>">
             <a href="<?php echo $h->vars['30_days_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_30_days"]; ?></a></li>
         
-        <li <?php echo $h->vars['top_365_days_active']; ?>>
+        <li class="<?php echo $h->vars['top_365_days_active']; ?>">
             <a href="<?php echo $h->vars['365_days_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_365_days"]; ?></a></li>
         
-        <li <?php echo $h->vars['top_all_time_active']; ?>>
+        <li class="<?php echo $h->vars['top_all_time_active']; ?>">
             <a href="<?php echo $h->vars['all_time_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_top_all_time"]; ?></a></li>
         
@@ -86,19 +86,19 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
 
         <ul class="nav nav-pills">
                     
-        <li <?php echo $h->vars['popular_active']; ?>>
+        <li class="<?php echo $h->vars['popular_active']; ?>">
             <a href="<?php echo $h->vars['popular_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_recently_popular"]; ?></a></li>
 
-        <li <?php echo $h->vars['upcoming_active']; ?>>
+        <li class="<?php echo $h->vars['upcoming_active']; ?>">
             <a href="<?php echo $h->vars['upcoming_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_upcoming"]; ?></a></li>
 
-        <li <?php echo $h->vars['latest_active']; ?>>
+        <li class="<?php echo $h->vars['latest_active']; ?>">
             <a href="<?php echo $h->vars['latest_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_latest"]; ?></a></li>
 
-        <li <?php echo $h->vars['all_active']; ?>>
+        <li class="<?php echo $h->vars['all_active']; ?>">
             <a href="<?php echo $h->vars['all_link']; ?>">
             <?php echo $h->lang["bookmarking_sort_all"]; ?></a></li>
                 
@@ -110,19 +110,19 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
             <ul class="dropdown-menu">
                 <!-- links -->                    
 
-                <li <?php echo $h->vars['top_24_hours_active']; ?>>
+                <li class="<?php echo $h->vars['top_24_hours_active']; ?>">
                     <a href="<?php echo $h->vars['24_hours_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_1_day"]; ?></a></li>
 
-                <li <?php echo $h->vars['top_48_hours_active']; ?>>
+                <li class="<?php echo $h->vars['top_48_hours_active']; ?>">
                     <a href="<?php echo $h->vars['48_hours_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_2_days"]; ?></a></li>
                 
-                <li <?php echo $h->vars['top_7_days_active']; ?>>
+                <li class="<?php echo $h->vars['top_7_days_active']; ?>">
                     <a href="<?php echo $h->vars['7_days_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_7_days"]; ?></a></li>
 
-                <li <?php echo $h->vars['top_30_days_active']; ?>>
+                <li class="<?php echo $h->vars['top_30_days_active']; ?>">
                     <a href="<?php echo $h->vars['30_days_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_30_days"]; ?></a></li>
 
@@ -130,7 +130,7 @@ if ($h->pageType == 'user') { return false; } // don't show filter on profile, a
                     <a href="<?php echo $h->vars['365_days_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_365_days"]; ?></a></li>
 
-                <li <?php echo $h->vars['top_all_time_active']; ?>>
+                <li class="<?php echo $h->vars['top_all_time_active']; ?>">
                     <a href="<?php echo $h->vars['all_time_link']; ?>">
                     <?php echo $h->lang["bookmarking_sort_top_all_time"]; ?></a></li>
 

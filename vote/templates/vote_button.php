@@ -27,7 +27,6 @@ The following code looks pretty ugly, but it's not quite as confusing as it firs
 */
 
 //$user_ip = $h->cage->server->testIp('REMOTE_ADDR');
-
 // Determine the status of the post so we can apply different css to top and new vote buttons:
 $status = $h->post->status;
 if ($status != 'top' && $status != 'new') { $status = 'new'; }  // used on next line to default to a blue button
@@ -38,40 +37,40 @@ $vote_button_type = 'vote_color_' . $status;  // for css difference between top 
 <div class='vote_button'>
 
 <!-- VOTE COUNT -->
-<div id='votes_<?php echo $h->post->id; ?>' class='vote_button_top <?php echo $vote_button_type; ?>'><?php echo $h->vars['votesUp']; ?></div>
+<div data-bind="text: post_votes_up" id='votes_<?php echo $h->post->id; ?>' class='img-rounded vote_button_top <?php echo $vote_button_type; ?>'><?php echo $h->post->votesUp; ?></div>
 
 <!-- VOTE OR UN-VOTE LINK -->
 <?php if (($h->currentUser->loggedIn || $h->vars['vote_anon_vote']) && !$h->vars['voted']) { ?>
     <!-- Logged in and not voted yet -->
     
     <!-- Shown -->
-    <div id='text_vote_<?php echo $h->post->id; ?>' class='vote_button_bottom'>
-        <a href="#" onclick="vote( <?php echo $h->post->id; ?>, 10); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
+    <div id='text_vote_<?php echo $h->post->id; ?>' class='img-rounded vote_button_bottom'>
+        <a href="#" onclick="vote( <?php echo $h->post->id; ?>, 10); return false;"><i class="fa fa-thumbs-up"></i></a>
     </div>    
     
     <!-- Hidden -->
-    <div id='text_unvote_<?php echo $h->post->id; ?>' class='vote_button_bottom' style="display: none;">
-        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, -10); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
+    <div id='text_unvote_<?php echo $h->post->id; ?>' class='img-rounded vote_button_bottom' style="display: none;">
+        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, -10); return false;"><i class="fa fa-thumbs-down"></i></a>
     </div>        
     
 <?php } elseif (($h->currentUser->loggedIn || $h->vars['vote_anon_vote']) && $h->vars['voted']) { ?>
     <!-- Logged in and already voted -->
     
     <!-- Hidden -->
-    <div id='text_vote_<?php echo $h->post->id; ?>' class='vote_button_bottom' style="display: none;">
-        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, 10); return false;"><b><?php echo $h->lang["vote_button_vote"]; ?></b></a>
+    <div id='text_vote_<?php echo $h->post->id; ?>' class='img-rounded vote_button_bottom' style="display: none;">
+        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, 10); return false;"><i class="fa fa-thumbs-up"></i></a>
     </div>
     
     <!-- Shown -->
-    <div id='text_unvote_<?php echo $h->post->id; ?>' class='vote_button_bottom'>
-        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, -10); return false;"><?php echo $h->lang["vote_button_unvote"]; ?></a>
+    <div id='text_unvote_<?php echo $h->post->id; ?>' class='img-rounded vote_button_bottom vote_color_top_clicked'>
+        <a href="#" onclick="vote(<?php echo $h->post->id; ?>, -10); return false;"><i class="fa fa-thumbs-down"></i></a>
     </div>
     
 <?php } else { ?>
     <!-- Need to login -->
     
-    <div id='text_login_<?php echo $h->post->id; ?>' class='vote_button_bottom'>
-        <a href="<?php echo $h->vars['vote_login_url']; ?>"><?php echo $h->lang["vote_button_vote"]; ?></a>
+    <div id='text_login_<?php echo $h->post->id; ?>' class='img-rounded vote_button_bottom'>
+        <a href="<?php echo $h->vars['vote_login_url']; ?>"><i class="fa fa-thumbs-up"></i></a>
     </div>
 <?php } ?>
 

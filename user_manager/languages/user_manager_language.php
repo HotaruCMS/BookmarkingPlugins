@@ -18,8 +18,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Hotaru CMS Team
- * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -66,7 +66,7 @@ $lang["user_man_category"] = "Category:";
 $lang["user_man_tags"] = "Tags:";
 $lang["user_man_urls"] = "Urls:";
 $lang["user_man_check"] = "";
-$lang['user_man_checkbox_action'] = "Go";
+$lang['user_man_checkbox_action'] = "Change Role";
 $lang["user_man_checkboxes_empty"] = "No users selected";
 $lang["user_man_checkboxes_role_changed"] = "Role changed for selected users";
 $lang["user_man_checkboxes_user_deleted"] = "Selected user and associated posts, comments and tags permanently deleted";
@@ -84,7 +84,7 @@ $lang["user_man_set_killspammed"] = "Killspam selected";
 $lang["user_man_set_delete"] = "Physically Delete";
 $lang['user_man_link'] = "User Manager";
 $lang['user_man_no_pending_users'] = "There are no users pending approval";
-$lang["user_man_num_pending"] = "<span style='color: red;'>Pending users: </span>";
+$lang["user_man_num_pending"] = "Pending users";
 $lang['user_man_when_killspam_delete'] = "When killspamming or deleting a user:";
 $lang['user_man_add_blocked_list'] = "Add to Blocked List";
 

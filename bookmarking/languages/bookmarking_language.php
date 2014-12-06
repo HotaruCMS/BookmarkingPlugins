@@ -24,6 +24,7 @@ $lang["bookmarking_extend_your_search"] = "Try the following filters to extend y
 
 /* Post */
 $lang["bookmarking_post_edit"] = "Edit";
+$lang["bookmarking_post_delete"] = "Delete";
 $lang["bookmarking_post_read_more"] = "[Read More]";
 $lang["bookmarking_post_posted_by"] = "Posted by";
 $lang["bookmarking_post_in"] = "in";
@@ -38,6 +39,10 @@ $lang["bookmarking_settings_default_type"] = "Post type to show as default on li
 $lang["bookmarking_settings_default_page"] = "Page type to show as default";
 $lang["bookmarking_settings_rss_redirect"] = "Automatically redirect RSS links to their original sources";
 $lang["bookmarking_settings_sort_bar_dropdown"] = "Use dropdown for selecting filtered posts";
+$lang["bookmarking_settings_use_alerts"] = "Enable Alerts (i.e. flag / bury). Alerts are only used on \"new\" posts";
+$lang["bookmarking_settings_alerts_to_bury"] = "Number of alerts to automatically bury a post:";
+$lang["bookmarking_settings_alerts_to_bury_invalid"] = "The number of alerts needed must be a positive integer";
+$lang["bookmarking_settings_physical_delete"] = "Physically delete a post from the database when buried";
 
 /* Admin Stats */
 $lang["bookmarking_admin_stats_total_posts"] = "Total";
@@ -71,4 +76,25 @@ $lang["bookmarking_sort_top_all_time"] = "All Time";
 /* Display */
 $lang["bookmarking_number_of_posts"] = "Number of posts found";
 
+
+/* Breadcrumb */
+$lang["bookmarking_breadcrumb_this_post"] = "This Post";
+
+/* Show Post - ALert links and flagged message */
+$lang["bookmarking_alert"] = "Flag it";
+$lang["bookmarking_alert_reason_title"] = "Reason for flagging this post:";
+$lang["bookmarking_alert_reason_1"] = "Spam";
+$lang["bookmarking_alert_reason_2"] = "Inappropriate";
+$lang["bookmarking_alert_reason_3"] = "Broken Link";
+$lang["bookmarking_alert_reason_4"] = "Duplicate";
+$lang["bookmarking_alert_reason_5"] = "Wrong Category";
+$lang["bookmarking_alert_reason_6"] = "Really lame";
+$lang["bookmarking_alert_already_flagged"] = "You've already flagged this post";
+$lang["bookmarking_alert_flagged_message_1"] = "This post has been flagged by";
+$lang["bookmarking_alert_flagged_message_2"] = "as";
+$lang["bookmarking_alert_flagged_message_user"] = "user";
+$lang["bookmarking_alert_flagged_message_users"] = "users";
+$lang["bookmarking_alert_flagged_message_reason"] = "reason";
+$lang["bookmarking_alert_flagged_message_reasons"] = "reasons";
+$lang["bookmarking_alert_post_buried"] = "This post has been buried";
 ?>

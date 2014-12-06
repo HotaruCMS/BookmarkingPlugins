@@ -19,8 +19,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Hotaru CMS Team
- * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -98,12 +98,12 @@ class UserManagerSettings
         // Get unique statuses for Filter form:
         $h->vars['roles'] = $h->getRoles('unique'); 
         
-        $u = new UserBase();
+        $u = new \Libs\UserBase();
         
         // if checkboxes
         if (($h->cage->get->getAlpha('type') == 'checkboxes') && ($h->cage->get->keyExists('user_man'))) 
         {
-            foreach ($h->cage->get->keyExists('user_man') as $id => $checked) {
+            foreach ($h->cage->get->keyExists('user_man', TRUE) as $id => $checked) {
                 $h->message = $h->lang["user_man_checkboxes_role_changed"]; // default "Changed role" message
                 $u->id = $id;
                 $u->getUser($h, $id);
@@ -128,6 +128,7 @@ class UserManagerSettings
                         if ($new_role == 'deleted') { 
                             $u->deleteUser($h); 
                             $h->clearCache('db_cache', false); // clears them from User Manager list
+							$h->message = $h->lang["user_man_checkboxes_user_deleted"];
                         }
                     }
                 }
@@ -324,7 +325,7 @@ class UserManagerSettings
         }
         
         // Show template:
-        $h->template('user_man_main', 'user_manager');
+        $h->displayTemplate('user_man_main', 'user_manager');
     }
     
     
@@ -358,7 +359,7 @@ class UserManagerSettings
             $h->pluginHook('user_manager_role');
             $user_icon = $h->vars['user_manager_role'][0];
             
-            $output .= "<tr class='table_row_" . $alt % 2 . "'>\n";
+            $output .= "<tr class=''>\n";
             $output .= "<td class='um_id'>" . $user->user_id . "</td>\n";
             $output .= "<td class='um_role'>" . $user->user_role . $user_icon . "</td>\n";
             $output .= "<td class='um_username'><a class='table_drop_down' href='#' title='" . $h->lang["user_man_show_content"] . "'>";
@@ -561,7 +562,7 @@ class UserManagerSettings
         }
         
         // Show template:
-        $h->template('user_man_perms', 'user_manager');
+        $h->displayTemplate('user_man_perms', 'user_manager');
     }
     
     
@@ -645,7 +646,7 @@ class UserManagerSettings
         $h->vars['settings'] = $default_settings;
 
         // Show template:
-        $h->template('user_man_user_settings', 'user_manager');
+        $h->displayTemplate('user_man_user_settings', 'user_manager');
     }
     
     
@@ -673,7 +674,7 @@ class UserManagerSettings
         if (!isset($h->vars['user_man_username_3'])) { $h->vars['user_man_username_3'] = ''; }
         if (!isset($h->vars['user_man_email'])) { $h->vars['user_man_email'] = ''; }
         
-        $h->template('user_man_add');
+        $h->displayTemplate('user_man_add');
     }
     
     
@@ -702,44 +703,41 @@ class UserManagerSettings
             $h->vars['user_man_email'] = $email;
         }
         
-        if (!$h->isActive('user_signin')) { $h->messages['user_signing plugin not installed'] = 'red'; $error=1; }
-        
-        if ($error) return false;
-        
         // process new user
-        require_once (PLUGINS . 'user_signin/user_signin.php');
-        $us = new UserSignin();
-        $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
-        $exists = $h->userExists(0, $username, $email);
-        if (!$blocked && ($exists == 'no')) {
-
-            // SUCCESS!!!
-            $userAuth = new UserAuth();
-            $userAuth->name = $username;
-            $userAuth->email = $email;
-            $userAuth->emailValid = 1;
-            $userAuth->password = random_string(10); // temporary until user is created
-            $userAuth->addUserBasic($h);
-            $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
-
-            // send password!
-            $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
-            $userAuth->newRandomPassword($h, $last_insert_id, $passconf);
-            $h->messages[$h->lang['user_man_add_success_password_sent']] = 'green';
-
-            $user = ''; $email = ''; // clear the form.
-
-        } elseif ($exists == 'id') {
-            $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
-
-        } elseif ($exists == 'name') {
-            $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
-
-        } elseif ($exists == 'email') {
-            $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
-
-        } elseif ($blocked) {
-            $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
+        if (!$error) {
+            $us = new UserSignin();
+            $blocked = $us->checkBlocked($h, $username, $email); // true if blocked, false if safe
+            $exists = $h->userExists(0, $username, $email);
+            if (!$blocked && ($exists == 'no')) {
+                
+                // SUCCESS!!!
+                $userAuth = new UserAuth();
+                $userAuth->name = $username;
+                $userAuth->email = $email;
+                $userAuth->emailValid = 1;
+                $userAuth->password = random_string(10); // temporary until user is created
+                $userAuth->addUserBasic($h);
+                $last_insert_id = $h->db->get_var($h->db->prepare("SELECT LAST_INSERT_ID()"));
+                
+                // send password!
+                $passconf = md5(crypt(md5($userAuth->email),md5($userAuth->email)));
+                $userAuth->newRandomPassword($h, $last_insert_id, $passconf);
+                $h->messages[$h->lang['user_man_add_success_password_sent']] = 'green';
+                
+                $user = ''; $email = ''; // clear the form.
+                
+            } elseif ($exists == 'id') {
+                $h->messages[$h->lang['user_signin_register_id_exists']] = 'red';
+    
+            } elseif ($exists == 'name') {
+                $h->messages[$h->lang['user_signin_register_username_exists']] = 'red';
+    
+            } elseif ($exists == 'email') {
+                $h->messages[$h->lang['user_signin_register_email_exists']] = 'red';
+                
+            } elseif ($blocked) {
+                $h->messages[$h->lang['user_signin_register_user_blocked']] = 'red';
+            }
         }
     }
     
@@ -777,7 +775,6 @@ class UserManagerSettings
         
         if ($userid) {
             // send email validation request
-            require_once (PLUGINS . 'user_signin/user_signin.php');
             $us = new UserSignin();
             $us->sendConfirmationEmail($h, $userid);
             $h->messages[$h->lang['user_man_email_validation_request_sent']] = 'green';

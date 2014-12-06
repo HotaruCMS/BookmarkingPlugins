@@ -13,7 +13,7 @@
         <ul class="nav navbar-nav">        
           
             <?php $h->pluginHook('category_bar_start'); ?>
-            <?php echo $h->vars['output']; ?>
+            <?php echo $h->categoriesDisplay; ?>
             <?php $h->pluginHook('category_bar_end'); ?>
           
         </ul>

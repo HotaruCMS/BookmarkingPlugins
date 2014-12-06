@@ -2,7 +2,7 @@
 /**
  * name: User Signin
  * description: Provides user registration and login
- * version: 0.8
+ * version: 1.1
  * folder: user_signin
  * type: signin
  * class: UserSignin
@@ -72,22 +72,25 @@ class UserSignin
         switch ($h->pageName)
         {
             case 'logout':
-                $h->currentUser->destroyCookieAndSession();
+                $h->destroyCookieAndSession();
                 header("Location: " . BASEURL);
                 exit;
                 break;
             case 'login':
-                $h->pageTitle = $h->lang["user_signin_login"];
+                $h->pageTitle = $h->lang("user_signin_login");
                 $h->pageType = 'login';
-                if ($this->login($h)) { 
+                if ($this->login($h)) {
                     // success, return to front page, logged IN.
                     $return = str_replace('&amp;', '&', $h->cage->post->getHtmLawed('return'));
+                    
+                    //die();
                     if ($return) {
                         header("Location: " . $return);
                     } else {
                         header("Location: " . BASEURL);
                     }
-                    die(); exit;
+                    exit; // important - this exit must be here or cookie has problems
+                    //die();
                 }                                                 
                 break;
             case 'cookies':                
@@ -122,13 +125,15 @@ class UserSignin
                     } else {
                         // redirect to login page
                         header("Location: " . BASEURL . "index.php?page=login");
-                        die(); exit;
+                        //die(); exit;
                     }
                 }
                 break;
             case 'emailconf':
                 $h->pageTitle = $h->lang['user_signin_register_emailconf'];
                 $h->pageType = 'register';
+                break;
+            default:
                 break;
         }
     }
@@ -156,96 +161,14 @@ class UserSignin
      */
     public function navigation_users($h)
     {
+        if (!isset($h->vars['theme_settings']['userProfile_tabs']))
+        {
+             $h->vars['theme_settings']['userProfile_tabs'] = false;
+        }
+        
         if ($h->currentUser->loggedIn) {
-            
-//            if ($h->pageName == 'logout') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
-//            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'logout')) . "'>" . $h->lang["user_signin_logout"] . "</a></li>";
-//            
-            if ($h->currentUser->getPermission('can_access_admin') == 'yes') {                
-                if ($h->isDebug && function_exists($h->debugNav())) { print $h->debugNav(); }
-                if (function_exists($h->adminNav())) $h->adminNav();
-            }
-            ?>
-            
-             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="user-dropdown-toggle">
-                    <span id="nav_usersettings">
-                        <span class="hide">
-                            User Settings
-                        </span>
-                    </span>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="dropdown-caret">
-                      <span class="caret-outer"></span>
-                      <span class="caret-inner"></span>
-                    </li>
-
-                    <li class="current-user" data-name="profile">
-                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>                        
-                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_editProfile')); ?>" class="account-nav account-nav-small">
-                        <?php } else { ?>
-                            <a href="<?php echo $h->url(array('page' => 'edit-profile' , 'user' => $h->currentUser->name)); ?>" class="account-nav account-nav-small">
-                        <?php } ?>
-                        <div class="content">
-                              
-                           <?php   if($h->isActive('avatar')) {
-					$h->setAvatar($h->currentUser->id, 32, 'g', 'img-circle');
-					echo  $h->getAvatar();                                       
-				}
-                            ?>
-                                                                                        
-                              <b class="fullname"><?php echo $h->currentUser->name; ?></b>
-                              <small class="metadata">
-                                  Edit profile
-                              </small>
-                            </div>
-                         
-                        </a>
-                    </li>
-
-                    <?php $h->pluginHook('usermenu_top'); ?>
-                    
-                    <?php if ($h->isActive('messaging')) { ?>
-                    <li class="divider"></li>
-
-                    <li class="messages" data-name="messages">
-                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
-                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#inbox')) ?>">
-                          <?php } else { ?>
-                            <a href="<?php echo $h->url(array('page'=>'inbox', 'user' => $h->currentUser->name)) ?>">
-                          <?php } ?>
-                        <span class=""></span>
-                        Messages
-                      </a>
-                    </li>                    
-                    <?php } ?>                  
-
-                    <li class="divider"></li>
-
-                    <li>
-                        <?php if ($h->vars['theme_settings']['userProfile_tabs']) { ?>
-                            <a href="<?php echo $h->url(array('user' => $h->currentUser->name . '#tab_settings')) ?>" data-nav="messages">
-                         <?php } else { ?>
-                            <a href="<?php echo $h->url(array('page'=>'user-settings', 'user' => $h->currentUser->name )); ?>">
-                         <?php } ?>
-                            Settings
-                        </a>
-                    </li>
-  
-                    <li>
-                      <a href="<?php echo $h->url(array('page'=>'logout')); ?>">Sign out</a>                   
-                    </li>
-
-                </ul>
-
-            </li>
-            
-            
-            <?php
+            $h->template('user_signin_navigation', 'user_signin');
         } else {    
-            
             // Allow other plugins to override the Login / Register links
             $result = $h->pluginHook('user_signin_navigation_logged_out');
             if (!$result)
@@ -331,30 +254,24 @@ class UserSignin
     {
         if (!$username_check = $h->cage->post->testUsername('username')) { $username_check = ""; } 
         if (!$password_check = $h->cage->post->testPassword('password')) { $password_check = ""; }
-        if ($h->cage->post->getInt('remember') == 1) { $remember = 1; } else { $remember = 0; }
+        if ($h->cage->post->keyExists('remember') || $h->cage->post->keyExists('persistent')) { $remember = 1; } else { $remember = 0; }
         
         if (($h->cage->post->testPage('page') == 'login') || $h->cage->post->keyExists('forgotten_password')) {
             // if either the login or forgot password form is submitted, check the CSRF key
-            if (!$h->csrf()) {
-                $h->messages[$h->lang['error_csrf']] = 'red';
-                return false;
-            }
+//            if (!$h->csrf()) {
+//                $h->messages[$h->lang['error_csrf']] = 'red';
+//                return false;
+//            }
         }
         
         if ($username_check != "" || $password_check != "") {
-            $login_result = $h->currentUser->loginCheck($h, $username_check, $password_check);
+            $login_result = $h->loginCheck($username_check, $password_check, $remember);
             if ($login_result) {
-                    //success
-                    $h->currentUser->name = $username_check;
-                    $result = $this->loginSuccess($h, $remember);
-                    return $result;
+                return $login_result;
             } else {
-                    // login failed
                     $h->messages[$h->lang["user_signin_login_failed"]] = 'red';
             }
-            
         } else {
-
             if ($h->cage->post->testPage('page') == 'login') {
                 // login failed
                 $h->messages[$h->lang["user_signin_login_failed"]] = 'red';
@@ -373,7 +290,7 @@ class UserSignin
             $userid = $h->cage->get->testInt('userid');
             
             if ($passconf && $userid) {
-                if ($h->currentUser->newRandomPassword($h, $userid, $passconf)) {
+                if ($h->newUserAuth()->newRandomPassword($h, $userid, $passconf)) {
                     $h->messages[$h->lang['user_signin_email_password_conf_success']] = 'green';
                 } else {
                     $h->messages[$h->lang['user_signin_email_password_conf_fail']] = 'red';
@@ -392,7 +309,7 @@ class UserSignin
      */
     public function loginSuccess($h, $remember = 0)
     {
-        $h->currentUser->getUser(0, $h->currentUser->name);
+        $h->getUser(0, $h->currentUser->name);
         
         $user_signin_settings = $h->getSerializedSettings('user_signin');
         $h->vars['useEmailConf'] = $user_signin_settings['emailconf_enabled'];
@@ -412,22 +329,6 @@ class UserSignin
             }
             return false;
         }
-        
-        /**
-        * TODO
-        * remove by v.1.6.0
-        * resetting cookies here domain wide since we are logged out anyway and about to set them, no harm in resetting cookies for the moment ?
-        */
-        $parsed = parse_url(SITEURL); 
-        setcookie("hotaru_user", "", time()-3600, "/", "." . $parsed['host']);
-        setcookie("hotaru_key", "", time()-3600, "/", "." . $parsed['host']); 
-        /**
-        *****************************/
-        
-        $h->currentUser->setCookie($h, $remember);
-        $h->currentUser->loggedIn = true;
-        $h->currentUser->updateUserLastLogin($h);
-        $h->currentUser->updateUserLastVisit($h);
         
         return true;
     }
@@ -453,7 +354,7 @@ class UserSignin
         
         if ($valid_email && $userid) {
                 //success
-                $h->currentUser->sendPasswordConf($h, $userid, $valid_email);
+                $h->newUserAuth()->sendPasswordConf($h, $userid, $valid_email);
                 $h->messages[$h->lang['user_signin_email_password_conf_sent']] = 'green';
                 return true;
         } else {
@@ -505,7 +406,7 @@ class UserSignin
             if ($password_check) {
                 if ($password_check == $password2_check) {
                     // safe, the two new password fields match
-                    $h->currentUser->password = $h->currentUser->generateHash($password_check);
+                    $h->currentUser->password = $password_check;
                 } else {
                     $h->messages[$h->lang['user_signin_register_password_match_error']] = 'red';
                     $error = 1;
@@ -633,7 +534,7 @@ class UserSignin
             return true;
         }
         
-        $h->pluginHook('users_signin_register_check_blocked');  // Stop Spam is one plugin that uses this
+        $h->pluginHook('users_register_check_blocked');  // Stop Spam is one plugin that uses this
         if (isset($h->vars['block']) && $h->vars['block'] == true) { return true; }
 
         return false;   // not blocked
@@ -647,7 +548,7 @@ class UserSignin
      */
     public function sendConfirmationEmail($h, $user_id)
     {
-        $user = new UserAuth();
+        $user = $h->newUserAuth();
         $user->getUserBasic($h, $user_id);
         
         // generate the email confirmation code
@@ -676,13 +577,6 @@ class UserSignin
         $body .= $h->lang['user_signin_register_emailconf_body_sign'];
         $to = $user->email;
         
-        /*
-        echo "To: " . $to . "<br />";
-        echo "Subject: " . $subject . "<br />";
-        echo "Body: " . $body . "<br />";
-        echo "Headers: " . $headers . "<br />";
-        */
-
         $h->email($to, $subject, $body);    
     }
     

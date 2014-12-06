@@ -6,7 +6,7 @@
  * folder: activity
  * class: Activity
  * requires: users 1.1, widgets 0.6
- * hooks: install_plugin, header_include, comment_post_add_comment, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, theme_index_main, profile, breadcrumbs, follow_activity, api_call, comment_voting_funcs_positive, comment_voting_funcs_negative
+ * hooks: install_plugin, header_include, comment_post_add_comment, navigation, comment_update_comment, com_man_approve_all_comments, comment_delete_comment, post_add_post, post_update_post, post_change_status, post_delete_post, userbase_killspam, vote_positive_vote, vote_negative_vote, vote_flag_insert, admin_sidebar_plugin_settings, admin_plugin_settings, theme_index_top, theme_index_main, profile, breadcrumbs, follow_activity, api_call, comment_voting_funcs_positive, comment_voting_funcs_negative
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -55,6 +55,7 @@ class Activity
         if (!isset($activity_settings['number'])) { $activity_settings['number'] = 20; }
         if (!isset($activity_settings['rss_number'])) { $activity_settings['rss_number'] = 20; }
         if (!isset($activity_settings['time'])) { $activity_settings['time'] = "checked"; }
+        if (!isset($activity_settings['navigation'])) { $activity_settings['navigation'] = "checked"; }
         if (!isset($activity_settings['refresh_button'])) { $activity_settings['refresh_button'] = ""; }
         
         $h->updateSetting('activity_settings', serialize($activity_settings));
@@ -356,7 +357,23 @@ class Activity
         // Get latest activity
         $activity = $h->getLatestActivity($activity_settings['widget_number']);
         
-        $h->template('activity_widget');                 
+        //$h->template('activity_widget','activity');
+        // build link that will link the widget title to all activity...        
+        $anchor_title = htmlentities($h->lang("activity_title_anchor_title"), ENT_QUOTES, 'UTF-8');
+        $title = "<a href='" . $h->url(array('page'=>'activity')) . "' title='" . $anchor_title . "'>" .$h->lang('activity_title') . "</a>";
+
+        if (isset($activity) && !empty($activity)) { ?>
+            
+            <h4 class='widget_head activity_widget_title'>
+                <?php echo $title; ?><a href="<?php echo $h->url(array('page'=>'rss_activity')); ?>" title="<?php echo $anchor_title; ?>">
+                    <i class="fa fa-rss"></i>
+            </h4>
+
+            <ul class='widget_body activity_widget_items'>            
+                <?php echo $this->getWidgetActivityItems($h, $activity, false); ?>
+            </ul>
+
+        <?php }
     }
     
     
@@ -467,10 +484,22 @@ class Activity
         echo "</ul></div>";
         
         if ($h->vars['pagedResults']) { echo $h->pageBar($h->vars['pagedResults']); }
-
-
     }
     
+    
+    /**
+     * Add "Activity" to the navigation bar
+     */
+    public function navigation($h)
+    {
+        if ($h->pluginSettings['activity']['navigation'] != 'checked') { return false; }
+        
+        // highlight "Activity" as active tab
+        if ($h->pageType == 'activity') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
+        
+        // display the link in the navigation bar
+        echo "<li " . $status . "><a href='" . $h->url(array('page'=>'activity')) . "'>" . $h->lang('activity_nav_title') . "</a></li>";
+    }
     
     /**
      * Display activity on Profile page
@@ -504,7 +533,7 @@ class Activity
         
         $crumbs = $h->pageTitle;
         $crumbs .= "<a href='" . $h->url(array('page'=>'rss_activity')) . "'>";
-        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n";
+        $crumbs .= ' <i class="fa fa-rss-square rss-icon"></i></a>';
         
         return $crumbs;
     }
@@ -574,7 +603,7 @@ class Activity
                             }
 
                             if ($act->useract_userid == 0) {
-                                $name = $h->lang['activity_anonymous'];
+                                $name = $h->lang('activity_anonymous');
                             } else {
                                 $name = $h->getUserNameFromId($act->useract_userid);
                             }
@@ -591,9 +620,9 @@ class Activity
             }
 
             if ($user) { 
-                    $description = $h->lang["activity_rss_latest_from_user"] . " " . $user; 
+                    $description = $h->lang("activity_rss_latest_from_user") . " " . $user; 
             } else {
-                    $description = $h->lang["activity_rss_latest"] . SITE_NAME;
+                    $description = $h->lang("activity_rss_latest") . SITE_NAME;
             }
 
             $h->rss(SITE_NAME, BASEURL, $description, $items);

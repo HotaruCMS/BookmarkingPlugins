@@ -36,19 +36,19 @@
     <div id="submit_edit_confirm">
     
         <!-- EDIT BUTTON -->
-        <form name='submit_3' action='<?php echo BASEURL; ?>index.php?page=submit3' method='post'>
+        <form role='form' name='submit_3' action='<?php echo BASEURL; ?>index.php?page=submit3' method='post'>
         <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
         <input type='hidden' name='submit3edit' value='true' />
         <input type='hidden' name='submit_key' value='<?php echo $h->vars['submit_key']; ?>' />
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $h->lang['main_form_edit']; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='btn btn-warning submit' value='<?php echo $h->lang['main_form_edit']; ?>' />
         </form>    
 
         <!-- CONFIRM BUTTON -->
         <form name='submit_3' action='<?php echo BASEURL; ?>index.php?page=submit_confirm' method='post'>
         <input type='hidden' name='submit_post_id' value='<?php echo $h->post->id; ?>' />
         <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='submit' value='<?php echo $h->lang['main_form_confirm']; ?>' />
+        <input type='submit' name='submit' onclick="javascript:safeExit=true;" class='btn btn-primary submit' value='<?php echo $h->lang['main_form_confirm']; ?>' />
         </form>
     </div>
     

@@ -13,6 +13,8 @@ Instructions
 
 Changelog
 ---------
+v.0.8 2014/10/14 - shibuya246 - various style fixes for older themes
+v.0.7 2014/10/07 - shibuya246 - fix for sort filters hook on no posts for plugins like domain_results
 v.0.6 2013/06/01 - shibuya246,Nick - a few css updates and hook for custom filters
 v.0.5 2010/08/10 - Nick - Edits to CSS and templates to allow for posts by "Anonymous" users
 		   	- Fix for blank post type on settings page when no posts in database

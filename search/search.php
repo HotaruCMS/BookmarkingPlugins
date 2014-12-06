@@ -2,11 +2,10 @@
 /**
  * name: Search
  * description: Displays search box
- * version: 1.3
+ * version: 1.5
  * folder: search
  * class: Search
  * type: search
- * requires: widgets 0.6
  * hooks: install_plugin, theme_index_top, header_include, bookmarking_functions_preparelist, search_box, search_box_nav, breadcrumbs, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://nickramsay.com
@@ -124,6 +123,7 @@ class Search
     
     /**
      * Prepare search filter
+     * TODO this is now in the Search LIBS folder and can be removed from here for v.1.7 > users
      */
     public function prepareSearchFilter($h, $search, $return = 'posts')
     {
@@ -259,9 +259,7 @@ class Search
         $search = $h->cage->get->sanitizeTags('search');
         if (!$search || !$h->isActive('search')) { return false; }
         
-        require_once(PLUGINS . 'search/search.php');
-        $search_plugin = new Search();
-        $prepared_search = $search_plugin->prepareSearchFilter($h, $search);
+        $prepared_search = $h->prepareSearchFilter($h, $search);
         extract($prepared_search);
         $h->vars['postRssSelect'] = $select;
         $h->vars['postRssFilter'] = $filter;

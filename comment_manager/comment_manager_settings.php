@@ -45,7 +45,7 @@ class CommentManagerSettings
         $h->vars['comment_status_filter'] = 'newest';
         
         require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment();
+        $h->comment = new \Libs\Comment();
         
         // approve comment
         if ($h->cage->get->getAlpha('action') == 'approve') 
@@ -307,7 +307,7 @@ class CommentManagerSettings
             $alt++;
             
             // We need user for the post author's name:
-            $user = new UserBase();
+            $user = new \Libs\UserBase();
             $user->getUserBasic($h, $comments->comment_user_id);
             
             // need to read the comment into the Comment object.

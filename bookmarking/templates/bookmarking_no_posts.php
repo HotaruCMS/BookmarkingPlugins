@@ -25,6 +25,7 @@
  */
 
 $linkArray = array('popular', 'latest', 'upcoming', 'all');
+$h->pluginHook('bookmarking_sort_filter'); // allow custom filters
 
 ?>
 <div style="padding:15px 25px;" class="hero-unit">    
@@ -45,11 +46,15 @@ $linkArray = array('popular', 'latest', 'upcoming', 'all');
                 <p><?php echo $h->lang("bookmarking_extend_your_search"); ?></p>
                 <ul>
                     <?php foreach ($linkArray as $link) {
+                        //print $h->pageType;
                         $href = $link . '_link';
                         $name = 'bookmarking_sort_' . $link;
-                        echo '<li><a href="' . $h->vars[$href] . '">' . $h->lang($name) . '</a>';
-                        if ($link == 'all' && isset($h->vars['bookmarking']['filter'])) echo' <span class="label label-info">' . $h->countPostsFilter(0,0,$h->vars['bookmarking']['filter'], $h->vars['bookmarking']['filterText'], $link) . '</span>';
-                            echo '</li>';
+                        $hrefLink = isset($h->vars[$href]) ? $h->vars[$href] : SITEURL . $link;
+                        echo '<li><a href="' . $hrefLink . '">' . $h->lang($name) . '</a>';
+                            if ($link == 'all' && isset($h->vars['bookmarking']['filter'])) { 
+                                echo' <span class="label label-info">' . $h->countPostsFilter(0,0,$h->vars['bookmarking']['filter'], $h->vars['bookmarking']['filterText'], $link) . '</span>';                           
+                            }
+                        echo '</li>';
                     } ?>
                 </ul>
                 <?php if ($h->isActive('submit')) { ?>

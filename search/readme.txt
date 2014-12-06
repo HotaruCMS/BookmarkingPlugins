@@ -20,6 +20,7 @@ If you'd like to show the search box without using it in a widget, paste this PH
 
 Changelog
 ---------
+v.1.5 2014/10/23 - shibuya246 - Move search filter to LIBS for general usage
 v.1.4 2014/04/26 - shibuya246 - Add form css for bootstrap
 v.1.3 2010/08/16 - Nick - Fixes for searching non-alphanumeric phrases not separated with spaces
 v.1.2 2010/07/29 - Nick - Fixes for searching non-alphanumeric phrases

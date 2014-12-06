@@ -6,7 +6,7 @@
  * folder: users
  * type: users
  * class: Users
- * hooks: install_plugin, pagehandling_getpagename, theme_index_top, header_include, bookmarking_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
+ * hooks: install_plugin, pagehandling_getpagename, theme_index_top, navigation, header_include, bookmarking_functions_preparelist, breadcrumbs, theme_index_main, users_edit_profile_save, user_settings_save, admin_theme_main_stats, header_meta, post_rss_feed
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -31,6 +31,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
+
+//namespace Plugins;
 
 class Users
 {
@@ -79,91 +81,102 @@ class Users
      */
     public function theme_index_top($h)
     {        
-        $user = $h->cage->get->testUsername('user');
-        if ($user) {
+        $username = $h->cage->get->testUsername('user');
+        if ($username) {
             $h->subPage = 'user';
         }
         
         switch ($h->pageName)
         {
             case 'profile':
-                $h->pageTitle = $h->lang["users_profile"] . '[delimiter]' . $user;
+                $h->pageTitle = $h->lang["users_profile"] . '[delimiter]' . $username;
                 $h->pageType = 'user';
                 break;
             case 'account':
-                $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $user;
+                $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $username;
                 $h->pageType = 'user';
                 break;
             case 'edit-profile':
-                $h->pageTitle = $h->lang["users_profile_edit"] . '[delimiter]' . $user;
+                $h->pageTitle = $h->lang["users_profile_edit"] . '[delimiter]' . $username;
                 $h->pageType = 'user';
                 break;
             case 'user-settings':
-                $h->pageTitle = $h->lang["users_settings"] . '[delimiter]' . $user;
+                $h->pageTitle = $h->lang["users_settings"] . '[delimiter]' . $username;
+                $h->pageType = 'user';
+                break;
+            case 'user-logins':
+                $h->pageTitle = $h->lang["users_logins"] . '[delimiter]' . $username;
                 $h->pageType = 'user';
                 break;
             case 'permissions':
-                if (!$user) { // when the permissions form is submitted
+                if (!$username) { // when the permissions form is submitted
                     $userid = $h->cage->post->testInt('userid');
-                    $user = $h->getUserNameFromId($userid);
+                    $username = $h->getUserNameFromId($userid);
                 }
-                $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $user;
+                $h->pageTitle = $h->lang["users_permissions"] . '[delimiter]' . $username;
                 $h->pageType = 'user';
                 break;
             case 'popular':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_top"] . '[delimiter]' . $user . '[delimiter]' . SITE_NAME; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_top"] . '[delimiter]' . $username . '[delimiter]' . SITE_NAME; }
                 break;
             case 'latest':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_latest"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_latest"] . '[delimiter]' . $username; }
                 break;
             case 'upcoming':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_upcoming"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_upcoming"] . '[delimiter]' . $username; }
                 break;
             case 'all':
-                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_all"] . '[delimiter]' . $user; }
+                if ($h->subPage == 'user') { $h->pageTitle = $h->lang["bookmarking_all"] . '[delimiter]' . $username; }
                 break;
             case 'sort':
                 if ($h->subPage == 'user') { 
                     $sort = $h->cage->get->testPage('sort');
                     $sort_lang = 'bookmarking_' . str_replace('-', '_', $sort);
-                    $h->pageTitle = $h->lang[$sort_lang] . '[delimiter]' . $user;
+                    $h->pageTitle = $h->lang[$sort_lang] . '[delimiter]' . $username;
                 }
+                break;
+            case 'users':
+                $h->pageTitle = 'Users';
+                $h->pageType = 'users';
                 break;
         }
 
-        // read this user into the global hotaru object for later use on this page
         if ($h->pageType != 'user' && $h->subPage != 'user') { return false; }
         
-        $h->vars['user'] = new UserAuth();
-        if ($user) {
-            $result = $h->vars['user']->getUser($h, 0, $user);
+        // read this user into the global hotaru object for later use on this page
+        if ($username) {
+            $h->displayUser->set($h, 0, $username);
         } else {
             // when the account page has been submitted (get id in case username has changed)
             $userid = $h->cage->post->testInt('userid');
             if ($userid) { 
-                $result = $h->vars['user']->getUser($h, $userid); 
+                $h->displayUser->set($h, $userid); 
             } else {
-                $result = $h->vars['user']->getUser($h, $h->currentUser->id); // default to self 
+                $h->displayUser->set($h, $h->currentUser->id); // default to self 
             }
         }
-        
-        if (isset($result)) {
-            $h->vars['profile'] = $h->vars['user']->getProfileSettingsData($h, 'user_profile');
-            $h->vars['settings'] = $h->vars['user']->getProfileSettingsData($h, 'user_settings');
-            $h->vars['user']->id = isset($result->user_id) ? $result->user_id : 0;
+        //print "<br/><br/>displayUser<br/>";
+        //print_r($h->displayUser);
+        //print "<br/>*****************<br/>";
+        if ($h->displayUser) {
+            $h->vars['profile'] = $h->displayUser->getProfileSettingsData($h, 'user_profile');
+            $h->vars['settings'] = $h->displayUser->getProfileSettingsData($h, 'user_settings');
         } else {
             $h->pageTitle = $h->lang["main_theme_page_not_found"];
             $h->pageType = '';
-            $h->vars['user'] = false;
         }
         
         /* check for account updates */
-        if ($h->pageName == 'account') {
-            $h->vars['checks'] = $h->vars['user']->updateAccount($h);
-            $h->vars['user']->name = $h->vars['checks']['username_check'];
-            $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $h->vars['user']->name;
+        if ($h->pageName == 'account') {            
+            $h->vars['checks'] = $h->displayUser->updateAccount($h);
+            $h->displayUser->name = $h->vars['checks']['username_check'];
+            $h->pageTitle = $h->lang["users_account"] . '[delimiter]' . $h->displayUser->name;
             $h->pageType = 'user';
         }
+        
+        // TODO deprecate by ver 2.0
+        // for all old plugins we still need to set the vars user as well
+        $h->vars['user'] = $h->displayUser;
     }
     
     
@@ -176,10 +189,10 @@ class Users
             if (isset($h->vars['profile']['bio']) && ($h->vars['profile']['bio'] != $h->lang['users_profile_default_bio'])) { 
                 echo '<meta name="description" content="' . $h->vars['profile']['bio'] . '" />' . "\n";
             } else {
-                echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->vars['user']->name . $h->lang['users_default_meta_description_after'] . '" />' . "\n";  // default profile meta description (see language file)
+                echo '<meta name="description" content="' . $h->lang['users_default_meta_description_before'] . $h->displayUser->name . $h->lang['users_default_meta_description_after'] . '" />' . "\n";  // default profile meta description (see language file)
             }
             
-            echo '<meta name="keywords" content="' . $h->vars['user']->name . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
+            echo '<meta name="keywords" content="' . $h->displayUser->name . $h->lang['users_profile_meta_keywords_more'] . '" />' . "\n";  // default profile meta keywords (see language file)
             
             return true;
         }
@@ -201,7 +214,6 @@ class Users
     }
     
     
-    
     /**
      * Filter posts to this user
      */
@@ -210,7 +222,7 @@ class Users
         $username = $h->cage->get->testUsername('user');
         if ($username) {
             $h->vars['filter']['post_author = %d'] = $h->getUserIdFromName($username);
-			unset($h->vars['filter']['post_archived = %s']);
+            unset($h->vars['filter']['post_archived = %s']);
         }
     }
     
@@ -222,9 +234,9 @@ class Users
     {
         $crumbs = '';
         
-        if (isset($h->vars['user']) && $h->vars['user']->name) {
-            $userlink = "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
-            $userlink .= $h->vars['user']->name . "</a>";
+        if ($h->displayUser->name) {
+            $userlink = "<a href='" . $h->url(array('user'=>$h->displayUser->name)) . "'>";
+            $userlink .= $h->displayUser->name . "</a>";
         } else {
         	return false;
         }
@@ -250,6 +262,10 @@ class Users
                 break;
             case 'permissions':
                 $crumbs = $userlink . ' / ' . $h->lang["users_permissions"];
+                //return $crumbs;
+                break;
+            case 'user-logins':
+                $crumbs = $userlink . ' / ' . $h->lang["users_logins"];
                 //return $crumbs;
                 break;
         }
@@ -291,33 +307,32 @@ class Users
         if ($h->currentUser->adminAccess) { 
             
             // put a dropdown on the right handside of the breadcrumb nav
-            $crumbs .= '<div class="pull-right">' .
+            $crumbs .= '<li class="pull-right">' .
                     '<div class="btn-group">' .
-                    '<a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">' .
+                    '<a class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" href="#">' .
                     'Admin&nbsp;<span class="caret"></span></a>' .
                     '<ul class="dropdown-menu">' .
                     '<!-- dropdown menu links -->';
 
-                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'account', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_account"] . '</a></li>';
-                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'edit-profile', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_profile_edit"] . '</a></li>';
-                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'user-settings', 'user'=>$h->vars['user']->name)) . '">' . $h->lang["users_settings"] . '</a></li>';                        
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'account', 'user'=>$h->displayUser->name)) . '">' . $h->lang["users_account"] . '</a></li>';
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'user-logins', 'user'=>$h->displayUser->name)) . '">' . $h->lang("users_logins") . '</a></li>';
+                        $crumbs .= '<li><a href="' . $h->url(array('page'=>'user-settings', 'user'=>$h->displayUser->name)) . '">' . $h->lang["users_settings"] . '</a></li>';                        
                         
                         $crumbs .= '<li class="divider"></li>';
                         
                         // show permissions   
-                        $href = $h->url(array('page'=>'permissions', 'user'=>$h->vars['user']->name));
+                        $href = $h->url(array('page'=>'permissions', 'user'=>$h->displayUser->name));
                         $crumbs .= '<li><a href="' . $href . '">' . $h->lang["users_permissions"] . '</a></li>';
  
                         // show User Manager link only if theplugin is active
                         if ($h->isActive('user_manager')) {
-                            $crumbs .= '<li><a href="' . BASEURL . 'admin_index.php?search_value=' . $h->vars['user']->name . '&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search#tab_settings">' . $h->lang['user_man_link'] . '</a></li>';
+                            $crumbs .= '<li><a href="' . BASEURL . 'admin_index.php?search_value=' . $h->displayUser->name . '&amp;plugin=user_manager&amp;page=plugin_settings&amp;type=search#tab_settings">' . $h->lang['user_man_link'] . '</a></li>';
 
                             $h->pluginHook('profile_navigation_restricted');                        
                          }        
                          
                 $crumbs .= '</ul>' .
-                  '</div>' .  
-                  '</div>';
+                  '</div></li>';
         }
 
         return $crumbs;
@@ -329,16 +344,21 @@ class Users
      */
     public function theme_index_main($h)
     {
-        if ($h->pageType != 'user') { return false; }
+        if ($h->pageType != 'user' && $h->pageType != 'users') { return false; }
 
-        // if user doesn't exist
-        if (!$h->vars['user']->name) { return false; }
-        if ($h->userExists(0, $h->vars['user']->name) == 'no') { return false; }
+        if ($h->pageType == 'users') {
+                $this->usersBrowse($h);
+                return;
+        }
+        
+        //print_r($h->displayUser);
+        if (!$h->displayUser->name) { return false; }
+        if ($h->userExists(0, $h->displayUser->name) == 'no') { return false; }
         
         // determine permissions
         $admin = false; $own = false; $denied = false;
         if ($h->currentUser->getPermission('can_access_admin') == 'yes') { $admin = true; }
-        if ($h->currentUser->id == $h->vars['user']->id) { $own = true; }
+        if ($h->currentUser->id == $h->displayUser->id) { $own = true; }
 
         $h->template('users_navigation');
         
@@ -363,10 +383,21 @@ class Users
                 return true;
                 break;
             case 'permissions':
-                if (!$admin) { $denied = true; break; }
+                if (!$admin ) { $denied = true; break; }
                 $this->editPermissions($h);
                 $h->template('users_permissions');
                 return true;
+                break;
+            case 'user-logins':
+                if (!$admin && !$own) {
+                    $denied = true;
+                    break; 
+                }
+                if (version_compare($h->version, '1.6.6') > 0) {
+                    $h->vars['logins'] = $h->getUserLogins($h->displayUser->id);
+                    $h->template('users_logins');
+                    return true;
+                }
                 break;
         }
         
@@ -374,6 +405,28 @@ class Users
             $h->messages[$h->lang["main_access_denied"]] = 'red';
             $h->showMessages();
         }
+    }
+    
+    
+    public function navigation($h)
+    {
+        $h->template('users_top_navigation');
+    }
+    
+    
+    private function usersBrowse($h)
+    {
+        // gets query and total count for pagination
+        $users_query = $h->getUsers(0, 'query');
+        $users_count = $h->getUsers(0, 'count');
+        
+        $limit = 30;
+        // pagination 
+        $h->vars['pagedResults'] = $h->pagination($users_query, $users_count, $limit, 'users');
+        
+        $h->template('users_browse');
+        
+        if ($h->vars['pagedResults']) { echo $h->pageBar($h->vars['pagedResults']); }
     }
     
     
@@ -392,20 +445,20 @@ class Users
             return false;
         }
         
-        $h->vars['user']->saveProfileSettingsData($h, $profile, 'user_profile', $h->vars['user']->id);
+        $h->displayUser->saveProfileSettingsData($h, $profile, 'user_profile', $h->displayUser->id);
         
         /*  Problem! The previous profile data is cached and we don't want to disable caching for profiles, 
             nor do we want to clear the entire db_cache, so instead, we'll delete the cache file that holds
             the previous profile for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_profile');
+        $query = $h->db->prepare($sql, $h->displayUser->id, 'user_profile');
         $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
         }
         
         $h->message = $h->lang["users_profile_edit_saved"] . "<br />\n";
-        $h->message .= "<a href='" . $h->url(array('user'=>$h->vars['user']->name)) . "'>";
+        $h->message .= "<a href='" . $h->url(array('user'=>$h->displayUser->name)) . "'>";
         $h->message .= $h->lang["users_profile_edit_view_profile"] . "</a>\n";
         $h->messageType = "green";
     }
@@ -426,13 +479,13 @@ class Users
             return false;
         }
         
-        $h->vars['user']->saveProfileSettingsData($h, $settings, 'user_settings', $h->vars['user']->id);
+        $h->displayUser->saveProfileSettingsData($h, $settings, 'user_settings', $h->displayUser->id);
         
         /*  Problem! The previous settings data is cached and we don't want to disable caching for settings, 
             nor do we want to clear the entire db_cache, so instead, we'll delete the cache file that holds
             the previous settings for this user. */
         $sql = "SELECT usermeta_value FROM " . DB_PREFIX . "usermeta WHERE usermeta_userid = %d AND usermeta_key = %s";
-        $query = $h->db->prepare($sql, $h->vars['user']->id, 'user_settings');
+        $query = $h->db->prepare($sql, $h->displayUser->id, 'user_settings');
         $cache_file = CACHE . 'db_cache/' . md5($query) . '.php';
         if (file_exists($cache_file)) {
             unlink($cache_file); // delete cache file.
@@ -449,14 +502,14 @@ class Users
     public function editPermissions($h)
     {
         // prevent non-admin user viewing permissions of admin user
-        if (($h->vars['user']->role) == 'admin' && ($h->currentUser->role != 'admin')) {
+        if (($h->displayUser->role) == 'admin' && ($h->currentUser->role != 'admin')) {
             $h->messages[$h->lang["users_account_admin_admin"]] = 'red';
             $h->showMessages();
             return true;
         }
         
         $perm_options = $h->getDefaultPermissions('', 'site', true);
-        $perms = $h->vars['user']->getAllPermissions();
+        $perms = $h->displayUser->getAllPermissions();
         
         // If the form has been submitted...
         if ($h->cage->post->keyExists('permissions')) {
@@ -469,15 +522,15 @@ class Users
         
            foreach ($perm_options as $key => $options) {
                 if ($value = $h->cage->post->testAlnumLines($key)) {
-                    $h->vars['user']->setPermission($key, $value);
+                    $h->displayUser->setPermission($key, $value);
                 }
             }
 
-            $h->vars['user']->updatePermissions($h);   // physically store changes in the database
+            $h->displayUser->updatePermissions($h);   // physically store changes in the database
             
             // get the newly updated latest permissions:
             $perm_options = $h->getDefaultPermissions('', 'site', true);
-            $perms = $h->vars['user']->getAllPermissions();
+            $perms = $h->displayUser->getAllPermissions();
             $h->messages[$h->lang['users_permissions_updated']] = 'green';
         }
         
@@ -486,7 +539,7 @@ class Users
             $h->vars['perm_options'] .= "<tr><td>" . make_name($key) . ": </td>\n";
             foreach($options as $value) {
                 if (isset($perms[$key]) && ($perms[$key] == $value)) { $checked = 'checked'; } else { $checked = ''; } 
-                if ($key == 'can_access_admin' && $h->vars['user']->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
+                if ($key == 'can_access_admin' && $h->displayUser->role == 'admin') { $disabled = 'disabled'; } else { $disabled = ''; }
                 $h->vars['perm_options'] .= "<td><input type='radio' name='" . $key . "' value='" . $value . "' " . $checked . " " . $disabled . "> " . $value . " &nbsp;</td>\n";
             }
             $h->vars['perm_options'] .= "</tr>";
@@ -498,8 +551,12 @@ class Users
      * Show stats on Admin home page
      */
     public function admin_theme_main_stats($h, $vars)
-    {        
-        $ui = new UserInfo();
+    {
+        if (version_compare($h->version, '1.6.6') > 0) {
+            $ui = \Libs\UserInfo::instance();
+        } else {
+            $ui = new UserInfo();
+        }
         $stats = $ui->stats($h); //, 'today');
 
 		//var_dump($stats);
@@ -507,7 +564,6 @@ class Users
 		echo "<li>&nbsp;</li>";
 		if ($stats) {
 		    foreach ($stats as $stat) {
-			//var_dump($stat);
 			$users[$stat[0]] = $stat[1];
 		    }
 		}
@@ -515,7 +571,7 @@ class Users
 		if (isset($vars) && (!empty($vars))) {
 			foreach ($vars as $key => $value) {
 				$key_lang = 'users_admin_stats_' . $key;
-				echo "<li class='title'>" . $h->lang[$key_lang] . "</li>";
+				echo "<li class='title'>" . $h->lang($key_lang) . "</li>";
 				foreach ($value as $stat_type) {
 					if (isset($value) && !empty($value)) {
 	
@@ -541,7 +597,7 @@ class Users
 						$lang_name = 'users_admin_stats_' . $stat_type;
 						echo '<li data-bind="text: userCount">';
 						if ($link) { echo "<a href='" . $link . "'>"; }
-						echo $h->lang[$lang_name] . ": " . $user_count;
+						echo $h->lang($lang_name) . ": " . $user_count;
 						if ($link) { echo "</a>"; }
 						echo "</li>";
 					}
@@ -557,12 +613,14 @@ class Users
     public function post_rss_feed($h)
     {
         $user = $h->cage->get->testUsername('user');
-        if (!$user) { return false; }
+        if (!$user) {
+            return false; 
+        }
         
         $user_id = $h->getUserIdFromName($user);
-        if ($user_id) { $h->vars['postRssFilter']['post_author = %d'] = $user_id; }
+        if ($user_id) { 
+            $h->vars['postRssFilter']['post_author = %d'] = $user_id;
+        }
         $h->vars['postRssFeed']['description'] = $h->lang["post_rss_from_user"] . " " . $user; 
     }
 }
-
-?>

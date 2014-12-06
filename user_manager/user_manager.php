@@ -2,11 +2,12 @@
 /**
  * name: User Manager
  * description: Manage users.
- * version: 1.3
+ * version: 1.5
  * folder: user_manager
  * class: UserManager
+ * type: Admin
  * requires: users 1.1, user_signin 0.5
- * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_sidebar_users, post_manager_user_name, comment_manager_user_name, submit_edit_end
+ * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, post_manager_user_name, comment_manager_user_name, submit_edit_end, admin_sidebar_users
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -26,8 +27,8 @@
  * 
  * @category  Content Management System
  * @package   HotaruCMS
- * @author    Hotaru CMS Team
- * @copyright Copyright (c) 2009 - 2013, Hotaru CMS
+ * @author    Nick Ramsay <admin@hotarucms.org>
+ * @copyright Copyright (c) 2009, Hotaru CMS
  * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @link      http://www.hotarucms.org/
  */
@@ -41,25 +42,10 @@ class UserManager
      *
      * @return bool
      */
-    public function comment_manager_user_name($h) { $this->post_manager_user_name($h); }
-    
-    public function post_manager_user_name($h)
-    {
-		// THIS IS NO LONGER USED IN POST MANAGER 1.0 +
-
-        list($username, $output) = $h->vars['user_manager_name_icons'];
-        
-        $output .="<div class='user_manager_name_icons'>";
-        $output .= "&nbsp;<a href='" . $h->url(array('page'=>'account', 'user'=>$username)) . "'>";
-        $output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_account.png' title='User Account'></a>";
-        
-        $output .= "&nbsp;<a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>";
-        $output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_manager.png' title='User Manager'></a>";
-        $output .= "</div>";
-        
-        $h->vars['user_manager_name_icons'] = array($username, $output);
+    public function comment_manager_user_name($h) {
+        // deprecated 
     }
-    
+
 
     /**
      * Add link to user at bottom of Submit Edit Post
@@ -73,7 +59,6 @@ class UserManager
         
         echo "<p class='user_man_find_user'><a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>" . $h->lang['user_man_find_user'] . "</a></p>";
     }
-    
     
     /**
      * Add link to admin sidebar

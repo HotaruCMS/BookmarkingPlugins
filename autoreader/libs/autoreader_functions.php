@@ -176,14 +176,16 @@ class AutoReaderFuncs
 
 	public function adminEditCategories($h, $data, $parent = 0, $level = 0, $categories = 0)
 	{
-		if ( !$categories )
+		if (!$categories) {
 			$args = array("orderby"=>"category_order", "order"=>"ASC");
+                }
+                
 		$categories = $h->getCategories($args);
 
 		if ( $categories )
 		{
 			require_once(LIBS . 'Category.php');
-			$catObj = new Category();
+			$catObj = new \Libs\Category($h);
 			$depth = 1;
 
 			echo "<ul class='categories_widget'>\n";
@@ -269,7 +271,8 @@ class AutoReaderFuncs
 		$hook = "autoreader_runcron";
 		$args = array('id'=> $id);
 		$cron_data = array('hook'=>$hook, 'args'=>$args);
-		$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+		//$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+                $h->cronDeleteJob($cron_data);
 
 		$arr = array('id'=> $id);
 		return json_encode($arr);
@@ -613,7 +616,7 @@ class AutoReaderFuncs
 		$date = $timestamp;
 		//$date = ($timestamp) ? gmdate('Y-m-d H:i:s', $timestamp + (get_option('gmt_offset') * 3600)) : null;
 
-		$h->post = new Post();
+		$h->post = new \Libs\Post();
 
 		// Force unique urls for posts with duplicate titles:
 		$i = 1;
@@ -1052,14 +1055,16 @@ class AutoReaderFuncs
 			$hook = "autoreader_runcron";
 			$args = array('id'=> $id);
 			$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook, 'args'=>$args);
-			$h->pluginHook('cron_update_job', 'cron', $cron_data);
+			//$h->pluginHook('cron_update_job', 'cron', $cron_data);
+                        $h->cronUpdateJob($cron_data);
 		}
 		else
 		{
 			$hook = "autoreader_runcron";
 			$args = array('id'=> $id);
 			$cron_data = array('hook'=>$hook, 'args'=>$args);
-			$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+			//$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+                        $h->cronDeleteJob($cron_data);
 		}
 
 		// campaign_frequency_d

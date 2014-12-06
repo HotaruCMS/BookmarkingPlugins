@@ -25,7 +25,7 @@
  */
 
 ?>
-    <form class="navbar-form navbar-right" accept-charset="UTF-8" name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'>     
+    <form role="form" class="navbar-form navbar-right" accept-charset="UTF-8" name='search_form' id='search_form' action='<?php echo BASEURL; ?>index.php?page=search' method='get'>     
         <div class="form-group">
             <input name="search" id="search_input" type="text" class="form-control" placeholder="<?php echo $h->lang('search_text'); ?>">
             <input name="utf8" type="hidden" value="✓">

@@ -30,10 +30,11 @@ require_once(PLUGINS . 'activity/libs/ActivityFunctions.php');
 $act = new ActivityFunctions();
 ?>
 
-<h2><?php echo $h->lang['activity_title']; ?>
-    <a href="<?php echo $h->url(array('page'=>'rss_activity', 'user'=>$h->vars['user_name']))?>" title="<?php echo $h->lang['activity_title_anchor_title']; ?>">
-    <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" width="16" height="16" alt="rss" /></a>
-</h2>
+<h4><?php echo $h->lang('activity_title'); ?>
+    <a href="<?php echo $h->url(array('page'=>'rss_activity', 'user'=>$h->vars['user_name']))?>" title="<?php echo $h->lang('activity_title_anchor_title'); ?>">
+        <i class="fa fa-rss-square rss-icon"></i>        
+    </a>
+</h4>
 
 <div id='activity'>
     <ul class='activity_items'>
@@ -61,7 +62,7 @@ $act = new ActivityFunctions();
                             </div>
                         <?php } ?>
 
-			<?php if ($user_id == 0) { echo $h->lang['activity_anonymous']; } else {
+			<?php if ($user_id == 0) { echo $h->lang('activity_anonymous'); } else {
 			    echo "<a class='activity_user' href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a>";
 			}?>
                         

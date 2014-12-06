@@ -1,6 +1,6 @@
 /* related posts */
 
-.related_posts_container { margin-left: 0.6em;}
+.related_posts_container ul { margin-left: 0; padding-left: 0;}
 #related_posts_title {margin-top: 1.0em; }
 .related_posts { margin-bottom: 1.2em; list-style-type: none; margin-left: 0.2em;}
 .related_posts_vote { text-align: center;  padding: 0 0.6em; }

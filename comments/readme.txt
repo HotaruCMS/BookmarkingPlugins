@@ -14,6 +14,8 @@ Instructions
 
 Changelog
 ---------
+v.2.8.1 2014/10/26 - shibuya246 - fix error in comment form template for post->id
+v.2.8 2014/09/26 - shibuya246 - css updates
 v.2.7 2013/06/16 - shibuya246 - query updates
 v.2.6 2010/08/12 - petsagouris - Updated rss function for Hotaru 1.4.1
 		 - Nick - Ensured nothing from this plugin shows on Submit step 3

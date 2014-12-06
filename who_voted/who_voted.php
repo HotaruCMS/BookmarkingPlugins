@@ -2,10 +2,10 @@
 /**
  * name: Who Voted
  * description: Show a list of who voted
- * version: 0.3
+ * version: 0.5
  * folder: who_voted
  * class: WhoVoted
- * hooks: install_plugin, header_include, show_post_middle, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: install_plugin, theme_index_top, header_include, show_post_middle, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -50,6 +50,10 @@ class WhoVoted
         $h->updateSetting('who_voted_settings', serialize($who_voted_settings));
     }
     
+    public function theme_index_top($h)
+    {
+        $h->vars['who_voted_settings'] = $h->getSerializedSettings();        
+    }
     
     /**
      * Show who voted on a post page
@@ -58,7 +62,7 @@ class WhoVoted
     { 
         if ($h->isPage('submit3')) { return false; }
         
-        echo $this->showWhoVoted($h);
+        $this->showWhoVoted($h);
     }
 
     
@@ -67,49 +71,22 @@ class WhoVoted
      */
     public function showWhoVoted($h)
     {
-        $who_voted_settings = $h->getSerializedSettings();
+        $who_voted_settings = $h->vars['who_voted_settings'];
         $limit = $who_voted_settings['who_voted_num'];
-        $avatars = $who_voted_settings['who_voted_avatars'];
-        $avatar_size = $who_voted_settings['who_voted_avatar_size'];
-        $avatar_shape = isset($who_voted_settings['who_voted_avatar_shape']) ? $who_voted_settings['who_voted_avatar_shape'] : '';
-        $names = $who_voted_settings['who_voted_names'];
-        $show_title = $who_voted_settings['who_voted_widget_title'];
-        
+
         $results = $this->getWhoVoted($h, $limit);
-        
-        $output = '';
-        
+       
         if ($results) 
         {
-            $output .= "<div id='who_voted'>\n";
-            if ($show_title) {
-                $output .= "<h3 id='who_voted_title'>" . $h->lang['who_voted'] . "</h3>";
-            }
-        
-            $output .= "<div id='who_voted_content'>\n";
-            foreach ($results as $item) {
-                $h->setAvatar($item->user_id, $avatar_size, 'g', 'img-' . $avatar_shape);
-                if ($avatars) {
-                    $output .= $h->linkAvatar(); 
-                }
-                if ($names) {
-                    $output .="<a href='" . $h->url(array('user' => $item->user_username)) . "'>" . $item->user_username . "</a> &nbsp;\n";
-                }
-            }
-            $output .= "</div>\n";
-            $output .= "</div>\n";
+            $h->vars['who_voted_results'] = $results;
+            $h->template('who_voted_list');
         }
         else 
         {
-            // Show "No other posts found with matching tags"
-            $output .= "<div id='who_voted'>\n";
-            $output .= "<div id='who_voted_content'>\n";
-            $output .= $h->lang['who_voted_no_results'];
-            $output .= "</div>\n";
-            $output .= "</div>\n";
+            $h->template('who_voted_none');
         }
-
-        return $output;
+        
+        return true;
     }
     
     /**

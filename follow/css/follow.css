@@ -1,0 +1,30 @@
+/* 
+    Document   : follow
+    Created on : 2010/04/17, 18:45:22
+    Author     : shibuya246
+    Description:
+*/
+
+.follow_list_headers {
+    background: #f6f6f6;
+    border: 0;
+}
+
+.follow_list {
+    margin-left:auto;
+    margin-right:auto;
+    width:100%;
+
+}
+
+.follow_row {
+    background-color:transparent;
+    border-bottom:1px solid #CCCCCC;
+    border-top:1px solid #CCCCCC;
+}
+
+.follow_user .avatar {
+    -moz-border-radius:6px 6px 6px 6px;
+    border:1pt solid #666666;
+    padding:5px;
+}

@@ -17,4 +17,5 @@ example.com/domain/example2.com (friendly urls)
 
 Changelog
 ---------
+v.0.2 2014/12/01 - shibuya246 - update regexp expression to assist with subdomains, update template
 v.0.1 2010/12/09 - Nick - Released first version

@@ -2,11 +2,11 @@
 /**
  * name: Tags
  * description: Show tags, filter tags and RSS for tags
- * version: 1.9
+ * version: 2.0
  * folder: tags
  * class: Tags
  * type: tags
- * hooks: theme_index_top, header_include, header_include_raw, header_meta, show_post_extra_fields, show_post_extras, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: theme_index_top, header_include, header_include_raw, header_meta, show_post_extra_fields, bookmarking_functions_preparelist, breadcrumbs, post_rss_feed, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -39,6 +39,16 @@ class Tags
      */
     public function theme_index_top($h)
     {
+        $h->vars['tags_settings'] = $h->getSerializedSettings('tags');
+        
+        // commit list of exclude tags to memory for later in page when we loop
+        $h->vars['exclude_tags'] = array();
+        if ($h->vars['tags_settings']['tags_setting_exclude_active'] && $h->vars['tags_settings']['tags_setting_exclude_words'])  {
+            $exclude_tags = explode(',', $h->vars['tags_settings']['tags_setting_exclude_words']);	    
+            array_walk($exclude_tags, array($this,'trim_value'));
+            $h->vars['exclude_tags'] = $exclude_tags;
+        } 
+                
         if ($h->cage->get->keyExists('tag')) { 
             $h->pageTitle = stripslashes(make_name($h->cage->get->noTags('tag')));
             if (!$h->pageName) { $h->pageName = 'popular'; }
@@ -129,56 +139,47 @@ class Tags
     /**
      * Shows tags in each post
      */
-    public function show_post_extra_fields($h)
-    { 
-        if ($h->post->tags)
-        { 
-            echo "";
-        }
-    }
+//    public function show_post_extras($h)
+//    { 
+//        if ($h->post->tags)
+//        { 
+//            echo "";
+//        }
+//    }
     
     
      /**
      * List of tags
      */
-    public function show_post_extras($h, $vars = array())
+    public function show_post_extra_fields($h, $vars = array())
     {
         if (!$h->post->tags) { return false; }
-        
+
         $tags = explode(',', $h->post->tags);
-
-	$tags_settings = $h->getSerializedSettings('tags');
+	    
+        $statusTags = array();
+        if ($h->vars['exclude_tags']) {
+            foreach ($tags as $tag) {
+                if (in_array($tag, $h->vars['exclude_tags'])) {
+                    $statusTags[$tag] = 'exclude';
+                }
+            }
+            //$tags = array_diff( $tags, $h->vars['exclude_tags'] );
+        }                
 	
-	if ($tags_settings['tags_setting_exclude_active'] && $tags_settings['tags_setting_exclude_words'])  {
-	    $exclude_tags = explode(',', $tags_settings['tags_setting_exclude_words']);	    
-	    array_walk($exclude_tags, array($this,'trim_value'));	    
-	    if ($exclude_tags) {
-		$tags = array_diff( $tags, $exclude_tags );
-	    }
-	}
-
-        // lots of nice issets for php 5.3 compatibility
+        // check the params
         if (isset($vars[0]) && isset($vars[1]) && ($vars[0] == "tags") && ($vars[1] == "raw")) {
             $raw = true;
         } else {
             $raw = false;
         }
         
-        if (!$raw) {
-            echo "<div class='show_tags'>\n";
-            echo "<ul>";
-            echo "<li>Tagged:</li>";
-        }
-        
-        foreach ($tags as $tag) {
-            echo "<li><a class='label' href='" . $h->url(array('tag' => str_replace(' ', '_', urlencode(trim($tag))))) . "'>" . trim($tag) . "</a></li>";
-        }
-        
-        if (!$raw) {
-            echo "</ul>\n";
-            echo "</div>\n";
-            echo "<div class='clear'>&nbsp;</div>\n";
-        }
+        // put vars in memory for template
+        $h->vars['tags']['raw'] = $raw;
+        $h->vars['tags']['tags'] = $tags;
+        $h->vars['statusTags'] = $statusTags;
+                
+        $h->template('tags', 'tags', false);
 
     }
 

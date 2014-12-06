@@ -15,6 +15,12 @@ Instructions
 
 Changelog
 ---------
+v.1.9.2 2014/11/12 - shibuya246 - Title update on Top Posts
+v.1.9.1 2014/10/27 - shibuya246 - Bug fix for queries
+v.1.9 2014/10/26 - shibuya246 - Add template for customisation
+v.1.8 2010/12/17 - mabujo - Enable use of images from the post images plugin to be used in post widgets.
+v.1.7 2010/10/12 - mabujo - Change widget headings from h2 to h4.
+v.1.7 2014/10/26 - shibuya246 - Create template for customisation
 v.1.6 2010/09/07 - Nick - Fixes for widget order gaps when removing posts widgets
 v.1.5 2010/07/31 - Nick - Added settings for number of items, item length, and remove unwanted widgets
 v.1.4 2010/07/24 - Nick - Set number of posts by editing $limit at the top of posts_widget.php

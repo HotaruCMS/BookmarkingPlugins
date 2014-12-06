@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.0 2014/10/23 - shibuya246 - Separate out template for tags to allow customisation
 v.1.9 2013/06/03 - shibuya246 - Added urlencode for browser search
 v.1.8 2010/06/10 - Alan - Added admin settings page, exclusion tag words for list and post page
 v.1.7 2010/05/22 - Nick - Fix for home page title tags and moved Tag RSS from SB Base into this plugin

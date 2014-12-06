@@ -37,7 +37,7 @@ class ActivitySettings
             $this->saveSettings($h); 
         }
         
-        echo "<h1>" . $h->lang["activity_settings_header"] . "</h1>\n";
+        echo "<h1>" . $h->lang("activity_settings_header") . "</h1>\n";
           
         // Get settings from database if they exist...
         $activity_settings = $h->getSerializedSettings('activity');
@@ -49,6 +49,7 @@ class ActivitySettings
         $pg_number = $activity_settings['number'];
         $rss_number = $activity_settings['rss_number'];
         $time = $activity_settings['time'];
+        $navigation = $activity_settings['navigation'];
         $refresh_button = $activity_settings['refresh_button'];
     
         $h->pluginHook('activity_settings_get_values');
@@ -61,41 +62,45 @@ class ActivitySettings
         if (!$pg_number) { $pg_number = 20; }
         if (!$rss_number) { $rss_number = 20; }
         if (!$time) { $time = ''; }
+        if (!$navigation) { $navigation = ''; }
         if (!$refresh_button) { $refresh_button = ''; }
         
-        echo "<form name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
+        echo "<form role='form' name='activity_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=activity' method='post'>\n";
         
         // number of items on the activity page
-        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang["activity_settings_number"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='pg_number' value='" . $pg_number . "' /> " . $h->lang("activity_settings_number") . "</p>\n";
         
         // number of items in the activity RSS feed
-        echo "<p><input type='text' size=5 name='rss_number' value='" . $rss_number . "' /> " . $h->lang["activity_settings_rss_number"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='rss_number' value='" . $rss_number . "' /> " . $h->lang("activity_settings_rss_number") . "</p>\n";
         
         // refresh button?
-        echo "<p><input type='checkbox' name='refresh_button' value='refresh_button' " . $refresh_button . " >&nbsp;&nbsp;" . $h->lang["activity_settings_refresh_button"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='refresh_button' value='refresh_button' " . $refresh_button . " >&nbsp;&nbsp;" . $h->lang("activity_settings_refresh_button") . "</p>\n"; 
         
-        echo "<br /><p>" . $h->lang["activity_settings_instructions"] . "</p>";
+        // navbar title
+        echo "<p><input type='checkbox' name='navigation' value='navigation' " . $navigation . " >&nbsp;&nbsp;" . $h->lang("activity_settings_navigation") . "</p>\n"; 
+        
+        echo "<br /><p>" . $h->lang("activity_settings_instructions") . "</p>";
         
         // show avatars?
-        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $h->lang["activity_settings_avatar"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='avatar' value='avatar' " . $avatar . " >&nbsp;&nbsp;" . $h->lang("activity_settings_avatar") . "</p>\n"; 
     
         // avatar size
-        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $h->lang["activity_settings_avatar_size"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='avatar_size' value='" . $avatar_size . "' /> " . $h->lang("activity_settings_avatar_size") . "</p>\n";
         
         // show users?
-        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $h->lang["activity_settings_user"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='user' value='user' " . $user . " >&nbsp;&nbsp;" . $h->lang("activity_settings_user") . "</p>\n"; 
         
         // show time?
-        echo "<p><input type='checkbox' name='time' value='time' " . $time . " >&nbsp;&nbsp;" . $h->lang["activity_settings_time"] . "</p>\n"; 
+        echo "<p><input type='checkbox' name='time' value='time' " . $time . " >&nbsp;&nbsp;" . $h->lang("activity_settings_time") . "</p>\n"; 
         
         // number of items in the widget
-        echo "<p><input type='text' size=5 name='widget_number' value='" . $widget_number . "' /> " . $h->lang["activity_settings_widget_number"] . "</p>\n";
+        echo "<p><input type='text' size=5 name='widget_number' value='" . $widget_number . "' /> " . $h->lang("activity_settings_widget_number") . "</p>\n";
         
         $h->pluginHook('activity_settings_form');
                         
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<button class='btn btn-primary' type='submit'>" .$h->lang("main_form_save") . "'></button>\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
@@ -147,6 +152,13 @@ class ActivitySettings
         } else { 
             $time = ''; 
         }
+        
+        // show titl in navbar
+        if ($h->cage->post->keyExists('navigation')) { 
+            $navigation = 'checked'; 
+        } else { 
+            $navigation = ''; 
+        }
 
         // number of items in the widget
         if ($h->cage->post->keyExists('widget_number')) { 
@@ -185,7 +197,7 @@ class ActivitySettings
                 
         if ($error == 1)
         {
-            $h->message = $h->lang["activity_settings_not_saved"];
+            $h->message = $h->lang("activity_settings_not_saved");
             $h->messageType = "red";
             $h->showMessage();
             
@@ -200,11 +212,12 @@ class ActivitySettings
             $activity_settings['number'] = $pg_number;
             $activity_settings['rss_number'] = $rss_number;
             $activity_settings['time'] = $time;
+            $activity_settings['navigation'] = $navigation;
             $activity_settings['refresh_button'] = $refresh_button;
         
             $h->updateSetting('activity_settings', serialize($activity_settings));
             
-            $h->message = $h->lang["main_settings_saved"];
+            $h->message = $h->lang("main_settings_saved");
             $h->messageType = "green";
             $h->showMessage();
         

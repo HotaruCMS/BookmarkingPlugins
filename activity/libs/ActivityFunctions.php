@@ -56,13 +56,13 @@ class ActivityFunctions
             }
         } elseif  ($item->useract_key2 == 'comment') {
             $commentId = $item->useract_value2;
-            $sql = "SELECT C.comment_content, C.comment_post_id, P.* FROM " . TABLE_COMMENTS . " AS C LEFT JOIN " . TABLE_POSTS . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_id = %d";
+            $sql = "SELECT C.comment_content, C.comment_post_id, P.* FROM " . TABLE_COMMENTS . " AS C LEFT OUTER JOIN " . TABLE_POSTS . " AS P ON C.comment_post_id = P.post_id WHERE C.comment_id = %d";
             $comment = $h->db->get_row($h->db->prepare($sql, $commentId));
 
             if (isset($comment))
             {
                 $comment_title = urlencode(strip_tags(urldecode($comment->comment_content)));
-                $post_url = $comment->category_safe_name . '/' . $comment->post_url . '#c' . $commentId;
+                $post_url = $comment->post_url . '#c' . $commentId;
                 //comment_post_id
                 return array($comment_title, $post_url);
             }           
@@ -131,7 +131,7 @@ class ActivityFunctions
 
             if ($activity_settings['widget_user']) {
                 if (!$userid) { 
-                        $output .= $h->lang['activity_anonymous'];
+                        $output .= $h->lang('activity_anonymous');
                 } else {
                     $output .= "<a class='activity_widget_user' href='" . $h->url(array('user' => $username)) . "'>" . $username . "</a> \n";
                 }
@@ -226,27 +226,27 @@ class ActivityFunctions
 
            switch ($item->useract_key) {
                    case 'comment':
-                           $output = $h->lang["activity_commented"] . " ";
+                           $output = $h->lang("activity_commented") . " ";
                            $cid = "#c" . $item->useract_value; // comment id to be put on the end of the url
                            break;
                    case 'post':
                            if ($h->post->type) {
                                $post_lang = "activity_submitted_" . $h->post->type; // e.g. news, blog, etc.
-                               $output = $h->lang[$post_lang] . " ";
+                               $output = $h->lang($post_lang) . " ";
                            } else {
-                               $output = $h->lang["activity_submitted_news"] . " ";
+                               $output = $h->lang("activity_submitted_news") . " ";
                            }
                            break;
                    case 'vote':
                            switch ($item->useract_value) {
                                    case 'up':
-                                           $output = $h->lang["activity_voted_up"] . " ";
+                                           $output = $h->lang("activity_voted_up") . " ";
                                            break;
                                    case 'down':
-                                           $output = $h->lang["activity_voted_down"] . " ";
+                                           $output = $h->lang("activity_voted_down") . " ";
                                            break;
                                    case 'flag':
-                                           $output = $h->lang["activity_voted_flagged"] . " ";
+                                           $output = $h->lang("activity_voted_flagged") . " ";
                                            break;
                                    default:
                                            break;

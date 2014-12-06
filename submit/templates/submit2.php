@@ -32,54 +32,49 @@ $h->pluginHook('submit_2_assign');
     
     <?php echo $h->lang["submit_instructions_2"]; ?>
 
-    <form name='submit_2' id='submit_2_form' action='<?php echo BASEURL; ?>index.php?page=submit2' method='post'>
-    <table>
-    
+    <form role='form' name='submit_2' id='submit_2_form' action='<?php echo BASEURL; ?>index.php?page=submit2' method='post'>
+
     <?php if (!$h->vars['submit_editorial']) { // only show if posting a link ?>
-        <tr>
-            <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-            <td><?php echo truncate($h->vars['submit_orig_url'], 60); ?></td>
-        </tr>
+        <div class="form-group">
+            <label for='submitUrl' ><?php echo $h->lang["submit_url"]; ?>&nbsp; </label>
+            <?php echo truncate($h->vars['submit_orig_url'], 60); ?>
+        </div>
     <?php } ?>
-    
-    <tr>
-        <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
-        <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
-    </tr>
-    
+
+    <div class="form-group">
+        <label for='submitTitle' ><?php echo $h->lang["submit_title"]; ?>&nbsp; </label>
+        <input class='form-control' type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'>
+    </div>
+ 
     <?php if ($h->vars['submit_use_content']) { ?>
-    <tr>
-        <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
-        <td>
-            <textarea id='post_content' name='post_content' rows='6'><?php echo $h->vars['submit_content']; ?></textarea>
-        </td>
-    </tr>
-    
-    <tr>
-        <td>&nbsp;</td>
-        <td style='vertical-align: top;' class="submit_instructions">
+    <div class="form-group">
+        <label for='submitContent' ><?php echo $h->lang["submit_content"]; ?>&nbsp; </label>
+        <div class="message-text" >
+            <textarea id="post_content" name="post_content" class="message_body"><?php echo $h->vars['submit_content']; ?></textarea>
+        </div>  
+        <div class="help-block text-right">
             <small><?php echo $h->lang['submit_allowable_tags']; ?>
             <?php echo $h->vars['submit_allowable_tags']; ?></small>
-        </td>
-    </tr>
+        </div>
+    </div>
     <?php } ?>
     
     
     <?php if ($h->vars['submit_use_categories']) { ?>
-    <tr>
-        <td style='vertical-align: top;'><?php echo $h->lang["submit_category"]; ?>&nbsp; </td>
-        <td><select name='post_category'>
+    <div class="form-group">
+        <label for='submitUrl' ><?php echo $h->lang["submit_category"]; ?>&nbsp; </label>
+        <select name='post_category' class='form-control'>
             <?php echo $h->vars['submit_category_picker']; ?>
-        </select></td>
-    </tr>
+        </select>
+    </div>
     <?php } ?>
     
     <?php if ($h->vars['submit_use_tags']) { ?>
-    	<tr>
-        	<td><?php echo $h->lang["submit_tags"]; ?>&nbsp; </td>
-            <td><input type='text' id='post_tags' name='post_tags' value='<?php echo $h->vars['submit_tags']; ?>'>&nbsp; 
-            <small><?php echo $h->lang['submit_tags_comma_separated']; ?></small></td>
-        </tr>
+    	<div class="form-group">
+        	<label for='submitUrl' ><?php echo $h->lang["submit_tags"]; ?>&nbsp; </label>
+            <input class='form-control' type='text' id='post_tags' name='post_tags' value='<?php echo $h->vars['submit_tags']; ?>'>&nbsp; 
+            <small><?php echo $h->lang['submit_tags_comma_separated']; ?></small>
+        </div>
     <?php } ?>
     
     <?php $h->pluginHook('submit_2_fields'); ?>
@@ -90,8 +85,8 @@ $h->pluginHook('submit_2_assign');
     <input type='hidden' name='submit_key' value='<?php echo $h->vars['submit_key']; ?>' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     
-    <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' /></td></tr>    
-    </table>
+    <input class='btn btn-primary pull-right' type='submit' onclick="javascript:safeExit=true;" class='submit' name='submit' value='<?php echo $h->lang['main_form_next']; ?>' />    
+    
     </form>
     <?php $h->pluginHook('image_upload'); ?>
 

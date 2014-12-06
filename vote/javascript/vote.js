@@ -31,14 +31,6 @@
 
 $(document).ready(function(){
 
-	// Show/Hide box 
-	$(".alert_link").click(function () {	    
-		var target = $(this).parents('div').nextAll('div.show_post_extras').children('div.alert_choices');
-                target.fadeToggle();
-                return false;
-        });
-
-
        if ($('#loggedIn').hasClass('loggedIn_true')) {
             $(".show_post_title a").click(function(event) {
                 if (vote_on_url_click == "checked") {

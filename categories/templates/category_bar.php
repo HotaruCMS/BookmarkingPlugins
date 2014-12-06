@@ -25,12 +25,12 @@
  */
 
 // check whether we have the fluid setting. If not make false
-$fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
+$fluid = isset($h->vars['theme_settings']['fullWidth']) && $h->vars['theme_settings']['fullWidth'] == 'checked'  ? '-fluid' : '';
 
 ?>
 
-<div class="container<?php echo $fluid; ?>">
-            <div class="row<?php echo $fluid; ?>">
+<div class="container-fluid">
+            <div id="category-row"  class="row">
 
 <div id="header_end" class="container<?php echo $fluid; ?>">
                         <!-- CATEGORIES, ETC -->
@@ -39,7 +39,7 @@ $fluid = isset($h->vars['theme_settings']['fullWidth']) ? '-fluid' : '';
 <div id="category_bar">
 	<ul>
 		<?php $h->pluginHook('category_bar_start'); ?>
-		<?php echo $h->vars['output']; ?>
+		<?php echo $h->categoriesDisplay; ?>
 		<?php $h->pluginHook('category_bar_end'); ?>
 	</ul>
 </div>

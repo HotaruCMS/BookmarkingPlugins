@@ -46,9 +46,7 @@ class VoteSettings
         $submit_vote_value = $vote_settings['submit_vote_value'];
         $votes_to_promote = $vote_settings['votes_to_promote'];
         $use_demote = $vote_settings['use_demote'];
-        $use_alerts = $vote_settings['use_alerts'];
-        $alerts_to_bury = $vote_settings['alerts_to_bury'];
-        $physical_delete = $vote_settings['physical_delete'];
+        
         $upcoming_duration = $vote_settings['upcoming_duration'];
         $no_front_page = $vote_settings['no_front_page'];
         $posts_widget = $vote_settings['posts_widget'];
@@ -59,10 +57,7 @@ class VoteSettings
         if (!$submit_vote) { $submit_vote = ''; }
         if (!$submit_vote_value) { $submit_vote_value = 1; }
         if (!$votes_to_promote) { $votes_to_promote = 5; }
-        if (!isset($use_demote)) { $use_demote = ''; }
-        if (!isset($use_alerts)) { $use_alerts = 'checked'; }
-        if (!$alerts_to_bury) { $alerts_to_bury = 5; }
-        if (!$physical_delete) { $physical_delete = ''; }
+        if (!isset($use_demote)) { $use_demote = ''; }        
         if (!$upcoming_duration) { $upcoming_duration = 5; }
         if (!$no_front_page) { $no_front_page = 5; }
         if (!$posts_widget) { $posts_widget = 'checked'; }
@@ -89,10 +84,6 @@ class VoteSettings
         echo "<p>" . $h->lang["vote_settings_upcoming_duration"] . " <input type='text' size=5 name='vote_upcoming_duration' value='" . $upcoming_duration . "' /> <small> (Default: 5)</small></p>\n";
         echo "<p>" . $h->lang["vote_settings_no_front_page"] . " <input type='text' size=5 name='vote_no_front_page' value='" . $no_front_page . "' /> <small> (Default: 5)</small></p>\n";
         echo "<p><input type='checkbox' name='vote_use_demote' value='vote_use_demote' " . $use_demote . " > " . $h->lang["vote_settings_back_to_latest"] . "</p>\n";
-        echo "<p><input type='checkbox' name='vote_use_alerts' value='vote_use_alerts' " . $use_alerts . " > " . $h->lang["vote_settings_use_alerts"] . "</p>\n";
-        echo "<p>" . $h->lang["vote_settings_alerts_to_bury"] . " <input type='text' size=5 name='vote_alerts_to_bury' value='" . $alerts_to_bury . "' /> <small> (Default: 5)</small></p>\n";
-        
-        echo "<p><input type='checkbox' id='vote_physical_delete' name='vote_physical_delete' " . $physical_delete . " /> " . $h->lang["vote_settings_physical_delete"] . "</p>";
         
         echo "<br /><p><b>" . $h->lang["vote_settings_other"] . "</b></p>";
         echo "<p><input type='checkbox' name='widget_votes' value='widget_votes' " . $posts_widget . ">&nbsp;&nbsp;" . $h->lang["vote_settings_posts_widget"] . "</p>\n";
@@ -105,7 +96,7 @@ class VoteSettings
         
         echo "<br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<button class='btn btn-primary' type='submit'>" . $h->lang["main_form_save"] . "</button>\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
@@ -193,35 +184,10 @@ class VoteSettings
             $use_demote = ''; 
         }
         
-        // Use alerts
-        if ($h->cage->post->keyExists('vote_use_alerts')) { 
-            $use_alerts = 'checked'; 
-        } else { 
-            $use_alerts = ''; 
-        }
         
         
-        // Check alerts_to_bury
-        if ($h->cage->post->keyExists('vote_alerts_to_bury')) { 
-            $alerts_to_bury = $h->cage->post->testInt('vote_alerts_to_bury'); 
-            if ($alerts_to_bury < 1) {
-                $h->messages[$h->lang["vote_settings_alerts_to_bury_invalid"] ] = "red";
-                $error = 1;
-                $alerts_to_bury = $vote_settings['alerts_to_bury'];
-            }
-        } else { 
-            $h->messages[$h->lang["vote_settings_alerts_to_bury_invalid"] ] = "red";
-            $error = 1;
-            $alerts_to_bury = $vote_settings['alerts_to_bury'];
-        }
         
         
-        // Check the status of our checkbox for physical delete
-        if ($h->cage->post->keyExists('vote_physical_delete')) { 
-            $physical_delete = 'checked'; 
-        } else { 
-            $physical_delete = ''; 
-        }
         
         
         // Votes in Sidebar Posts
@@ -254,9 +220,7 @@ class VoteSettings
         $vote_settings['submit_vote_value'] = $submit_vote_value;
         $vote_settings['votes_to_promote'] = $votes_to_promote;
         $vote_settings['use_demote'] = $use_demote;
-        $vote_settings['use_alerts'] = $use_alerts;
-        $vote_settings['alerts_to_bury'] = $alerts_to_bury;
-        $vote_settings['physical_delete'] = $physical_delete;
+        
         $vote_settings['upcoming_duration'] = $upcoming_duration;
         $vote_settings['no_front_page'] = $no_front_page;
         $vote_settings['posts_widget'] = $posts_widget;

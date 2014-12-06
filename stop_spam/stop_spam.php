@@ -1,13 +1,13 @@
 <?php
 /**
- * name: StopSpam
+ * name: Stop Spam
  * description: Checks new users against the StopForumSpam.com blacklist
- * version: 0.7
+ * version: 0.8
  * folder: stop_spam
  * class: StopSpam
  * type: antispam
- * requires: users 1.1
- * hooks: install_plugin, user_signin_register_check_blocked, users_register_check_blocked, users_register_pre_add_user, user_signin_register_pre_add_user, users_register_post_add_user, user_signin_register_post_add_user, users_email_conf_post_role, user_signin_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings, 
+ * requires: users 1.1, user_signin
+ * hooks: install_plugin, users_signin_register_check_blocked, users_register_check_blocked, users_register_pre_add_user, users_signin_register_pre_add_user, users_register_post_add_user, users_signin_register_post_add_user, users_email_conf_post_role, users_signin_email_conf_post_role, user_manager_role, user_manager_details, user_manager_pre_submit_button, user_man_killspam_delete, admin_sidebar_plugin_settings, admin_plugin_settings, 
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -50,19 +50,19 @@ class StopSpam
     /**
      * Included to cover old versions with old hook
      */
-    public function user_signin_register_check_blocked($h)
+    public function users_signin_register_check_blocked($h)
     {
         $this->users_register_check_blocked($h);
     }
-    public function user_signin_register_pre_add_user($h)
+    public function users_signin_register_pre_add_user($h)
     {
         $this->users_register_pre_add_user($h);
     }
-    public function user_signin_register_post_add_user($h, $vars)
+    public function users_signin_register_post_add_user($h, $vars)
     {
         $this->users_register_post_add_user($h, $vars);
     }
-    public function user_signin_email_conf_post_role($h)
+    public function users_signin_email_conf_post_role($h)
     {
         $this->users_email_conf_post_role($h);
     }
@@ -138,7 +138,7 @@ class StopSpam
     
     
     /**
-     * This function is called after the email confirmtaion function assigns the user a new role.
+     * This function is called after the email confirmation function assigns the user a new role.
      * We want to override the role, forcing the user to be "pending";
      */
     public function users_email_conf_post_role($h)

@@ -26,20 +26,21 @@
 ?>
 
 <?php
+$activity = $h->vars['activity'];
 
 // build link that will link the widget title to all activity...        
-$anchor_title = htmlentities($h->lang["activity_title_anchor_title"], ENT_QUOTES, 'UTF-8');
+$anchor_title = htmlentities($h->lang("activity_title_anchor_title"), ENT_QUOTES, 'UTF-8');
 $title = "<a href='" . $h->url(array('page'=>'activity')) . "' title='" . $anchor_title . "'>" .$h->lang('activity_title') . "</a>";
         
 if (isset($activity) && !empty($activity)) { ?>
             
-    <h2 class='widget_head activity_widget_title'>
+    <h4 class='widget_head activity_widget_title'>
         <?php echo $title; ?><a href="<?php echo $h->url(array('page'=>'rss_activity')); ?>" title="<?php echo $anchor_title; ?>">
         <img src="<?php echo BASEURL; ?>content/themes/<?php echo THEME; ?>images/rss_16.png" width="16" height="16" alt="RSS" />\n</a>
-    </h2>
+    </h4>
 
     <ul class='widget_body activity_widget_items'>            
         <?php echo $this->getWidgetActivityItems($h, $activity, false); ?>
     </ul>
             
-<?php } ?>
+<?php }

@@ -46,25 +46,23 @@ $h->vars['profile'] = $profile;
 $h->pluginHook('user_edit_profile_fill_form'); 
 
 ?>
-<div id="users_edit_profile" class="users_content">
+<div id="users_edit_profile" class="col-md-9">
 
-    <h2><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
+    <h4><?php echo $h->lang["users_profile_edit"]; ?>: <?php echo $h->vars['user']->name; ?></h4>
     
     <?php echo $h->showMessage(); ?>
 
-    <form name='edit_profile_form' class='users_form' action='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$h->vars['user']->name)); ?>' method='post'>    
-    <table>
+    <form role='form' name='edit_profile_form' class='users_form' action='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$h->vars['user']->name)); ?>' method='post'>    
+    <div class="form-group">
+        <?php echo $h->lang["users_profile_edit_bio"]; ?>&nbsp; </td>
+        <textarea class="form-control" rows=5 name='bio'><?php echo $profile['bio']; ?></textarea></td>
+    </div>
     
-    <tr><td><?php echo $h->lang["users_profile_edit_bio"]; ?>&nbsp; </td>
-        <td><textarea rows=5 name='bio'><?php echo $profile['bio']; ?></textarea></td>
-    </tr>
-    
-    <?php // Add your own profile fields here. Use tr and td tags. ?>
+    <?php // Add your own profile fields here.?>
     
     <?php $h->pluginHook('user_edit_profile_extras'); ?>
     
-    <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['users_profile_edit_update']; ?>' /></td></tr>
-    </table>
+    <button type='submit' class='btn btn-primary'><?php echo $h->lang['users_profile_edit_update']; ?></button>
     <input type='hidden' name='edited_profile' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
     </form>

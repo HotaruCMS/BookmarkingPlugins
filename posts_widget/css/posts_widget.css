@@ -1,7 +1,11 @@
 /* posts widget */
  
+.posts_widget_items { padding: 0; }
+.posts_widget_item { display: inline-block; }
 .posts_widget_vote { float: left; width: 1.8em; text-align: center;  margin-right: 0.5em; }
-.posts_widget_link  { display: block; }
+.posts_widget_link  { display: block;}
 .posts_widget_indent { margin-left: 2.4em; }
+.posts_widget_image { float: left; margin-right: 0.3em; }
+.posts_widget_image img { height: 35px; width: 35px; }
 
 /* vote colors moved to vote.css in Vote plugin */

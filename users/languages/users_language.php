@@ -26,6 +26,7 @@ $lang["users_all_posts"] = "Posts";
 $lang["users_all_comments"] = "Comments";
 $lang["users_edit"] = "Edit";
 $lang["user_man_link"] = "User Manager";
+$lang["users_logins"] = "Login Auths";
 
 /* User Account Update */
 $lang["users_account"] = "Account";
@@ -34,10 +35,13 @@ $lang["users_account_username"] = "Username:";
 $lang["users_account_email"] = "Email:";
 $lang["users_account_role"] = "Role:";
 $lang["users_account_role_note"] = "<small><b>Important</b>: Changing role will reset user permissions.</small>";
-$lang["users_account_password_instruct"] = "Change your password?";
-$lang["users_account_old_password"] = "Old password:";
-$lang["users_account_new_password"] = "New password:";
-$lang["users_account_new_password_verify"] = "New password (again):";
+$lang["users_account_password_instruct"] = "Change Password";
+$lang["users_account_form_old_password"] = "Old:";
+$lang["users_account_form_new_password"] = "New:";
+$lang["users_account_form_new_password_verify"] = "New (again):";
+$lang["users_account_old_password"] = "Old password";
+$lang["users_account_new_password"] = "New password";
+$lang["users_account_new_password_verify"] = "New password (again)";
 $lang["users_account_success"] = "Updated successfully.";
 $lang["users_account_update"] = "Update";
 $lang["users_account_deleted"] = "User Deleted";

@@ -1,0 +1,8 @@
+/* hovercard */
+
+#hover_card_content {
+    height: 80px;
+    background-color: #fff;
+    border: solid 1pt #111;
+    width:50px;
+}

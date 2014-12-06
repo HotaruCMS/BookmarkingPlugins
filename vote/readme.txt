@@ -14,6 +14,7 @@ Instructions
 
 Changelog
 ---------
+v.2.5 2014/10/20 - shibuya246 - moved show_post_extras code to a template so it can be customised
 v.2.4 2013/05/15 - shibuya246 - required update for v.1.5.0 - config folder moved
 v.2.3 2010/08/09 - Nick - Fix for multiple flagging bug
 v.2.2 2010/07/20 - Nick - Edits to CSS for vote button

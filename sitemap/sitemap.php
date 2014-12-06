@@ -90,20 +90,20 @@ class Sitemap
 
 		//Retrieve the links and last update time from the database
 		if ($sitemap_settings['sitemap_include_posts'] == 'checked') {
-		    $sql = "SELECT post_id, post_url, post_category, post_updatedts FROM ". TABLE_POSTS;
+                    $sql = "SELECT post_id, post_url, post_category, post_updatedts FROM ". TABLE_POSTS;
 		    $maps = $h->db->get_results($sql);
 		}
 
 		//Retrieve categories from the database
 		if ($sitemap_settings['sitemap_include_cats'] == 'checked') {
-		    $sql = "SELECT category_safe_name, category_updatedts FROM ". TABLE_CATEGORIES;
-		    $maps_cat = $h->db->get_results($sql);
+                    $sql = "SELECT category_safe_name, category_updatedts FROM ". TABLE_CATEGORIES;
+                    $maps_cat = $h->db->get_results($sql);
 		}
 
 		//Retrieve tags from the database
-		if ($sitemap_settings['sitemap_include_tags'] == 'checked') {		    
-		    $sql = "SELECT DISTINCT tags_word, tags_updatedts FROM ". TABLE_TAGS;
-		    $maps_tag = $h->db->get_results($sql);
+		if ($sitemap_settings['sitemap_include_tags'] == 'checked') {
+                    $sql = "SELECT DISTINCT tags_word, tags_updatedts FROM ". TABLE_TAGS;
+                    $maps_tag = $h->db->get_results($sql);
 		}
 		
 		//In case the site has more than 50000 links or is larger than 10MB prepare an index file
@@ -132,13 +132,13 @@ class Sitemap
 			    $h->post->category = $map->post_category;
 			    $h->post->url = $map->post_url;
 			    //Format the date to ISO standards
-			    $datetime = date("c", strtotime($map->post_updatedts));
-			    //Stop it a bit early to be safe
+                            $datetime = date("c", strtotime($map->post_updatedts));
+                            //Stop it a bit early to be safe
 			    if($count < 49998 && strlen($sitemap[$sitemapNum]) < 10484000) {
 				    $sitemap[$sitemapNum] .='<url>';
 				    $sitemap[$sitemapNum] .='<loc>'. htmlentities($h->url(array('page'=>$h->post->id))) . '</loc>';
-				    $sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime).'</lastmod>';
-				    $sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
+                                    $sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime).'</lastmod>';
+                                    $sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
 				    $sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_posts'].'</priority>';
 				    $sitemap[$sitemapNum] .='</url>';
 			    } else {
@@ -161,34 +161,34 @@ class Sitemap
 		if (isset($maps_cat) && $maps_cat) {
 		    foreach($maps_cat as $cat)
 		    {
-			    $datetime_cat = date("c", strtotime($cat->category_updatedts));
-			    if($count < 49998 && strlen($sitemap[$sitemapNum]) < 10484000) {
-				$sitemap[$sitemapNum] .='<url>';
-				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
-				$sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
-				$sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
-				$sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
-				$sitemap[$sitemapNum] .='</url>';
-			    } else {
-				$sitemap[$sitemapNum]  .= '</urlset>';
-				$sitemapNum++;
-				$count = 0;
-				$sitemap[$sitemapNum] = '<?xml version="1.0" encoding="UTF-8"?>';
-				$sitemap[$sitemapNum] .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-				$sitemap[$sitemapNum] .='<url>';
-				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
-				$sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
-				$sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
-				$sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
-				$sitemap[$sitemapNum] .='</url>';
-			    }
+                        $datetime_cat = date("c", strtotime($cat->category_updatedts));
+                        if($count < 49998 && strlen($sitemap[$sitemapNum]) < 10484000) {
+                            $sitemap[$sitemapNum] .='<url>';
+                            $sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
+                            $sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
+                            $sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
+                            $sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
+                            $sitemap[$sitemapNum] .='</url>';
+                        } else {
+                            $sitemap[$sitemapNum]  .= '</urlset>';
+                            $sitemapNum++;
+                            $count = 0;
+                            $sitemap[$sitemapNum] = '<?xml version="1.0" encoding="UTF-8"?>';
+                            $sitemap[$sitemapNum] .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+                            $sitemap[$sitemapNum] .='<url>';
+                            $sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('category'=>$cat->category_safe_name)) ) . '</loc>';
+                            $sitemap[$sitemapNum] .='<lastmod>'.htmlentities($datetime_cat).'</lastmod>';
+                            $sitemap[$sitemapNum] .='<changefreq>'.$sitemap_settings['sitemap_frequency'].'</changefreq>';
+                            $sitemap[$sitemapNum] .='<priority>'.$sitemap_settings['sitemap_priority_categories'].'</priority>';
+                            $sitemap[$sitemapNum] .='</url>';
+                        }
 		    }
 		}
 
 		if (isset($maps_tag) && $maps_tag) {
 		    foreach($maps_tag as $tag)
 		    {
-			    $datetime_tag = date("c", strtotime($tag->tags_updatedts));
+                        $datetime_tag = date("c", strtotime($tag->tags_updatedts));
 			    if($count < 49998 && strlen($sitemap[$sitemapNum]) < 10484000) {
 				$sitemap[$sitemapNum] .='<url>';
 				$sitemap[$sitemapNum] .='<loc>'. urldecode( $h->url(array('tag'=>$tag->tags_word)) ) . '</loc>';
@@ -378,4 +378,3 @@ class Sitemap
 	    return $header;
 	}
 }
-?>

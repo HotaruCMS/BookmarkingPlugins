@@ -2,11 +2,11 @@
 /**
  * name: Bookmarking
  * description: Social Bookmarking base - provides "list" and "post" templates. 
- * version: 0.6
+ * version: 0.8
  * folder: bookmarking
  * class: Bookmarking
  * type: base
- * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, theme_index_pre_main, profile_navigation, api_call, post_rss_feed_items
+ * hooks: install_plugin, theme_index_top, header_meta, header_include, navigation, breadcrumbs, theme_index_main, admin_plugin_settings, admin_sidebar_plugin_settings, user_settings_pre_save, user_settings_fill_form, user_settings_extra_settings, pre_show_post, show_post_extra_fields, show_post_title, theme_index_pre_main, profile_navigation, api_call, post_rss_feed_items
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -34,54 +34,61 @@
 
 class Bookmarking
 {
-	/**
-	 * Install Submit settings if they don't already exist
-	 */
-	public function install_plugin($h)
-	{
-		// Default settings 
-		$bookmarking_settings = $h->getSerializedSettings();
-		if (!isset($bookmarking_settings['posts_per_page'])) { $bookmarking_settings['posts_per_page'] = 10; }
-		if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }				
+        /**
+        * Install Submit settings if they don't already exist
+        */
+        public function install_plugin($h)
+        {
+                // Default settings 
+                $bookmarking_settings = $h->getSerializedSettings();
+                if (!isset($bookmarking_settings['posts_per_page'])) { $bookmarking_settings['posts_per_page'] = 10; }
+                if (!isset($bookmarking_settings['rss_redirect'])) { $bookmarking_settings['rss_redirect'] = ''; }				
                 if (!isset($bookmarking_settings['default_type'])) { $bookmarking_settings['default_type'] = 'news'; }
-		if (!isset($bookmarking_settings['default_page'])) { $bookmarking_settings['default_page'] = 'popular'; }
-		if (!isset($bookmarking_settings['archive'])) { $bookmarking_settings['archive'] = "no_archive"; }
+                if (!isset($bookmarking_settings['default_page'])) { $bookmarking_settings['default_page'] = 'popular'; }
+                if (!isset($bookmarking_settings['archive'])) { $bookmarking_settings['archive'] = "no_archive"; }
                 if (!isset($bookmarking_settings['sort_bar_dropdown'])) { $bookmarking_settings['sort_bar_dropdown'] = 'checked'; }
-		$h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
-		
-		// Add "open in new tab" option to the default user settings
-		$base_settings = $h->getDefaultSettings('base'); // originals from plugins
-		$site_settings = $h->getDefaultSettings('site'); // site defaults updated by admin
-		if (!isset($base_settings['new_tab'])) { 
-			$base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
-			$h->updateDefaultSettings($base_settings, 'base'); 
-			$h->updateDefaultSettings($site_settings, 'site');
-		}
-		if (!isset($base_settings['link_action'])) { 
-			$base_settings['link_action'] = ""; $site_settings['link_action'] = "";
-			$h->updateDefaultSettings($base_settings, 'base'); 
-			$h->updateDefaultSettings($site_settings, 'site');
-		}
-	}
+                if (!isset($bookmarking_settings['use_alerts'])) { $bookmarking_settings['use_alerts'] = "checked"; }
+                if (!isset($bookmarking_settings['alerts_to_bury'])) { $bookmarking_settings['alerts_to_bury'] = 5; }
+                if (!isset($bookmarking_settings['physical_delete'])) { $bookmarking_settings['physical_delete'] = ""; }
 
+                $h->updateSetting('bookmarking_settings', serialize($bookmarking_settings));
 
+                // Add "open in new tab" option to the default user settings
+                $base_settings = $h->getDefaultSettings('base'); // originals from plugins
+                $site_settings = $h->getDefaultSettings('site'); // site defaults updated by admin
+                if (!isset($base_settings['new_tab'])) { 
+                        $base_settings['new_tab'] = ""; $site_settings['new_tab'] = "";
+                        $h->updateDefaultSettings($base_settings, 'base'); 
+                        $h->updateDefaultSettings($site_settings, 'site');
+                }
+                if (!isset($base_settings['link_action'])) { 
+                        $base_settings['link_action'] = ""; $site_settings['link_action'] = "";
+                        $h->updateDefaultSettings($base_settings, 'base'); 
+                        $h->updateDefaultSettings($site_settings, 'site');
+                }
+        }
+    
 	/**
 	 * theme_index_top
 	 */
 	public function theme_index_top($h)
 	{
-            switch ($h->pageName)
-            {
-                case 'ajax_bookmarking':
-
+            $h->vars['bookmarking_settings'] = $h->getSerializedSettings();
+            $h->vars['useAlerts'] = isset($h->vars['bookmarking_settings']['use_alerts']) ? $h->vars['bookmarking_settings']['use_alerts'] : false;
+            
+            switch ($h->pageName) {
+                case 'ajax_bookmarking':                    
                     $fromId = $h->cage->get->testInt('fromId'); 
                     $csrf = $h->cage->get->testAlnum('csrf');
-//                    $act_query = $h->getLatestActivity(0, 0, 'query', $fromId);
-//                    $items = $h->db->get_results($act_query);
-
-                    $h->vars['pagedResults'] = new stdClass();
-                    //$h->vars['pagedResults']->items = $items;                
-                    //$h->template('activity');
+                    
+                    //$act_query = $h->getLatestActivity(0, 0, 'query', $fromId);
+                    //echo json_encode($act_query);
+                    
+                    $sql = "SELECT post_votes_up FROM " . TABLE_POSTS . " WHERE post_id = %d";
+                    $items = $h->db->get_results($h->db->prepare($sql, 5121)); 
+            
+                    //$items = $h->db->get_results($act_query);                
+                    echo json_encode($items[0]);
                     die();
                 default:
                     
@@ -89,6 +96,7 @@ class Bookmarking
                     // run all other theme_index_top functions except this one
                     $h->pluginHook('theme_index_top', '', array(), array('bookmarking'));
                     $this->finalizePage($h);
+                    $this->getUserSettings($h);
                     return "skip";
             }
             
@@ -99,31 +107,28 @@ class Bookmarking
 	/**
 	 * Determine the page
 	 */
-	public function determinePage($h)
+	private function determinePage($h)
 	{
-		// check if we're using the sort/filter links
-		if ($h->cage->get->keyExists('sort')) {
-			$h->pageName = 'sort';
-		}
+            // check if we're using the sort/filter links
+            if ($h->cage->get->keyExists('sort')) {
+                    $h->pageName = 'sort';
+            }
 
-		// get settings
-		$h->vars['bookmarking_settings'] = $h->getSerializedSettings('bookmarking');		
-		
-		// check if we should forward an RSS link to its source
-		$this->rssForwarding($h);
-		
-		//check if we should set the home page to settings default page
-		$this->setHomeDefaultPage($h);
+            // check if we should forward an RSS link to its source
+            $this->rssForwarding($h);
 
-		// check page name and set types and titles
-		$this->checkPageName($h);
+            //check if we should set the home page to settings default page
+            $this->setHomeDefaultPage($h);
+
+            // check page name and set types and titles
+            $this->checkPageName($h);
 	}
 	
 	
 	/**
 	 * We should now know the pageName for certain, so finish setting up the page
 	 */
-	public function finalizePage($h)
+	private function finalizePage($h)
 	{
 		// no need to continue for other types of homepage
 		$valid_lists = array('popular', 'upcoming', 'latest', 'all');
@@ -140,38 +145,62 @@ class Bookmarking
 		$posts_per_page = $h->vars['bookmarking_settings']['posts_per_page'];
 		
 		// if a list, get the posts:
-		switch ($h->pageType)
-		{
-			case 'list':
-				$post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
-				$post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used				
-				$h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
-				break;
-			case 'post':
-				// if a post is already set (e.g. from the categories plugin), we don't want to
-				// do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
-				break;
-			default:
-				// Probably a post, let's check:
-				if (is_numeric($h->pageName)) {
-					// Page name is a number so it must be a post with non-friendly urls
-					$exists = $h->readPost($h->pageName);    // read current post
-					if (!$exists) { $h->pageTitle = $h->lang['main_theme_page_not_found']; return false; }
-					$h->pageTitle = $h->post->title;
-					$h->pageType = 'post';
-				} elseif ($post_id = $h->isPostUrl($h->pageName)) {
-					// Page name belongs to a story
-					$h->readPost($post_id);    // read current post
-					$h->pageTitle = $h->post->title;
-					$h->pageType = 'post';
-				}
-		} // close switch
-		
-		// user defined settings:
-                
+		switch ($h->pageType) {
+                    case 'list':
+                            $post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
+                            $post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used				
+
+                            // this query created from bookmarking query
+                            // if it was a more generic query we could have in main libs or vote plugin libs, but it is specific to bookmarking query
+                            $h->vars['pagedResults'] = $h->pagination($post_query, $post_count, $posts_per_page, 'posts');
+                            $funcs->makePostList($h, $h->vars['pagedResults']->items);
+                            
+                            // this is instead of the join
+                            $h->vars['currentUserVotedPosts'] = $funcs->getVotedPostsByThisUser($h);
+                            break;
+                    case 'post':
+                            // if a post is already set (e.g. from the categories plugin), we don't want to
+                            // do the default stuff below. We do, however, need the "target", "editorial" stuff after it, though...
+                            break;
+                    default:
+                            // Probably a post, let's check:
+                            if (is_numeric($h->pageName)) {
+                                // Page name is a number so it must be a post with non-friendly urls
+                                // this is instead of the join
+                                $h->postList = array($h->pageName);
+                                $h->vars['currentUserVotedPosts'] = $funcs->getVotedPostsByThisUser($h);
+                                if (!$h->readPost($h->pageName)) {
+                                    $h->pageTitle = $h->lang['main_theme_page_not_found'];
+                                    return false; 
+                                }
+                                $h->pageTitle = $h->post->title;
+                                $h->pageType = 'post';
+                            } elseif ($post_id = $h->isPostUrl($h->pageName)) {
+                                // Page name belongs to a story
+                                // this is instead of the join
+                                $h->postList = array($post_id);
+                                $h->vars['currentUserVotedPosts'] = $funcs->getVotedPostsByThisUser($h);
+                                $h->readPost($post_id);    // read current post
+                                $h->pageTitle = $h->post->title;
+                                $h->pageType = 'post';
+                            }
+                            break;
+		}
+	}
+        
+        
+        /**
+         * user defined settings:
+         * 
+         * @param type $h
+         */
+        private function getUserSettings($h)
+        {
 		// logged out users get the default settings:
-		if (!$h->currentUser->settings) { $h->currentUser->settings = $h->getDefaultSettings('site'); }
-		
+		if (!$h->currentUser->settings) {
+                    $h->currentUser->settings = $h->getDefaultSettings('site'); 
+                }
+ 
 		// open links in a new tab?
 		$h->vars['target'] = $h->currentUser->settings['new_tab'] ? 'target="_blank"' : ''; 
 		
@@ -179,13 +208,13 @@ class Bookmarking
                 $h->vars['link_action'] = $h->currentUser->settings['link_action'] ? 'source' : ''; 
 		
 		// editorial (story with an internal link)
-		$h->vars['editorial'] = strstr($h->post->origUrl, BASEURL) ? true: false;
+		$h->vars['editorial'] = isset($h->post) && strstr($h->post->post_orig_url, BASEURL) ? true: false;
 		
-		// get settings from Submit 
+		// get settings from Submit Plugin
 		if (!isset($h->vars['submit_settings'])) {
 			$h->vars['submit_settings'] = $h->getSerializedSettings('submit');
 		}
-	}
+        }
 	
 
 	/**
@@ -199,8 +228,11 @@ class Bookmarking
 		if (!$h->cage->get->keyExists('forward')) { return false; }
 		
 		$post_id = $h->cage->get->testInt('forward');
-		if ($post_id) { $post = $h->getPost($post_id); }
-		if (isset($post->post_orig_url)) {
+		if ($post_id) { 
+                    $post = $h->getPost($post_id);
+                }
+		
+                if (isset($post->post_orig_url)) {
 			header("Location:" . urldecode($post->post_orig_url));
 			exit;
 		}
@@ -223,7 +255,7 @@ class Bookmarking
 	/**
 	 * Get Bookmarking Functions
 	 */
-	public function getBookmarkingFunctions($h)
+	private function getBookmarkingFunctions($h)
 	{
 		// include bookmarking_functions class:
 		require_once(PLUGINS . 'bookmarking/libs/BookmarkingFunctions.php');
@@ -282,60 +314,70 @@ class Bookmarking
 	public function header_meta($h)
 	{
 		if ($h->pageType != 'post') { return false; }
+                
 		$meta_content = sanitize($h->post->content, 'all');
 		$meta_content = truncate($meta_content, 200);
 		echo '<meta name="description" content="' . $meta_content . '" />' . "\n";
-		return true;
+		
+                return true;
 	}
 	
 	
-	/**
-	 * Add "Latest" to the navigation bar
-	 */
-	public function navigation($h)
-	{
-		if ($h->home != 'popular') {
-			// highlight "Top Stories" as active tab
-			if ($h->pageName == 'popular') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
-			
-			// display the link in the navigation bar
-			echo "<li " . $status . "><a href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["bookmarking_top"] . "</a></li>";
-		}
-		
-		// highlight "Latest" as active tab
-		if ($h->pageName == 'latest') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
-		
-		// display the link in the navigation bar
-		echo "<li " . $status . "><a href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["bookmarking_latest"] . "</a></li>";
-	}
+        /**
+         * Add "Latest" to the navigation bar
+         */
+        public function navigation($h)
+        {
+//            echo '<li class="posts" data-name="posts">';
+//                echo '<a href="' . $h->url(array('page' => 'all')) . '">Explore</a>';
+//            echo '</li>';
+                     
+            if ($h->home != 'popular') {
+                    // highlight "Top Stories" as active tab
+                    if ($h->pageName == 'popular') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
+
+                    // display the link in the navigation bar
+                    echo "<li " . $status . "><a href='" . $h->url(array('page'=>'popular')) . "'>" . $h->lang["bookmarking_top"] . "</a></li>";
+            }
+
+            // highlight "Latest" as active tab
+            if ($h->pageName == 'latest') { $status = "id='navigation_active' class='active'"; } else { $status = ""; }
+
+            // display the link in the navigation bar
+            echo "<li " . $status . "><a href='" . $h->url(array('page'=>'latest')) . "'>" . $h->lang["bookmarking_latest"] . "</a></li>";
+        }
 
 
-	/**
-	 * Replace the default breadcrumbs in specific circumstances
-	 */
-	public function breadcrumbs($h)
-	{
-		if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
-		
-		if ($h->pageName == 'popular') { 
-			$h->pageTitle = $h->lang["bookmarking_top"];
-		}
-		
-		switch ($h->pageName) {
-			case 'popular':
-				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
-				break;
-			case 'latest':
-				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
-				break;
-			case 'upcoming':
-				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('upcoming');
-				break;
-			case 'all':
-				return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
-				break;
-		}
-	}
+        /**
+         * Replace the default breadcrumbs in specific circumstances
+         */
+        public function breadcrumbs($h)
+        {
+                if ($h->subPage) { return false; } // don't use these breadcrumbs if on a subpage 
+
+                if ($h->pageType == 'post') {
+                    return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
+                }
+
+                if ($h->pageName == 'popular') { 
+                        $h->pageTitle = $h->lang["bookmarking_top"];
+                }
+
+                switch ($h->pageName) {
+                        case 'popular':
+                                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('top');
+                                break;
+                        case 'latest':
+                                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('new');
+                                break;
+                        case 'upcoming':
+                                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink('upcoming');
+                                break;
+                        case 'all':
+                                return $h->pageTitle . ' ' . $h->rssBreadcrumbsLink();
+                                break;
+                }
+        }
 
 
     /**
@@ -343,61 +385,165 @@ class Bookmarking
      */
     public function theme_index_main($h)
     {
-        // stop here if not a list of a post
-        if (($h->pageType != 'list') && ($h->pageType != 'post')) { return false; }
-        
-        // necessary settings:
-        $h->vars['use_content'] = $h->vars['submit_settings']['content'];
-        $h->vars['use_summary'] = $h->vars['submit_settings']['summary'];
-        $h->vars['summary_length'] = $h->vars['submit_settings']['summary_length'];
-        
-        switch ($h->pageType)
-        {
-            case 'post':
-                // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
-                
-                // defaults:
-                $buried = false; $pending = false; $can_edit = false;
-                
-                // check if buried:
-                if ($h->post->status == 'buried') {
-                    $buried = true;
-                    $h->messages[$h->lang["bookmarking_post_buried"]] = "red";
-                } 
-                
-                // check if pending:
-                if ($h->post->status == 'pending') { 
-                    $pending = true;
-                    $h->messages[$h->lang["bookmarking_post_pending"]] = "red";
-                }
-                
-                // check if global edit permissions
-                if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+            // stop here if not a list or a post
+            if (($h->pageType != 'list') && ($h->pageType != 'post')) { return false; }
 
-                $h->showMessages();
-                
-                // display post or show error message
-                if (!$buried && !$pending){
-                    $h->template('bookmarking_post');
-                } elseif ($can_edit) {
-                    $h->template('bookmarking_post');
-                } else {
-                    // don't show the post
-                }
-                
-                return true;
-                break;
-                
-            case 'list':
-                if (isset($h->vars['pagedResults']->items)) {
-                    $h->template('bookmarking_list');
-                    echo $h->pageBar($h->vars['pagedResults']);
-                } else {
-                    $h->template('bookmarking_no_posts');
-                }
-                return true;
-        }
+            // flag status btns only shown on page once, keep them hidden then display with js when clicked
+            $h->template('bookmarking_flags', 'bookmarking');
+
+            // necessary settings:
+            $h->vars['use_content'] = $h->vars['submit_settings']['content'];
+            $h->vars['use_summary'] = $h->vars['submit_settings']['summary'];
+            $h->vars['summary_length'] = $h->vars['submit_settings']['summary_length'];
+
+            switch ($h->pageType)
+            {
+                case 'post':
+                    // This post is visible if it's not buried/pending OR if the viewer has edit post permissions...
+
+                    // defaults:
+                    $buried = false; $pending = false; $can_edit = false;
+
+                    // check if buried:
+                    if ($h->post->status == 'buried') {
+                        $buried = true;
+                        $h->messages[$h->lang["bookmarking_post_buried"]] = "red";
+                    } 
+
+                    // check if pending:
+                    if ($h->post->status == 'pending') { 
+                        $pending = true;
+                        $h->messages[$h->lang["bookmarking_post_pending"]] = "red";
+                    }
+
+                    // check if global edit permissions
+                    if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { $can_edit = true; }
+
+                    $h->showMessages();
+
+                    // display post or show error message
+                    if (!$buried && !$pending){
+                        $h->template('bookmarking_post');
+                    } elseif ($can_edit) {
+                        $h->template('bookmarking_post');
+                    } else {
+                        // don't show the post
+                    }
+
+                    return true;
+                    break;
+
+                case 'list':
+                    if (isset($h->vars['pagedResults']->items)) {
+                        $h->template('bookmarking_list');
+                        echo $h->pageBar($h->vars['pagedResults']);
+                    } else {
+                        $h->template('bookmarking_no_posts');
+                    }
+                    return true;
+            }
     }  
+    
+    
+    // maybe move to finalize page above
+    public function pre_show_post($h)
+    {        
+        if ($h->pageType == 'list') { return false; } // making sure list page keeps running fast
+        
+        if (($h->pageType == 'post') && ($h->vars['useAlerts'] == "checked")) {
+            
+             // CHECK TO SEE IF THIS POST IS BEING FLAGGED AND IF SO, ADD IT TO THE DATABASE
+            $h->vars['flagged'] = false;
+            
+            if ($h->cage->get->keyExists('alert') && $h->currentUser->loggedIn) {
+                // Check if already flagged by this user
+                // TODO is this the right query ? 
+                $sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_rating = %d LIMIT 1";
+                $flagged = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, -999));
+                
+                if (!$flagged) {
+                    $sql = "INSERT INTO " . TABLE_POSTVOTES . " (vote_post_id, vote_user_id, vote_user_ip, vote_date, vote_type, vote_rating, vote_reason, vote_updateby) VALUES (%d, %d, %s, CURRENT_TIMESTAMP, %s, %d, %d, %d)";
+                    $h->db->query($h->db->prepare($sql, $h->post->id, $h->currentUser->id, $h->cage->server->testIp('REMOTE_ADDR'), 'vote', -999, $h->cage->get->testInt('alert'), $h->currentUser->id));
+                    $h->pluginHook('bookmarking_flag_insert');
+                }
+                else
+                {
+                    $h->messages[$h->lang("bookmarking_alert_already_flagged")] = "red";
+                    $h->showMessages();
+                }
+            }            
+           
+            // CHECK TO SEE IF THIS POST HAS BEEN FLAGGED AND IF SO, SHOW THE ALERT STATUS
+            $h->vars['reasons'] = $h->postGetFlags($h->post->id);
+
+            if ($h->vars['reasons']) {
+                $h->vars['flag_count'] = count($h->vars['reasons']);
+                
+                // Buries or Deletes a post if this new flag sends it over the limit set in Settings
+                if ($h->cage->get->keyExists('alert') && $h->vars['flag_count'] >= $h->vars['bookmarking_settings']['alerts_to_bury'])
+                {
+                    $h->readPost($h->post->id); //make sure we've got all post details
+                    
+                    if ($h->vars['bookmarking_settings']['physical_delete']) { 
+                        $h->deletePost(); // Akismet uses those details to report the post as spam
+                    } else {
+                        $h->changePostStatus('buried');
+                        $h->clearCache('html_cache', false);
+                        $h->pluginHook('bookmarking_post_status_buried'); // Akismet hooks in here to report the post as spam
+                    }
+                    
+                    $h->messages[$h->lang("bookmarking_alert_post_buried")] = "red";
+                }
+                
+                $h->vars['flagged'] = true;
+            }
+        }
+            
+    }
+    
+    
+    /**
+     * List of alert reasons to choose from.
+     */
+//    public function show_post_extras($h)
+//    {
+//        
+//    }
+    
+    
+    /**
+     * Add an "alert" link below the story
+     */
+    public function show_post_extra_fields($h)
+    {
+        // Only show the Alert link ("Flag it") on new posts, not top stories
+        if ($h->currentUser->loggedIn && $h->post->status == "new" && ($h->vars['useAlerts'] == "checked")) {            
+            // flag link            
+            $h->template('bookmarking_alert_link', 'bookmarking', false);           
+        } else {
+            //print "not new";
+        }
+    }
+    
+    
+     /**
+     * Displays the flags next to the post title.
+     */
+    public function show_post_title($h)
+    {
+        if (!isset($h->vars['flagged']) || !$h->vars['flagged']) { return false; }
+        
+        $why_list = "";
+        foreach ($h->vars['reasons'] as $why) {
+            $alert_lang = "bookmarking_alert_reason_" . $why;            
+                $why_list .= $h->lang($alert_lang). ", ";            
+        }
+        $why_list = rstrtrim($why_list, ", ");    // removes trailing comma
+
+        // $h->vars['flag_count'] got from above function
+        $h->vars['flag_why'] = $why_list;
+        $h->template('bookmarking_alert', 'bookmarking', false);
+    }
     
     
     /**
@@ -445,19 +591,33 @@ class Bookmarking
     {
         if (!isset($h->vars['settings']) || !$h->vars['settings']) { return false; }
         
-        echo "<tr>\n";
-            // OPEN POSTS IN A NEW TAB?
-        echo "<td>" . $h->lang['bookmarking_users_settings_open_new_tab'] . "</td>\n";
-        echo "<td><input type='radio' name='new_tab' value='yes' " . $h->vars['new_tab_yes'] . "> " . $h->lang['users_settings_yes'] . " &nbsp;&nbsp;\n";
-        echo "<input type='radio' name='new_tab' value='no' " . $h->vars['new_tab_no'] . "> " . $h->lang['users_settings_no'] . "</td>\n";
-        echo "</tr>\n";
         
-        echo "<tr>\n";
-            // OPEN POSTS IN A NEW TAB?
-        echo "<td>" . $h->lang['bookmarking_users_settings_link_action'] . "</td>\n";
-        echo "<td><input type='radio' name='link_action' value='source' " . $h->vars['link_action_source'] . "> " . $h->lang['bookmarking_users_settings_source'] . " &nbsp;&nbsp;\n";
-        echo "<input type='radio' name='link_action' value='post' " . $h->vars['link_action_post'] . "> " . $h->lang['bookmarking_users_settings_post'] . "</td>\n";
-        echo "</tr>\n";
+        // OPEN POSTS IN A NEW TAB?
+        echo "<div class='form-group'>";
+            echo '<label for="inputEmail3" class="col-sm-6">';
+                echo $h->lang['bookmarking_users_settings_open_new_tab'];
+            echo '</label>'; 
+            echo '<div class="col-sm-3">';
+                echo "<input type='radio' name='new_tab' value='yes' " . $h->vars['new_tab_yes'] . "> " . $h->lang['users_settings_yes'] . " &nbsp;&nbsp;\n";
+            echo '</div>';
+            echo '<div class="col-sm-3">';
+                echo "<input type='radio' name='new_tab' value='no' " . $h->vars['new_tab_no'] . "> " . $h->lang['users_settings_no'] . "\n";
+            echo '</div>';
+        echo '</div>';
+        
+        
+        // OPEN POSTS IN A NEW TAB?
+        echo "<div class='form-group'>";
+            echo '<label for="inputEmail3" class="col-sm-6">';
+                echo $h->lang['bookmarking_users_settings_link_action'];
+            echo '</label>'; 
+            echo '<div class="col-sm-3">';
+                echo "<input type='radio' name='link_action' value='source' " . $h->vars['link_action_source'] . "> " . $h->lang['bookmarking_users_settings_source'] . " &nbsp;&nbsp;\n";
+            echo '</div>';
+            echo '<div class="col-sm-3">';
+                echo "<input type='radio' name='link_action' value='post' " . $h->vars['link_action_post'] . "> " . $h->lang['bookmarking_users_settings_post'] . "\n";
+            echo '</div>';
+        echo '</div>';
     }
     
     
@@ -482,7 +642,7 @@ class Bookmarking
      */
     public function profile_navigation($h)
     {
-        echo "<li><a href='" . $h->url(array('page'=>'all', 'user'=>$h->vars['user']->name)) . "'>" . $h->lang["users_all_posts"] . "&nbsp;<span class='badge'>" . $h->postsApproved($h->vars['user']->id) . "</span></a></li>\n";
+        echo "<li><a href='" . $h->url(array('page'=>'all', 'user'=>$h->displayUser->name)) . "'>" . $h->lang["users_all_posts"] . "&nbsp;<span class='label label-waring pull-right'>" . number_format($h->postsApproved($h->displayUser->id),0) . "</span></a></li>\n";
     }
 
     
@@ -491,6 +651,8 @@ class Bookmarking
      */
     public function theme_index_pre_main($h)
     {
+        if (substr($h->pageName, 0, 6) == 'submit' || substr($h->pageName, 0, 4) == 'edit' || $h->pageName == 'login' || $h->pageName == 'register') { return false; }
+        
         $pagename = $h->pageName;
         
         // check if we're looking at a category
@@ -531,7 +693,7 @@ class Bookmarking
          
         // POPULAR ACTIVE OR INACTIVE
         if (($pagename == 'popular') && (!isset($sort)) && $h->pageType != 'profile') { 
-            $h->vars['popular_active'] = "class='active'";
+            $h->vars['popular_active'] = "active";
         } else { $h->vars['popular_active'] = ""; }
         
         // UPCOMING LINK
@@ -541,7 +703,7 @@ class Bookmarking
         $h->vars['upcoming_link'] = $url;
         
         // UPCOMING ACTIVE OR INACTIVE        
-        $h->vars['upcoming_active'] = $pagename == 'upcoming' && !isset($sort) ? "class='active'" : '';
+        $h->vars['upcoming_active'] = $pagename == 'upcoming' && !isset($sort) ? "active" : '';
         
         // LATEST LINK
         if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
@@ -550,7 +712,7 @@ class Bookmarking
         $h->vars['latest_link'] = $url;               
 
         // LATEST ACTIVE OR INACTIVE        
-        $h->vars['latest_active'] = $pagename == 'latest' && !isset($sort) ? "class='active'" : '';
+        $h->vars['latest_active'] = $pagename == 'latest' && !isset($sort) ? "active" : '';
         
         // ALL LINK
         if (isset($h->vars['bookmarking']['filter']) || isset($h->vars['bookmarking']['filterText'])) {
@@ -559,7 +721,7 @@ class Bookmarking
         $h->vars['all_link'] = $url; 
 
         // ALL ACTIVE OR INACTIVE        
-        $h->vars['all_active'] = $pagename == 'all' && !isset($sort) ? "class='active'" : '';
+        $h->vars['all_active'] = $pagename == 'all' && !isset($sort) ? "active" : '';
         
         // 24 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-24-hours', 'category'=>$category));
@@ -570,7 +732,7 @@ class Bookmarking
         $h->vars['24_hours_link'] = $url;
 
         // 24 HOURS ACTIVE OR INACTIVE        
-        $h->vars['top_24_hours_active'] = isset($sort) && $sort == 'top-24-hours' ? "class='active'" : '';
+        $h->vars['top_24_hours_active'] = isset($sort) && $sort == 'top-24-hours' ? "active" : '';
         
         // 48 HOURS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-48-hours', 'category'=>$category));
@@ -581,7 +743,7 @@ class Bookmarking
         $h->vars['48_hours_link'] = $url;
 
         // 48 HOURS ACTIVE OR INACTIVE        
-        $h->vars['top_48_hours_active'] = isset($sort) && $sort == 'top-48-hours' ? "class='active'" : '';
+        $h->vars['top_48_hours_active'] = isset($sort) && $sort == 'top-48-hours' ? "active" : '';
         
         // 7 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-7-days', 'category'=>$category));
@@ -592,7 +754,7 @@ class Bookmarking
         $h->vars['7_days_link'] = $url;
 
         // 7 DAYS ACTIVE OR INACTIVE        
-        $h->vars['top_7_days_active'] = isset($sort) && $sort == 'top-7-days' ? "class='active'" : '';
+        $h->vars['top_7_days_active'] = isset($sort) && $sort == 'top-7-days' ? "active" : '';
         
         // 30 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-30-days', 'category'=>$category));
@@ -603,7 +765,7 @@ class Bookmarking
         $h->vars['30_days_link'] = $url;
 
         // 30 DAYS ACTIVE OR INACTIVE        
-        $h->vars['top_30_days_active'] = isset($sort) && $sort == 'top-30-days' ? "class='active'" : '';
+        $h->vars['top_30_days_active'] = isset($sort) && $sort == 'top-30-days' ? "active" : '';
         
         // 365 DAYS LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-365-days', 'category'=>$category));
@@ -614,7 +776,7 @@ class Bookmarking
         $h->vars['365_days_link'] = $url;
 
         // 365 DAYS ACTIVE OR INACTIVE        
-        $h->vars['top_365_days_active'] = isset($sort) && $sort == 'top-365-days' ? "class='active'" : '';
+        $h->vars['top_365_days_active'] = isset($sort) && $sort == 'top-365-days' ? "active" : '';
         
         // ALL TIME LINK
         if (isset($category)) { $url = $h->url(array('sort'=>'top-all-time', 'category'=>$category));
@@ -625,7 +787,7 @@ class Bookmarking
         $h->vars['all_time_link'] = $url;
         
         // ALL TIME ACTIVE OR INACTIVE        
-        $h->vars['top_all_time_active'] = isset($sort) && $sort == 'top-all-time' ? "class='active'" : '';
+        $h->vars['top_all_time_active'] = isset($sort) && $sort == 'top-all-time' ? "active" : '';
         
         $h->pluginHook('bookmarking_sort_filter'); // allow custom filters
         //
@@ -650,13 +812,11 @@ class Bookmarking
         $limit = $h->cage->get->KeyExists('limit') ? $h->cage->get->testInt('limit') : 30;        
         
         switch ($action) {
-            case 'get':
-                // call query
+            case 'get':                
                 $post_count = $funcs->prepareList($h, '', 'count');   // get the number of posts
                 $post_query = $funcs->prepareList($h, '', 'query');   // and the SQL query used				
                 $result = $h->pagination($post_query, $post_count, $limit, 'posts');
                 break;
-
             default:
                 return false;
                 break;

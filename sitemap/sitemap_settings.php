@@ -67,12 +67,12 @@ class SitemapSettings extends Sitemap
 		$maps_tag = $h->db->get_var($sql);
 		
                 // show header
-                echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
+                //echo "<h1>" . $h->lang["sitemap_settings_header"] . "</h1>\n";
 
 		echo "<h3>" . $h->lang['sitemap_configure_sitemap'] . "</h3>\n";
 		
-		echo '<form name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
-		print $sitemap_settings['sitemap_compress'];
+		echo '<form role="form" name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
+		//print $sitemap_settings['sitemap_compress'];
 		echo $h->lang['sitemap_compress'].'<input type="checkbox" name ="sitemap_compress" value="sitemap_compress" ' . $sitemap_settings['sitemap_compress'] . '> <br />';
 		echo $h->lang['sitemap_frequency'].'<select name ="sitemap_frequency">
 			<option selected="yes">'.$sitemap_settings['sitemap_frequency'].'</option>
@@ -112,7 +112,7 @@ class SitemapSettings extends Sitemap
 		echo '<input type="hidden" name="submitted" value="true">';
 		echo '<input type="hidden" name="generate" value="false">';
 		echo '<input type="hidden" name="newpass" value="false">';
-		echo '<input type="submit" value="' . $h->lang['sitemap_form_save_settings'] . '" />';
+		echo '<input class="btn btn-primary" type="submit" value="' . $h->lang['sitemap_form_save_settings'] . '" />';
 		echo '<input type="hidden" name="csrf" value="' . $h->csrfToken . '" />';
 		echo '</form>';
 		
@@ -127,7 +127,7 @@ class SitemapSettings extends Sitemap
 		//Allow the user to run the sitemap creation tool
 		echo '<form name="input" action="'. BASEURL . 'admin_index.php?page=plugin_settings&amp;plugin=sitemap" method="post">';
 		echo '<input type="hidden" name="ping" value="true">';
-		echo '<input type="submit" value="' . $h->lang['sitemap_form_ping'] . '" />';
+		echo '<input class="btn btn-success" type="submit" value="' . $h->lang['sitemap_form_ping'] . '" />';
 		echo '<input type="hidden" name="csrf" value="' . $h->csrfToken . '" />';
 		echo '</form>';
 
@@ -149,7 +149,7 @@ class SitemapSettings extends Sitemap
 		echo '<input type="hidden" name="submitted" value="false">';
 		echo '<input type="hidden" name="generate" value="true">';
 		echo '<input type="hidden" name="newpass" value="false">';
-		echo '<input type="submit" value="' . $h->lang['sitemap_form_new_sitemap'] . '" />';
+		echo '<input class="btn btn-default" type="submit" value="' . $h->lang['sitemap_form_new_sitemap'] . '" />';
 		echo '<input type="hidden" name="csrf" value="' . $h->csrfToken . '" />';
 		echo '</form>';
 		
@@ -164,7 +164,7 @@ class SitemapSettings extends Sitemap
 		echo '<input type="hidden" name="submitted" value="false">';
 		echo '<input type="hidden" name="generate" value="false">';
 		echo '<input type="hidden" name="newpass" value="true">';
-		echo '<input type="submit" value="' . $h->lang['sitemap_form_new_password'] . '">';
+		echo '<input class="btn btn-warning" type="submit" value="' . $h->lang['sitemap_form_new_password'] . '">';
 		echo '<input type="hidden" name="csrf" value="' . $h->csrfToken . '" />';
 		echo '</form>';
 
@@ -198,7 +198,8 @@ class SitemapSettings extends Sitemap
 			$timestamp = time();
 			$recurrence = "daily"; 
 			$cron_data = array('timestamp'=>$timestamp, 'recurrence'=>$recurrence, 'hook'=>$hook);
-			$h->pluginHook('cron_update_job', 'cron', $cron_data); 
+			//$h->pluginHook('cron_update_job', 'cron', $cron_data); 
+                        $h->cronUpdateJob($cron_data);
 		}
 		else
 		{
@@ -207,7 +208,8 @@ class SitemapSettings extends Sitemap
 			// delete any existingcron job for sitemaps
 			$hook = "sitemap_runcron";
 			$cron_data = array('hook'=>$hook);
-			$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+			//$h->pluginHook('cron_delete_job', 'cron', $cron_data);
+                        $h->cronDeleteJob($cron_data);
 		}
 
 		// Ping Google, Bing

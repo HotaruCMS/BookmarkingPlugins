@@ -267,7 +267,7 @@ class SubmitFunctions
     public function saveSubmitData($h)
     {
         // delete everything in this table older than 30 minutes:
-        $this->deleteTempData($h->db);
+        $this->deleteTempData($h);
 
         $sid = preg_replace('/[^a-z0-9]+/i', '', session_id());
         $key = md5(microtime() . $sid . rand());
@@ -286,7 +286,7 @@ class SubmitFunctions
     public function loadSubmitData($h, $key = '')
     {
         // delete everything in this table older than 30 minutes:
-        $this->deleteTempData($h->db);
+        $this->deleteTempData($h);
         
         if (!$key) { return array(); }
         
@@ -304,13 +304,13 @@ class SubmitFunctions
      /**
      * Delete temporary data older than 30 minutes
      */
-	public function deleteTempData($db)
+	public function deleteTempData($h)
 	{
 		$sql = 'SELECT NOW();'; // use mysql time
-		$timestamp = strtotime($db->get_var($sql));
+		$timestamp = strtotime($h->db->get_var($sql));
 		$exp = date('YmdHis', $timestamp - (60 * 30));
-		$sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
-		$db->query($db->prepare($sql, $exp));
+                $sql = "DELETE FROM " . TABLE_TEMPDATA . " WHERE tempdata_updatedts < %s";
+		$h->db->query($h->db->prepare($sql, $exp));
 	} 
     
     
@@ -405,15 +405,16 @@ class SubmitFunctions
             $error = 1;
         } elseif ($existing = $h->urlExists($url)) {
             // URL already exists...
+            $h->message = $h->lang['submit_url_already_exists_error'];
+            $h->messageType = 'red';
+            $error = 1;
+            // TODO message doesnt show when we redirect below. make it show
             if (($existing->post_status == 'new') || ($existing->post_status == 'top'))
             {
             	// redirect to the existing post unless you 
             	header("Location: " . $h->url(array('page'=>$existing->post_id)));
             	exit;
             }
-            $h->message = $h->lang['submit_url_already_exists_error'];
-            $h->messageType = 'red';
-            $error = 1;
         } elseif ($h->currentUser->getPermission('can_submit') == 'no') {
             // No permission to submit posts
             $h->message = $h->lang['submit_no_permission'];

@@ -10,7 +10,7 @@
 .activity_avatar { display: inline; padding: 0.2em; }
 .activity_content { display: inline; }
 
-
+.activity_items { padding: 0; }
 
 
 
@@ -72,17 +72,7 @@ top: 0;
     border-radius: 2px;
 }
 
-.label {
-    background-size: 100%;
-background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#7fb3d4),color-stop(100%,#599cc7));
-background-image: -webkit-linear-gradient(top,#7fb3d4,#599cc7);
-background-image: -moz-linear-gradient(top,#7fb3d4,#599cc7);
-background-image: -o-linear-gradient(top,#7fb3d4,#599cc7);
-background-image: linear-gradient(top,#7fb3d4,#599cc7);
--webkit-box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
--moz-box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
-box-shadow: 0 1px 0 #f7f7f7,inset 0 1px 1px #70aacf;
-}
+
 
 .label-blue {
     background: #599cc7;

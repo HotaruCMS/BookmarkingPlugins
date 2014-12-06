@@ -1,21 +1,5 @@
 /* users */
 
-.profile_navigation {
-    width: 18%;
-    margin-right: 2%;
-    float: left; 
-    display: inline; 
-}
-
-.users_content {
-    width: 80%;
-    float: left;
-}
-
-#users_edit_profile.users_content table, .users_content textarea { 
-	width: 100%;
-}
-
 .users_content table td {
 	vertical-align: top;
 }
@@ -25,7 +9,7 @@
 #users_posts_filter#sort_box.sort_menu li.active a { color: #000; font-weight: bold; }
 
 #profile_avatar {  margin: 0.6em 1.0em 1.0em 0; }
-#profile_bio { float: left; margin: 0.6em 0 1.0em 0; width: 80%; }
+#profile_bio {  }
 #profile_usage { margin: 0 1.0em 1.0em 0; }
 
 
@@ -65,4 +49,10 @@
 
 #user_profile_navigation .nav {
     margin-bottom: 0px;
+}
+
+.profile-navigation ul {
+    margin-left:0;
+    padding-left:0;
+    margin-right:10px;
 }

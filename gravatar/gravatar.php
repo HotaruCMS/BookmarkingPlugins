@@ -2,11 +2,11 @@
 /**
  * name: Gravatar
  * description: Enables Gravatar avatars for users
- * version: 1.1
+ * version: 1.3.1
  * folder: gravatar
  * class: Gravatar
  * type: avatar
- * hooks: install_plugin, avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar, admin_plugin_settings
+ * hooks: install_plugin, theme_index_top, admin_theme_index_top, avatar_set_avatar, avatar_get_avatar, avatar_show_avatar, avatar_test_avatar, admin_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -61,18 +61,37 @@ class Gravatar
 	private $default = 'identicon'; 
 
 
-	/**
-	 * Install Gravatar settings if they don't already exist
-	 */
-	public function install_plugin($h)
-	{
-		// Default settings 
-		$gravatar_settings = $h->getSerializedSettings();
-		if (!isset($gravatar_settings['default_avatar'])) { $gravatar_settings['default_avatar'] = "identicon"; }
-		$h->updateSetting('gravatar_settings', serialize($gravatar_settings));
-	}
+    /**
+     * Install Gravatar settings if they don't already exist
+     */
+    public function install_plugin($h)
+    {
+            // Default settings 
+            $gravatar_settings = $h->getSerializedSettings();
+            if (!isset($gravatar_settings['default_avatar'])) { $gravatar_settings['default_avatar'] = "identicon"; }
+            //if (!isset($gravatar_settings['gravatar_ssl'])) { $gravatar_settings['gravatar_ssl'] = ''; }
+
+            $h->updateSetting('gravatar_settings', serialize($gravatar_settings));
+    }
 	
-	
+    /**
+     * 
+     * @param type $h
+     */
+    public function admin_theme_index_top($h)
+    {
+        $h->vars['gravatar_settings'] = $h->getSerializedSettings('gravatar');
+    }
+    
+    /**
+     * 
+     * @param type $h
+     */
+    public function theme_index_top($h)
+    {
+        $h->vars['gravatar_settings'] = $h->getSerializedSettings('gravatar');
+    }
+    
     /**
      * Set global $h vars for this avatar
      *
@@ -118,8 +137,7 @@ class Gravatar
     public function avatar_get_avatar($h)
     {
     	// get default from settings
-		$h->vars['gravatar_settings'] = $h->getSerializedSettings('gravatar');
-		$this->default = $h->vars['gravatar_settings']['default_avatar'];
+        $this->default = $h->vars['gravatar_settings']['default_avatar'];
         	
         $grav_url = $this->buildGravatarUrl($h, $h->vars['avatar_user_email'], $h->vars['avatar_size'], $h->vars['avatar_rating']);
         $img_url = $this->buildGravatarImage($grav_url, $h->vars['avatar_size'], $h->vars['avatar_img_class']);
@@ -136,7 +154,7 @@ class Gravatar
      * @param string $d the Gravatar "default" parameter - 404 just tests for existence
      * @return string - html for image
      */
-    public function buildGravatarUrl($h, $email = '', $size = 32, $rating = 'g', $test = FALSE)
+    public function buildGravatarUrl($h, $email = '', $size = 32, $rating = 'g', $test = false)
     {
     	/*	3 cases:
     	
@@ -145,32 +163,25 @@ class Gravatar
     		3. Otherwise, use the default Gravatar image specified in plugin settings for Gravatar
     	*/
     	
-    	if ($test)
-    	{
+    	if ($test) {
     		$d = '404';
-    	}
-        elseif ($this->default === 'custom')
-        {         	
+    	} elseif ($this->default === 'custom') {         	
         	// Look in the theme's images folder for a custom default avatar before using the one in the Gravatar images folder
-        	if (file_exists(THEMES . THEME . "images/default_80.png"))
-        	{
-                $default_image = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
-                $d = urlencode($default_image); // Gravatar will redirect back and use this custom avatar
-            } 
-            
-            // otherwise use the Gravatar "Mystery Man" default avatar
-            else 
-            { 
-                $d = 'mm';
-            }            
-        }
-        else
-        {
+                if (file_exists(THEMES . THEME . "images/default_80.png")) {
+                    $default_image = BASEURL . "content/themes/"  . THEME . "images/default_80.png";
+                    $d = urlencode($default_image); // Gravatar will redirect back and use this custom avatar
+                } else { 
+                    // otherwise use the Gravatar "Mystery Man" default avatar
+                    $d = 'mm';
+                }            
+        } else {
         	$d = $this->default;
         }
+                   
+        $url =  "//www.gravatar.com/";
         
         // build the gravatar url
-        $grav_url = "http://www.gravatar.com/avatar/".md5( strtolower($email) ).
+        $grav_url = $url . "avatar/".md5( strtolower($email) ).
             "?d=". $d.
             "&amp;size=" . $size . 
             "&amp;r=" . $rating;
@@ -192,9 +203,8 @@ class Gravatar
         if (!$grav_url) { return false; }
         
         $resized = "style='height: " . $size . "px; width: " . $size . "px'";
-                
-        if ($class) $class = ' ' . $class;
-        $img_url = "<img class='avatar" . $class . "' width='" . $size . "' height='" . $size . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
+        $img_url = "<img class='avatar " . $class . "' width='" . $size . "' height='" . $size . "' src='" . $grav_url . "' " . $resized  ." alt='' />";
+        
         return $img_url;
     }
 }

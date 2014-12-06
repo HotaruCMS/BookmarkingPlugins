@@ -70,12 +70,12 @@ class RecentVisitors
         $label = 'recent_visitors';
         
         // check for a cached version and use it if no recent update:
-        $output = $h->smartCache('html', 'users', 10, '', $label);
-        if ($output) {
-            echo $output; return true;
-        } else {
-            $need_cache = true;
-        }
+//        $output = $h->smartCache('html', 'users', 10, '', $label);
+//        if ($output) {
+//            echo $output; return true;
+//        } else {
+//            $need_cache = true;
+//        }
         
         $recent_visitors_settings = $h->getSerializedSettings('recent_visitors');
         $limit = $recent_visitors_settings['visitors_num'];
@@ -94,9 +94,9 @@ class RecentVisitors
         $output = '';
         
         if ($show_title) {
-            $output .="<h2 class='widget_head widget_recent_visitors_title'>";
+            $output .="<h4 class='widget_head widget_recent_visitors_title'>";
             $output .=$h->lang["recent_visitors_widget_title"];
-            $output .="</h2>\n";
+            $output .="</h4>\n";
         }
         
         // if using avatars, set them up here:
@@ -151,9 +151,9 @@ class RecentVisitors
         
         $output .="</div>";
         
-        if ($need_cache) {
-            $h->smartCache('html', 'users', 60, $output, $label); // make or rewrite the cache file
-        }
+//        if ($need_cache) {
+//            $h->smartCache('html', 'users', 60, $output, $label); // make or rewrite the cache file
+//        }
         
         echo $output;
     }

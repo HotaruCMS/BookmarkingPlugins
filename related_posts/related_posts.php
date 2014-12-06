@@ -2,11 +2,10 @@
 /**
 * name: Related Posts
 * description: Show a list of related posts
-* version: 1.2
+* version: 1.4
 * folder: related_posts
 * class: relatedPosts
-* requires: search 0.8
-* hooks: install_plugin, header_include, submit_settings_get_values, submit_settings_form2, submit_save_settings, submit_step3_pre_buttons, submit_step3_post_buttons, show_post_middle
+* hooks: install_plugin, theme_index_top, header_include, submit_settings_get_values, submit_settings_form2, submit_save_settings, submit_step3_pre_buttons, submit_step3_post_buttons, show_post_middle, admin_plugin_settings
 * author: Nick Ramsay
 * authorurl: http://hotarucms.org/member.php?1-Nick
 *
@@ -45,6 +44,10 @@ class relatedPosts
 		if (!$h->getSetting('submit_related_posts_post')) { $h->updateSetting('submit_related_posts_post', 5); }
 	}
 	
+        public function theme_index_top($h)
+        {
+            $h->vars['related_posts_settings'] = $h->getSerializedSettings('related_posts');        
+        }
 	
 	/**
 	* Gets current settings from the database
@@ -72,10 +75,7 @@ class relatedPosts
 	*/
 	public function submit_settings_form2($h)
 	{
-		echo "<br /><input type='text' size=5 name='related_posts_submit' value='" . $h->vars['related_posts_submit'] . "' /> ";
-		echo $h->lang["submit_settings_related_posts_submit"] . "<br />\n";
-		echo "<br /><input type='text' size=5 name='related_posts_post' value='" . $h->vars['related_posts_post'] . "' /> ";
-		echo $h->lang["submit_settings_related_posts_post"] . "<br />\n";
+                $h->template('related_posts_form2');
 	}
 	
 	
@@ -102,7 +102,6 @@ class relatedPosts
 				
 		$h->updateSetting('submit_related_posts_submit', $h->vars['related_posts_submit']);
 		$h->updateSetting('submit_related_posts_post', $h->vars['related_posts_post']);
-	
 	}
 	
 	
@@ -159,35 +158,25 @@ class relatedPosts
 		
 		$tags = explode(',', $h->post->tags);
 		$count = count($tags);
-		if ($count > 5) { $tags = array_slice($tags, 0, 5); } // restrict to first 5 tags only
-		foreach ($tags as $key => $value) { $tags[$key] = trim($value); } // trim whitespace from each tag
+                
+		if ($count > 5) {
+                    $tags = array_slice($tags, 0, 5);
+                } // restrict to first 5 tags only
+		
+                foreach ($tags as $key => $value) {
+                    $tags[$key] = trim($value); 
+                } // trim whitespace from each tag
+                
 		$tags = implode(' ', $tags);
 
 		// abort of no tags for this post
-		if (!$tags) { echo $this->noRelatedPosts($h); return true; }
-		
-		$search_terms = $tags;
-		
-		$need_cache = false;
-		
-		// check for a cached version and use it if no recent update:
-		$output = $h->smartCache('html', 'tags', 60, '', 'related_posts_' . $original_id);
-		if ($output) {
-				echo $output; // cached HTML
-				return true;
-		} else {
-				$need_cache = true;
-		}
-		
+		if (!$tags) { 
+                    $this->noRelatedPosts($h);
+                    return true;                     
+                }
+                
 		// get the results and generate HTML:
-		$output = $this->showRelatedPosts($h, $search_terms, $num_posts);
-		
-		// write them to the cache
-		if ($need_cache) {
-				$h->smartCache('html', 'tags', 60, $output, 'related_posts_' . $original_id); // make or rewrite the cache file
-		}
-		
-		echo $output;
+		$this->showRelatedPosts($h, $tags, $num_posts);
 		
 		$h->readPost($original_id); // fill the object with the original post details.
 	}
@@ -201,61 +190,14 @@ class relatedPosts
 	*/
 	public function showRelatedPosts($h, $search_terms = '', $num_posts = 10)
 	{
-		$output = '';
-		
 		$results = $this->getRelatedPosts($h, $search_terms, $num_posts);
 		if (!$results) {
-				// Show "No other posts found with matching tags"
-				return $this->noRelatedPosts($h);
+                    // Show "No other posts found with matching tags"
+                    return $this->noRelatedPosts($h);
 		} 
-
-		$output = "<div class='related_posts_container'><h3 id='related_posts_title'>" . $h->lang['related_posts'] . "</h3>";
-
-		$output .= "<ul class='related_posts'>\n";
-		foreach ($results as $item) {
-				$h->readPost(0, $item); // needed for the url function
-				$output .= "<li class='related_posts_item'>\n<div class='related_posts_item_block'>";
-			$indent = '';
-			if ($h->isActive('vote')) {
-					if (!isset($item->post_votes_up)) { $item->post_votes_up = '&nbsp;'; }
-					$output .= "<span class='related_posts_vote vote_color_" . $item->post_status . "'>";
-					$output .= $item->post_votes_up;
-					$output .= "</span>\n";
-				$indent = "related_posts_indent";
-			}
-			if($h->isActive('post_images'))
-			{
-				$h->vars['post_images_settings'] = $h->getSerializedSettings("post_images");
-				if($h->vars['post_images_settings']['show_in_related_posts'] == 'checked') 
-				{
-					if(isset($h->post->vars['img']) && strlen($h->post->vars['img']) > 0 )
-						{
-							if (substr($h->post->vars['img'],0,32) != 'http://images.sitethumbshot.com/')
-								{	
-									// We have an image for this post and it is not a site thumbnail so use the image and prepend path to folder
-									$output .= "<span class=\"related_posts_image\"><a href=\"" . $h->url(array('page'=>$item->post_id)) . "\"> <img src=\"" . BASEURL . "content/images/post_images/" . $h->post->vars['img'] . "\" alt=\"" . stripslashes(urldecode($item->post_title)) . "\" /></a></span>";
-								}
-									else 
-								{
-									// Image is a 3rd party site thumbnail, print it out as it is
-									$output .= "<span class=\"related_posts_image\"><img src=\"" . $h->post->vars['img'] . "\" /></span>";
-								}
-							}
-				}
-			}
-				$output .= "<span class=\"related_posts_link " . $indent . "\">";
-				$output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' ";
-				$output .= "title='" . $h->lang['related_links_new_tab'] . "'>\n";
-				$output .= stripslashes(urldecode($item->post_title)); 
-				$output .= "</a>";
-				$output .= "</span></div>";
-				$output .= "</li>\n";
-		}
-		$output .= "</ul>\n";
-		$output .= "</div>\n";		
-		$output .= "<div class=\"clear\" ></div>";
-
-		return $output;
+                
+                $h->vars['related_posts_results'] = $results;
+                $h->template('related_posts_list');
 	}
     
 	/**
@@ -267,12 +209,10 @@ class relatedPosts
 	public function noRelatedPosts($h, $output = '')
 	{
 		if ($h->isPage('submit3')) { 
-				$output .= "<div id='related_posts_none'>\n";
-				$output .= $h->lang['related_links_no_results'];
-				$output .= "</div>\n";
+			$h->template('related_posts_none');
 		}
 		
-		return $output;
+		return true;
 	}
 	
 	/**
@@ -284,17 +224,22 @@ class relatedPosts
 	*/
 	public function getRelatedPosts($h, $search_terms = '', $num_posts = 10)
 	{
-		if (!$h->isActive('search')) { return false; }
-		
-		require_once(PLUGINS . 'search/search.php');
-		$search = new Search();
+                if (!isset($h->vars['select'])) { return false; }
+            
 		$h->vars['filter']['post_archived != %s'] = 'Y';
 		$h->vars['filter']['post_id != %d'] = $h->post->id;
 		$h->vars['filter']['post_type = %s'] = 'news';
-		$prepared_search = $search->prepareSearchFilter($h, $search_terms);
+                if ($h->version > '1.6.6') {
+                    $prepared_search = $h->prepareSearchFilter($h, $search_terms);
+                } else {
+                    if (!$h->isActive('search')) { return false; }
+                    require_once(PLUGINS . 'search/search.php');
+                    $search = new Search();                                    
+                    $prepared_search = $search->prepareSearchFilter($h, $search_terms);
+                }
 		extract($prepared_search);
 
-		$prepared_filter = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], $num_posts,false, true);
+		$prepared_filter = $h->db->select($h, array($h->vars['select']), 'posts', $h->vars['filter'], $h->vars['orderby'], $num_posts, false, true);
 
 		$results = $h->db->getData($h, 'posts', $prepared_filter);
 		return $results;

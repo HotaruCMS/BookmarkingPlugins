@@ -28,7 +28,7 @@ $(document).ready(function(){
 	// Show/Hide box 
 	$(".comment_reply_link").click(function () {
 		var target = $(this).parents(".comment");
-		target = $(target).next("div").next("div");
+		target = $(target).next("div.comment_form");
 		target.fadeToggle();
 		
 		target2 = $(target).find("div.comment_status"); // finds div in form
@@ -40,7 +40,7 @@ $(document).ready(function(){
 	// Show/Hide box 
 	$(".comment_edit_link").click(function () {
 		var target = $(this).parents(".comment");
-		target = $(target).next("div").next("div"); // finds div surrounding form
+		target = $(target).next("div.comment_form"); // finds div surrounding form
 		target.fadeToggle();
 
 		target2 = $(target).find("div.comment_status"); // finds div in form
@@ -51,8 +51,8 @@ $(document).ready(function(){
         
 	// Show/Hide comment content
 	$(".comment_show_hide").click(function () {
-		var target = $(this).parents(".comment_header");
-		target = $(target).next("div").next("div"); // finds div surrounding form
+		var target = $(this).parents(".comment");
+		target = $(target).next("div.comment_content"); // finds div surrounding form
 		target.fadeToggle();
 
 		target2 = $(target).find("div.comment_status"); // finds div in form

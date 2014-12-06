@@ -1,11 +1,12 @@
 <?php
 /**
  * name: Category Manager
- * description: Manage categories.
- * version: 1.0
+ * description: Manager categories.
+ * version: 1.1
  * folder: category_manager
  * class: CategoryManager
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings
+ * type: Admin
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, admin_sidebar_categories
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -49,6 +50,17 @@ class CategoryManager
     
     // no other methods necessary because we fall back on the defaults.
     // See category_manager_settings for all the real code.
+    
+    /**
+     * Add link to admin sidebar
+     */
+    public function admin_sidebar_categories($h)
+    {
+        $links = array(            
+            'Category Manager' => array('admin_index.php?page=plugin_settings&plugin=category_manager')
+        );
+        return $links;
+    }
 }
 
 ?>

@@ -14,6 +14,8 @@ Instructions
 
 Changelog
 ---------
+v.1.4 2014/10/25 - shibuya246 - Added settings for admin section. Further template for customisation on submit stage
+v.1.3 2014/10/23 - shibuya246 - Remove dependency on search plugin. Create template for customisation
 v.1.2 2010/12/12 - mabujo - Make image clickable, add default size to css, add alt tag, fix error in appending indent class.
 v.1.1 2010/12/11 - mabujo - Allow use of post images in related posts results.
 v.1.0 2010/12/10 - mabujo - Reinstated noRelatedPosts function as its removal causes a fatal error.

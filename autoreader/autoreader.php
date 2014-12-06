@@ -173,7 +173,8 @@ class Autoreader
 		case "flush":
 		$hook = "autoreader_runcron";
 		$cron_data = array('hook'=>$hook);
-		$h->pluginHook('cron_flush_hook', 'cron', $cron_data);
+		//$h->pluginHook('cron_flush_hook', 'cron', $cron_data);
+                $h->cronFlushHook($cron_data);
 		exit;
 		default :        
 

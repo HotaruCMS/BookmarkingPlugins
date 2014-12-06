@@ -32,17 +32,17 @@ $h->pluginHook('submit_2_assign');
 
     <?php echo $h->showMessages(); ?>
     
-    <?php echo $h->lang["submit_edit_instructions"]; ?>
-
-    <form name='submit_edit_post' id='submit_edit_form' action='<?php echo BASEURL; ?>index.php?page=edit_post' method='post'>
-    <table>
+    <?php //echo $h->lang["submit_edit_instructions"]; ?>
+    
+    <form role='form' name='submit_edit_post' id='submit_edit_form' action='<?php echo BASEURL; ?>index.php?page=edit_post' method='post'>
+    <table class='table'>
     <tr>
-        <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-        <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . truncate($h->vars['submit_orig_url'], 60) . "</a>"; ?></td>
+        <td><?php echo "<i class='fa fa-link'></i>&nbsp;" . $h->lang["submit_url"]; ?>&nbsp; </td>
+        <td><?php echo "<a target='_blank' href='" . $h->vars['submit_orig_url'] . "'>" . truncate($h->vars['submit_orig_url'], 80) . "</a>"; ?></td>
     </tr>
     <tr>
         <td><?php echo $h->lang["submit_title"]; ?>&nbsp; </td>
-        <td><input type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
+        <td><input class='form-control' type='text' id='post_title' name='post_title' value='<?php echo $h->vars['submit_title']; ?>'></td>
     </tr>    
     <?php if ($h->vars['submit_use_content']) { ?>
     
@@ -50,30 +50,29 @@ $h->pluginHook('submit_2_assign');
         <td style='vertical-align: top;'><?php echo $h->lang["submit_content"]; ?>&nbsp; </td>
         <td>
             <textarea id='post_content' name='post_content' rows='6'><?php echo $h->vars['submit_content']; ?></textarea>
+            <div class='help-block text-right'>
+                <?php echo $h->lang['submit_allowable_tags']; ?>
+                <?php echo $h->vars['submit_allowable_tags']; ?>
+            </div>
         </td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
-        <td style='vertical-align: top;' class="submit_instructions">
-        	<small><?php echo $h->lang['submit_allowable_tags']; ?>
-            <?php echo $h->vars['submit_allowable_tags']; ?></small>
-        </td>
-    </tr>
+    </tr>	
     <?php } ?>
     
     <?php if ($h->vars['submit_use_categories']) { ?>
     <tr>
         <td style='vertical-align: top;'><?php echo $h->lang["submit_category"]; ?>&nbsp; </td>
-        <td><select name='post_category'>
-            <?php echo $h->vars['submit_category_picker']; ?>
-        </select></td>
+        <td>
+            <select class='form-control' name='post_category'>
+                <?php echo $h->vars['submit_category_picker']; ?>
+            </select>
+        </td>
     </tr>
     <?php } ?>
     
     <?php if ($h->vars['submit_use_tags']) { ?>
     	<tr>
         	<td><?php echo $h->lang["submit_tags"]; ?>&nbsp; </td>
-            <td><input type='text' id='post_tags' name='post_tags' value='<?php echo $h->vars['submit_tags']; ?>'>&nbsp; 
+            <td><input class='form-control' type='text' id='post_tags' name='post_tags' value='<?php echo $h->vars['submit_tags']; ?>'>&nbsp; 
             <small><?php echo $h->lang['submit_tags_comma_separated']; ?></small></td>
         </tr>
     <?php } ?>
@@ -83,20 +82,24 @@ $h->pluginHook('submit_2_assign');
     <?php if ($h->currentUser->getPermission('can_edit_posts') == 'yes') { ?>
         <!-- Admin/Mod only options -->
         
-        <tr><td colspan=3><u><?php echo $h->lang["submit_edit_admin_only"]; ?></u></td></tr>
+        <tr><td colspan=3>
+        <br/><br/>
+        <div class='label label-warning'><?php echo $h->lang["submit_edit_admin_only"]; ?></div>
+            </td></tr>
         
         <?php if (!$h->vars['submit_editorial']) { // if not editorial, allow source url to be changed: ?>
             <tr>
                 <td><?php echo $h->lang["submit_url"]; ?>&nbsp; </td>
-                <td><input type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>'></td>
+                <td><input class='form-control' type='text' id='post_orig_url' name='post_orig_url' value='<?php echo $h->vars['submit_orig_url']; ?>'></td>
             </tr>
         <?php } ?>
         
         <tr>
             <td style='vertical-align: top;'><?php echo $h->lang["submit_edit_status"]; ?>&nbsp; </td>
-            <td><select name='post_status'>
+            <td><select class='form-control' name='post_status'>
                 <option value="<?php echo $h->vars['submit_status']; ?>"><?php echo $h->vars['submit_status']; ?></option>
                 <?php echo $h->vars['submit_status_options']; ?>
+                <br/><br/>
             </td>
         </tr>
         
@@ -113,14 +116,14 @@ $h->pluginHook('submit_2_assign');
     <input type='hidden' name='edit_post' value='true' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
         
-    <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
+    <tr><td>&nbsp; </td><td style='text-align:right;'><input type='submit' class='btn btn-primary submit' name='submit_edit_post' value='<?php echo $h->lang["main_form_update"]; ?>' /></td></tr>    
 
     </table>
     </form>
     <?php $h->pluginHook('image_upload'); ?>
     
     <?php if ($h->currentUser->getPermission('can_delete_posts') == 'yes') { ?>
-        <a class='bold_red' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">
+        <a class='btn btn-danger' href="<?php echo $h->url(array('page'=>'edit_post', 'post_id'=>$h->post->id, 'action'=>'delete')); ?>">
         <?php echo $h->lang["submit_edit_delete"]; ?>
         </a>
     <?php } ?>

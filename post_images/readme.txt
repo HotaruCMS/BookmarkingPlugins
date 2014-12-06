@@ -15,6 +15,8 @@ Instructions
 
 Changelog
 ---------
+v.1.7 2014/10/08 - shibuya246 - removed unique array func as causing error
+v.1.6 2014/10/03 - shibuya246 - fix CSRF issue on submit2 with this plugin
 v.1.5 2013/05/28 - shibuya246 - return false if no image selected to avoid crash
 v.1.4 2013/05/21 - shibuya246 - minor bug with js load, added padding to image on posts
 v.1.3 2013/05/20 - shibuya246 - Updated JCrop jquery script for compatibility with jquery 1.9.1

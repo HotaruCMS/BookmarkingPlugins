@@ -64,7 +64,7 @@ $lang["post_man_set_delete"] = "Physically Delete";
 $lang["post_man_original_post"] = "Original Post";
 $lang["post_man_post"] = "Post";
 $lang['post_man_no_pending_posts'] = "No posts pending";
-$lang["post_man_num_pending"] = "<span style='color: red;'>Pending posts: </span>";
+$lang["post_man_num_pending"] = "Pending posts:";
 $lang["post_man_search_too_short"] = "You search term must be at least 3 characters";
 
 /* Sidebar */

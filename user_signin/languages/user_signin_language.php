@@ -66,7 +66,7 @@ $lang["user_signin_login_form_submit_remember"] = "Remember:";
 $lang["user_signin_login_forgot_password"] = "Forgot your password?";
 $lang['user_signin_login_forgot_password_submit'] = "Submit";
 $lang['user_signin_login_forgot_password_submit_instruct_1'] = "Enter the email address for your " . SITE_NAME . " account:";
-$lang['user_signin_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password. Use that to access your account and change it to something you can remember.";
+$lang['user_signin_login_forgot_password_submit_instruct_2'] = "You will be emailed a confirmation code. Click that confirmation code to be sent a new, random password.";
 
 /* Forgotten Password */
 $lang['user_signin_email_password_conf_sent'] = "An email has been sent to the address provided";

@@ -16,4 +16,6 @@ $lang['post_rss_tagged'] = "Stories tagged";
 $lang['tags_settings_header'] = "Tags Settings";
 $lang['tags_setting_exclude_words'] = "Tag words to exclude (separate by comma)";
 $lang['tags_setting_exclude_active'] = "Exclusion words active";
+$lang['tags_setting_display_buttons'] = "Display as buttons";
+
 ?>

@@ -5,6 +5,7 @@
  * version: 1.0
  * folder: post_manager
  * class: PostManager
+ * type: Admin
  * hooks: hotaru_header, install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details, admin_theme_main_stats, admin_sidebar_posts
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
@@ -109,7 +110,7 @@ class PostManager
 	    if (isset($vars) && (!empty($vars))) {
 		foreach ($vars as $key => $value) {
 			$key_lang = 'post_man_admin_stats_' . $key;
-			echo "<li class='title'>" . $h->lang[$key_lang] . "</li>";
+			echo "<li class='title'>" . $h->lang($key_lang) . "</li>";
 			foreach ($value as $stat_type) {
 				if (isset($value) && !empty($value)) {
 
@@ -143,7 +144,7 @@ class PostManager
 					$lang_name = 'post_man_admin_stats_' . $stat_type;
 					echo "<li>";
 					if ($link) { echo "<a href='" . $link . "'>"; }
-					echo $h->lang[$lang_name] . ": " . $post_count;
+					echo $h->lang($lang_name) . ": " . $post_count;
 					if ($link) { echo "</a>"; }
 					echo "</li>";
 				}

@@ -25,6 +25,7 @@
  */
 
 /* Activity language */
+$lang["activity_nav_title"] = "Activity";
 $lang['activity_submitted'] = "submitted";
 $lang['activity_submitted_news'] = "bookmarked";
 $lang['activity_submitted_blog'] = "posted";
@@ -50,6 +51,7 @@ $lang["activity_settings_avatar"] = "Show user's avatar <small>(requires the Gra
 $lang["activity_settings_avatar_size"] = "Avatar size in pixels <small>(default: 16)</small>";
 $lang["activity_settings_user"] = "Show user's name";
 $lang["activity_settings_time"] = "Show time since activity";
+$lang["activity_settings_navigation"] = "Show title in navigation bar";
 $lang["activity_settings_widget_number"] = "Number of items to show in the widget <small>(default: 10)</small>";
 $lang["activity_settings_number"] = "Number of items per page to show on activity pages <small>(default: 20)</small>";
 $lang["activity_settings_rss_number"] = "Number of items to show in the activity RSS feed <small>(default: 20)</small>";

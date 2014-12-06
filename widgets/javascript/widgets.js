@@ -72,7 +72,7 @@ jQuery('document').ready(function($) {
             },
             dataType: "json"
         });
-    }
+    };
 
      $.fn.widget_order = function(widget) {
           // Get the current widget
@@ -116,4 +116,4 @@ jQuery('document').ready(function($) {
             },
             dataType: "json"
         });
-     }
+     };

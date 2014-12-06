@@ -2,11 +2,11 @@
 /**
  * name: Domain Results
  * description: Show a page of results for a given domain
- * version: 0.1
+ * version: 0.2
  * folder: domain_results
  * class: DomainResults
  * requires: bookmarking 0.1
- * hooks: theme_index_top, breadcrumbs, bookmarking_sort_filter, bookmarking_functions_preparelist, show_post_author_date
+ * hooks: theme_index_top, theme_index_main, breadcrumbs, bookmarking_sort_filter, bookmarking_functions_preparelist, show_post_author_date
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -43,25 +43,24 @@ class DomainResults
 	{
 		$get_domain = $this->getDomain($h->post->domain);
 		
-		if (!$get_domain) { return FALSE; }
+		if (!$get_domain) { return false; }
 
-		echo $h->lang["domain_results_pre_domain"] . "<a href='" . $h->url(array('domain'=>$get_domain)) . "'>". $h->lang["domain_results_domain"] . $get_domain . "</a>\n";
+                $h->vars['domain_results']['domain'] = $get_domain;
+                $h->template('domain_results_link', 'domain_results', false);
+                
+		//echo $h->lang["domain_results_pre_domain"] . "<a href='" . $h->url(array('domain'=>$get_domain)) . "'>". $h->lang["domain_results_domain"] . $get_domain . "</a>\n";
 	}
 
 
 	/** 
-	 * http://stackoverflow.com/questions/399250/going-where-php-parse-url-doesnt-parsing-only-the-domain
+	 * get domain, tld and subdomain from url
 	 */ 
 	private function getDomain($url)
-	{
-		$pieces = parse_url($url);
-		$domain = isset($pieces['host']) ? $pieces['host'] : '';
-		
-		if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs))
-		{
-			return $regs['domain'];
-		}
-
+	{	
+                if (preg_match("/([a-z0-9\-]+\.)*[a-z0-9\-]+\.[a-z]+/", parse_url($url, PHP_URL_HOST), $_domain_tld))
+                { 
+                    return $_domain_tld[0];
+                }
 		return false;
 	}
 
@@ -71,7 +70,7 @@ class DomainResults
 	private function isDomainPage($h)
 	{
 		$this->domain = $h->cage->get->getHtmLawed('domain');
-		return ($this->domain) ? TRUE : FALSE;
+		return ($this->domain) ? true : false;
 	}
 
 
@@ -80,25 +79,80 @@ class DomainResults
 	 */
 	public function theme_index_top($h)
 	{
-		if (!$this->isDomainPage($h)) { return FALSE; }
+		if (!$this->isDomainPage($h)) { return false; }
 
 		// deal with the page title:
 		$h->pageTitle = $this->domain;
-		if (!$h->pageName) { $h->pageName = 'popular'; }
-		if ($h->pageName == $h->home) { $h->pageTitle .=  '[delimiter]' . SITE_NAME; }
+                
+		if (!$h->pageName) {
+                    $h->pageName = 'popular';
+                }
+		
+                if ($h->pageName == $h->home) {
+                    $h->pageTitle .=  '[delimiter]' . SITE_NAME;
+                }
 
 		// set other properties
 		$h->subPage = 'domain';
 		$h->pageType = 'list';
 	}
 
+        
+        /**
+        * Display All Activity page
+        */
+        public function theme_index_main($h)
+        {
+//                if ($h->pageName == 'domains') {
+//                    $this->domainsList($h);
+//                    return true;
+//                }
+                
+                return false;
+        }
+    
+        
+        /**
+         * 
+         */
+        private function domainsList($h)
+        {
+            // gets query and total count for pagination
+            $domains_query = $this->getDomains(0, 'query');
+            $domains_count = $this->getDomains(0, 'count');
+
+            $limit = 40;
+            // pagination 
+            $h->vars['pagedResults'] = $h->pagination($domains_query, $domains_count, $limit, 'domain_results');
+
+            $h->template('domain_results_list');
+
+            if ($h->vars['pagedResults']) { echo $h->pageBar($h->vars['pagedResults']); }
+        }
+    
+        
+        private function getDomains($h, $limitCount = 0, $type = '', $fromId = 0)
+	{
+		$limit = (!$limitCount) ? '' : "LIMIT " . $limitCount;
+		
+                $select = ($type == 'count') ? 'count(post_id)' : 'P.* '; //user_id, U.user_username, U.user_email, U.user_role, U.user_date ';
+                
+                $sql = "SELECT " . $select . " FROM " . TABLE_POSTS . " AS P ORDER BY P.url ASC " . $limit;
+                $query = $sql; // $h->db->prepare($sql);
+
+                if ($type == 'query') { return $query; }
+                $result = ($type == 'count') ? $h->db->get_var($query) : $h->db->get_results($query);
+
+		if ($result) { return $result; } else { return false; }
+	}
+        
 
 	/**
 	 * Clean up breadcrumbs
 	 */
 	public function breadcrumbs($h)
 	{ 
-		if (!$this->isDomainPage($h)) { return FALSE; }
+		if (!$this->isDomainPage($h)) { return false; }
 
 		return $this->domain;
 	}
@@ -109,7 +163,7 @@ class DomainResults
 	 */
 	public function bookmarking_sort_filter($h)
 	{
-		if (!$this->isDomainPage($h)) { return FALSE; }
+		if (!$this->isDomainPage($h)) { return false; }
 
 		$h->vars['popular_link'] = $h->url(array('page'=>'popular', 'domain'=>$this->domain));
 		$h->vars['upcoming_link'] = $h->url(array('page'=>'upcoming', 'domain'=>$this->domain));
@@ -130,7 +184,7 @@ class DomainResults
 	 */
 	public function bookmarking_functions_preparelist($h)
 	{
-		if (!$this->isDomainPage($h)) { return FALSE; }
+		if (!$this->isDomainPage($h)) { return false; }
 	
 		$h->vars['filter']['post_domain LIKE %s'] = "%" . urlencode($this->domain);
 		unset($h->vars['filter']['post_archived = %s']); // no need to restrict to archived posts

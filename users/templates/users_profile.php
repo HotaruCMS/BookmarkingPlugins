@@ -31,9 +31,13 @@ $profile = $h->vars['profile'];
     $h->pluginHook('user_profile_defaults'); 
 ?>
 
-<div id="profile" class="users_content">
+<div id="profile" class="col-md-9">
    
-    <div id="profile_bio">
+    <?php if ($h->displayUser->name == $h->currentUser->name) { ?>
+        <a href='<?php echo $h->url(array('page'=>'edit-profile', 'user'=>$h->displayUser->name)); ?>' class='pull-right btn btn-default'>Edit</a>
+    <?php } ?>
+    
+    <div id="profile_bio" class="well">
         <?php echo $profile['bio']; ?>
     </div>
     

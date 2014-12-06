@@ -62,7 +62,7 @@ class PostImagesSettings
 		$post_images_pullRight = isset($post_images_settings['pullRight']) ? $post_images_settings['pullRight'] : '';	
                 
 		// start form
-		echo "<form name='post_images_settings_form' ";
+		echo "<form role='form' name='post_images_settings_form' ";
 		echo "action='" . SITEURL . "admin_index.php?page=plugin_settings&amp;plugin=post_images' method='post'>\n";
 		// instructions
 		echo "<p>" . $h->lang['post_images_settings_default'] . "</p>";
@@ -112,7 +112,7 @@ class PostImagesSettings
 		// end form
 		echo "<br />";
 		echo "<input type='hidden' name='submitted' value='true' />\n";
-		echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+		echo "<button class='btn btn-primary' type='submit'>" . $h->lang["main_form_save"] . "</button>\n";
 		echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
 		echo "</form>\n";
 	}

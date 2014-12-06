@@ -1,0 +1,90 @@
+/* messaging */
+ 
+.messaging_list {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.messaging_list td {
+    border-bottom: 1px solid #f6f6f6;
+}
+
+.messaging_list_headers td {
+    background: #f6f6f6;
+    border: 0;
+}
+
+.messaging_date {
+
+}
+
+.messaging_delete {
+    width: 1.0em;
+}
+
+#messaging_compose table { 
+    width: 100%;
+}
+
+#messaging_compose td { 
+    vertical-align: top;
+}
+
+#messaging_compose input#message_to,
+#messaging_compose input#message_subject {
+    width: 100%;
+}
+
+#messaging_compose textarea#message_body { 
+    width: 100%; 
+}
+
+
+
+
+.message-box-header {
+    background-color: #ffffff;
+    border: 1px solid #E7EAEC;
+    border-bottom: 0;
+    padding: 24px 20px 16px 20px;
+}
+
+.message-box-header h2 {
+    margin-top: 0px;
+    font-size:24px;
+    color: #666;
+}
+
+.message-box-header h3 {
+    margin-top: 5px;
+    font-weight:600;
+    font-size:16px;
+}
+
+.message-box-header h5 {
+    margin-top: 5px;
+    font-weight: 600;
+    font-size:12px;
+}
+
+.font-noraml {
+    font-weight: 400;
+}
+
+.message-box {
+    background-color: #ffffff;
+    border: 1px solid #E7EAEC;
+    border-top: 0;
+    padding: 0px;
+    margin-bottom: 20px;
+}
+
+.message-body {
+    border-top: 1px solid #E7EAEC;
+    padding: 20px;
+}
+
+.unread td {
+    background-color: #f9f8f8;
+}

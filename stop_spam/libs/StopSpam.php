@@ -73,7 +73,6 @@ class StopSpamFunctions
         require_once(EXTENSIONS . 'SWCMS/HotaruHttpRequest.php');
         $r = new HotaruHttpRequest($url);
         $error = $r->DownloadToString();
-        //if (!$error) { echo "Success"; } else { echo $error; }
     }
 }
 

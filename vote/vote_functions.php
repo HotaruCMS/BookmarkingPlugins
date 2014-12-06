@@ -30,7 +30,7 @@
 require_once('../../../config/settings.php');
 require_once('../../../Hotaru.php');    // Not the cleanest way of getting to the root...
 
-$h = new Hotaru();
+$h = new \Libs\Hotaru();
 $h->start();
 
 $h->includeLanguage('vote', 'vote');
@@ -40,15 +40,14 @@ if ($h->cage->post->keyExists('post_id')) {
     $vote_rating = $h->cage->post->testInt('rating');
     $user_ip = $h->cage->server->testIp('REMOTE_ADDR');
     $referer = $h->cage->post->testAlnum('referer');
-
+    
     //get vote settings
-    $vote_settings = unserialize($h->getSetting('vote_settings', 'vote'));
+    $vote_settings = $h->getSettingsArray('vote');
     
     vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings);
 }
 
 function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
-
     if ($vote_settings['vote_anon_vote'] && !$h->currentUser->loggedIn) {
 	$user_id = 0;  // include user_id = 0 since if regd user votes after anon at same ip, we dont want to delete both votes later if anon user unvotes
 	$sql = "SELECT vote_rating FROM " . TABLE_POSTVOTES . " WHERE vote_post_id = %d AND vote_user_id = %d AND vote_user_ip = %s AND vote_rating != %d";
@@ -138,5 +137,3 @@ function vote($h, $post_id, $vote_rating, $user_ip, $referer, $vote_settings) {
 
     echo json_encode($json_array);
 }
-
-?>

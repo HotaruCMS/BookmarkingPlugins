@@ -33,4 +33,7 @@ $lang['related_links_no_results'] = "Related: No other posts found with matching
 $lang["submit_settings_related_posts_submit"] = "Max number of related posts to show on submit step 3";
 $lang["submit_settings_related_posts_post"] = "Max number of related posts to show on post pages";
 
+$lang["related_posts_setting_posts_submit"] = "Submit Posts";
+$lang["related_posts_setting_posts_post"] = "Display Posts";
+
 ?>

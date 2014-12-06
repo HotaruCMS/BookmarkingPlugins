@@ -20,6 +20,9 @@ NOTE: For users of previous versions of this plugin, please note that the collec
 
 Changelog
 ---------
+v.1.3.1 2014/11/04 - shibuya246 - Rolled back SSL option and replaced with plain http call that will work with both
+v.1.3 2014/11/03 - shibuya246 - Added an SSL option to url
+v.1.2 2014/10/20 - shibuya246 - Move getSerialized settings function to theme top to avoid multiple calls
 v.1.1 2013/06/03 - Nick - Uses Gravatar's random default avatars
 v.1.0 2010/07/06 - Nick - Added option to randomize the default avatar
 v.0.9 2010/04/03 - Nick - Removed requirement to have the Users plugin enabled

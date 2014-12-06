@@ -244,8 +244,6 @@ class CategoryManagerSettings
 				$h->template('cat_man_main', 'category_manager');
 				break;
 		}
-                
-                $h->setCatMemCache();
 		
 		return true;
     }

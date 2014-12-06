@@ -31,22 +31,20 @@ if (!isset($h->vars['post_man_navi'])) { $h->vars['post_man_navi'] = ''; }
 ?>
 
 <!-- TITLE FOR ADMIN NEWS -->
-<h2><?php echo $h->lang["post_man"]; ?></h2>
-
 <?php echo $h->lang["post_man_desc"]; ?>
 
-<?php echo " [<a href='" . BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter'>" . $h->lang["post_man_num_pending"] . $h->vars['num_pending'] . "</a>]"; ?>
+<?php echo " <a class='btn btn-xs btn-danger' href='" . BASEURL . "admin_index.php?post_status_filter=pending&plugin=post_manager&page=plugin_settings&type=filter'>" . $h->lang["post_man_num_pending"] . ' ' . $h->vars['num_pending'] . "</a>"; ?>
 
 <?php echo $h->showMessage(); ?>
 
 <table><tr><td>
 
-<form name='post_man_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='get'>
+<form role= 'form' name='post_man_search_form' action='<?php echo BASEURL; ?>admin_index.php' method='get'>
     <h3><?php echo $h->lang["post_man_search"]; ?></h3>
     <table>
         <tr class='table_headers'>
             <td><input type='text' size=30 name='search_value' value='<?php echo $h->vars['search_term']; ?>' /></td>
-            <td><input class='submit' type='submit' value='<?php echo $h->lang['post_man_search_button']; ?>' /></td>
+            <td><button class='submit btn btn-sm btn-default' type='submit'><?php echo $h->lang['post_man_search_button']; ?></button></td>
         </tr>
     </table>
     <input type='hidden' name='plugin' value='post_manager' />

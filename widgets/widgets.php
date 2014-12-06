@@ -5,7 +5,7 @@
  * version: 1.0
  * folder: widgets
  * class: Widgets
- * hooks: theme_index_top, plugins_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block
+ * hooks: theme_index_top, header_include, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, widget_block
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -33,23 +33,12 @@
 
 
 class Widgets
-{ 
-        /**
-         * Set things up when the page is first loaded
-         */
-        public function plugins_top($h) { 
-            // Create a new global object called "widget_block".
-            require_once(LIBS . 'Widget.php');
-            $h->vars['widgets'] = new Widget();
-            $h->vars['widgets']->initializeWidgets($h);
-        }
-                        
+{                         
         public function theme_index_top($h)
         {
             // Create a new global object called "widget_block".
             require_once(LIBS . 'Widget.php');
-            $h->vars['widgets'] = new Widget();
-            //$h->vars['widgets']->initializeWidgets($h);
+            $h->vars['widgets'] = new \Libs\Widget();
         }
 
 	
@@ -67,7 +56,7 @@ class Widgets
 		if (!$widgets) { return false; }
 		
 		foreach ($widgets as $widget => $details)
-		{
+		{                     
 			// Only show widgets intended for this block
 			if (($details['block'] == $block_id) && $details['enabled'])
 			{
@@ -93,6 +82,9 @@ class Widgets
 		
 		if (!$details) { return false; } // the plugin for this widget is probably inactive
 		
+                //print($details['plugin']);
+                //if ($h->isActive($details['plugin'])) { exit; }  // the plugin is not active
+                
 		$function_name = "widget_" . $widget;
 		
 		/*  include the plugin class if not already. This is usually done in the pluginHook
@@ -140,9 +132,10 @@ class Widgets
      * Widget Settings Page
      */
     public function admin_plugin_settings($h)
-    {
+    {       
         require_once(LIBS . 'Widget.php');
-        $h->vars['widgets'] = new Widget();
+        $h->vars['widgets'] = new \Libs\Widget();
+        $h->vars['widgets']->initializeWidgets($h);
             
         if ($h->cage->get->testAlpha('plugin') != 'widgets') { return false; }
         

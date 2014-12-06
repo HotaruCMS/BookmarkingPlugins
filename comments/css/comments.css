@@ -1,46 +1,100 @@
 /* comments */
-
-.comment_link       { padding-left: 1.5em; background-image: url(../../../content/plugins/comments/images/comment.png); background-repeat: no-repeat; }
-.comment_reply_link { padding-left: 1.9em; background-image: url(../../../content/plugins/comments/images/comment.png); background-repeat: no-repeat; background-position: 0 0;}
-.comment_edit_link { padding-left: 1.9em; padding-top:0.1em; background-image: url(../../../content/plugins/comments/images/edit.png); background-repeat: no-repeat;  background-position: 0 0;}
-.comment_reply_wrapper a:hover  { background-position: 0 -32px;}
-
-.comments_wrapper h2 {
+#comments_wrapper {
+    margin-bottom: 20px;
+}
+#comments_wrapper h2 {
 	padding-bottom: 0em;
 }
 
-.comment_header .avatar_wrapper a {	
-	padding: 0 0.6em 0.6em 0;
+#comments_wrapper .avatar_wrapper {	
+        padding: 0 0.6em 0.6em 0;
+        position: absolute;
+        left: 0;
+        display: inline-block;
+        width: 36px;
 }
 
+.comment_footer {
+    
+}
 .comment {
 	background-color: #fff;
 	margin-top: 1.0em;	
 	border: 0;
+        position: relative;
+        margin-right:12px;
+        padding-bottom:24px;
+        clear:both;
 }
 
 .comment_reply_wrapper {
-	padding-bottom:1em;
-	padding-top: 0.8em;
-	text-align:right;
-	margin-right: 0.6em;
+	margin:2px 4px;
+        float:left;
+}
+.comment_reply_link {
+    
 }
 
-.comment_reply_link, .comment_edit_link {
-	font-size: 8pt;
-	text-decoration: none;
-	color:#444444;
-	font-weight:bold;
+.comment_edit_link {
+	
+        float:right;
 }
 
-.comment_author {
-
+.comment>.comment_body {
+        width: auto;
+        margin-left: 50px;
+        position: relative;
+        margin-right: 1px;
 }
 
-.comment_author_date {
-    margin-top: 0.6em;
-	font-size: 0.8em;
-	float: right;
+.comment_body>.comment_content {
+        width: auto;
+        border: 1px solid #DDE4ED;
+        padding: 5px 8px 8px;
+        border-left-width: 2px;
+        position: relative;
+}
+
+.comment_body>.comment_content:before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: -7px;
+        top: 11px;
+        width: 8px;
+        height: 8px;
+        border: 2px solid #DDE4ED;
+        border-width: 2px 0 0 2px;
+        background-color: #FFF;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        -webkit-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        -o-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+}
+
+.comment_name {
+        display: block;
+        color: #999;
+}
+
+.comment_date {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #666;
+        position: absolute;
+        right: 9px;
+        top: 6px;
+}
+
+.comment_text {
+        display: block;
+        position: relative;
+        margin-top: 2px;
+        font-size: 13px;
 }
 
 .comment_form textarea {
@@ -66,28 +120,6 @@
 	padding: 0;
 }
 
-.comment_header {
-	border: 1px solid #d0d0d0;
-	padding: 0.4em;
-	background-color: #f9f9f9;
-	margin-bottom: 0.4em;
-	height:16px;
-	display:block;
-}
-
-.comment_content {
-	margin: 0.6em 0 0 0.8em;
-	overflow: hidden;
-	width: 96%;
-}
-
-.comment_header_left {
-	float:left;
-	width: 70%;
-}
-
 .comment_post_link {margin: 0.6em 0.6em 0.4em; text-align:right;}
 
 .comment_show_hide  { margin-left: 2.0em; font-size: 0.8em; }
-
-.clear	{ clear: both; margin: 0; line-height: 0em;} /* need line-height for IE */

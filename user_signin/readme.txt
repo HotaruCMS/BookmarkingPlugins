@@ -14,6 +14,9 @@ Instructions
 
 Changelog
 ---------
+v.1.1 2014/10/13 - shibuya246 - added user navigation template for customising (particularly for older themes not using bootstrap)
+v 1.0 2014/10/05 - shibuya246 - Updated hook for spam filter
+v 0.9 2014/10/01 - shibuya246 - Restyled form
 v.0.8 2013/05/03 - shibuya246 - Plugin hook updated
 v.0.7 2010/08/06 - Nick - Minor fix for &amp; in urls when redirecting from login to submit step 2
 v.0.6 2010/04/27 - Nick - Fix for unnecessary ReCaptcha-related errors on the settings page 

@@ -2,7 +2,7 @@
 /**
  * name: Posts Widget
  * description: Adds links in widgets to the latest posts and top stories on the site.
- * version: 1.6
+ * version: 1.9.2
  * folder: posts_widget
  * class: PostsWidget
  * requires: widgets 0.6, bookmarking 0.1
@@ -97,13 +97,14 @@ class PostsWidget
     public function postsWidgetDefault($h, $type)
     {
         $posts = $this->getPostsWidget($h, $type, false);
-        $title = $this->getWidgetTitle($h, $type);
+        $h->vars['posts_widget_title'] = $this->getWidgetTitle($h, $type);
         
         if (isset($posts) && !empty($posts)) {
-            
-            $output = "<h2 class='widget_head posts_widget_title'>\n";
-
+                        
             switch ($type) {
+                case 'top':
+                    $link = $h->url(array('page'=>'popular'));
+                    break;
                 case 'new':
                     $link = $h->url(array('page'=>'latest'));
                     break;
@@ -128,22 +129,11 @@ class PostsWidget
                 default:
                     $link = BASEURL;
             }
-            $output .= "<a href='" . $link . "' title='" . $h->lang["posts_widget_title_anchor_title"] . "'>" . $title . "</a>\n";
             
-            if ($type == 'top' || $type == 'new' || $type == 'upcoming') {
-                $output .= "<a href='" . $h->url(array('page'=>'rss', 'status'=>$type)) . "' title='" . $h->lang["posts_widget_icon_anchor_title"] . "'>\n";
-                $output .= "<img src='" . BASEURL . "content/themes/" . THEME . "images/rss_16.png' width='16' height='16' alt='RSS' /></a>\n"; // RSS icon
-            }
-            
-            $output .= "</h2>\n"; 
-            
-            $output .= "<ul class='widget_body posts_widget_items'>\n";
-            $output .= $this->getPostsWidgetItems($h, $posts, $type);
-            $output .= "</ul>\n";
+            $h->vars['posts_widget_link'] = $link;
+            $this->getPostsWidgetItems($h, $posts, $type);
         }
         
-        // Display the whole thing:
-        if (isset($output) && $output != '') { echo $output; }
     }
 
     
@@ -195,10 +185,10 @@ class PostsWidget
      */
     public function getPostsWidget($h, $type, $custom = true, $limit = 0)
     {
-		if (!$limit) { 
-			$pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
-			$limit = (isset($pw_settings['items'])) ? $pw_settings['items'] : 10; 
-		}
+        if (!$limit) { 
+            $pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
+            $limit = (isset($pw_settings['items'])) ? $pw_settings['items'] : 10; 
+        }
  
         $h->vars['limit'] = $limit;
         $posts = '';
@@ -207,19 +197,16 @@ class PostsWidget
         require_once(PLUGINS . 'bookmarking/libs/BookmarkingFunctions.php');
         $funcs = new BookmarkingFunctions();
         
-        if (!$custom) 
-        {
+        if (!$custom) {
             // Show latest on front page, top stories on latest page, or both otherwise
-            if ($type == 'new' && $h->pageName != 'latest') { 
+            if ($type == 'new' && $h->pageName != 'latest') {  
                 $posts = $funcs->prepareList($h, 'new');
             } elseif ($type == 'top' && $h->pageName != 'popular') {
                 $posts = $funcs->prepareList($h, 'top');
             } elseif ($type == 'upcoming' && $h->pageName != 'upcoming') {
                 $posts = $funcs->prepareList($h, 'upcoming');
             }
-        }
-        else
-        {
+        } else {
             // Return posts regardless of what page we're viewing
             if ($type == 'new') { 
                 $posts = $funcs->prepareList($h, 'new');    // get latest stories
@@ -260,55 +247,64 @@ class PostsWidget
     {
         if (!$posts) { return false; }
         
-        $need_cache = false;
-        
-        // check for a cached version and use it if no recent update:
-        $output = $h->smartCache('html', 'posts', 10, '', $type);
-        if ($output) {
-            return $output;
-        } else {
-            $need_cache = true;
-        }
+//        $need_cache = false;
+//        
+//        // check for a cached version and use it if no recent update:
+//        $output = $h->smartCache('html', 'posts', 10, '', $type);
+//        if ($output) {
+//            return $output;
+//        } else {
+//            $need_cache = true;
+//        }
 
-		// get max post title length
-		$pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
-		$length = (isset($pw_settings['length'])) ? $pw_settings['length'] : 0; 
+        // get max post title length
+        $pw_settings = $h->getSerializedSettings('posts_widget', 'posts_widget_settings');
+        $length = (isset($pw_settings['length'])) ? $pw_settings['length'] : 0; 
         
-		// determine if we should show vote counts before titles...
+        $post_images_settings = $h->getSerializedSettings("post_images");
+        $h->vars['posts_widgets_showImages'] = ($h->isActive('post_images') && $post_images_settings['show_in_posts_widget'] == 'checked') ? true : false;
+          
+        // determine if we should show vote counts before titles...
         $vote_settings = $h->getSerializedSettings('vote', 'vote_settings');
-        $widget_votes = $vote_settings['posts_widget'];
+        $h->vars['widget_votes'] = $vote_settings['posts_widget'];
         
+        $h->vars['posts'] = array();
+                
         foreach ($posts as $item) {
             
             $h->post->url = $item->post_url; // used in Hotaru's url function
             $h->post->category = $item->post_category; // used in Hotaru's url function
             
-            // POST TITLE
-            $output .= "<li class='posts_widget_item'>\n";
+            $item->post_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
             
-            // show vote if enabled in Vote settings
-            if ($widget_votes == 'checked') {
-                $output .= "<div><div class='posts_widget_vote vote_color_" . $item->post_status . "'>";
-                $output .= $item->post_votes_up;
-                $output .= "</div></div>\n";
-                
-                $output .= "<div class='posts_widget_link posts_widget_indent'>\n";
-            } else {
-                $output .= "<div class='posts_widget_link'>\n";
+            if ($length) {
+                $item->post_title = truncate($item->post_title, $length);
             }
-            $item_title = stripslashes(html_entity_decode(urldecode($item->post_title), ENT_QUOTES,'UTF-8'));
-			if ($length) {
-				$item_title = truncate($item_title, $length);
-			}
-            $output .= "<a href='" . $h->url(array('page'=>$item->post_id)) . "' title='" . urldecode($item->post_domain) . "'>\n" . $item_title . "\n</a></div>\n";
-            $output .= "</li>\n";
+            
+            // Display images from post images plugin 
+            $item->imageType = 'none';
+            if ($h->vars['posts_widgets_showImages'] && isset($item->post_img) && strlen($item->post_img) > 0 ) {                    
+                $item->imageType = substr($item->post_img,0,32) != 'http://images.sitethumbshot.com/' ? 'thumb' : 'dummy';
+            }
+            
+            // make sure also works for older versions of Hotaru
+            if ($h->version < 1.7) {
+                $item->urlLink = $h->url(array('page'=>$item->post_id));
+            } else {
+                $item->urlLink = $h->url(array('postUrl'=>$item->post_url, 'postId' => $item->post_id));
+            }
+            
+            $h->vars['posts'][] = $item;
         }
+                
+        $h->vars['posts_type'] = $type;
+        $h->template('posts_widget_list', 'posts_widget', false);
         
-        if ($need_cache) {
-            $h->smartCache('html', 'posts', 10, $output, $type); // make or rewrite the cache file
-        }
+//      if ($need_cache) {
+//            $h->smartCache('html', 'posts', 10, $output, $type); // make or rewrite the cache file
+//      }
         
-        return $output;
+        return true;
     }
     
     public function footer($h) {

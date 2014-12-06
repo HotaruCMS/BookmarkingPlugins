@@ -42,41 +42,48 @@ if ($h->cage->post->getAlpha('users_type') == 'register') {
     
     <?php $h->pluginHook('user_signin_register_pre_register_form'); ?>
         
-    <div class='user_login_reg'>
-    <?php echo $h->lang["user_signin_register_instructions"]; ?>
+    <div class='well col-md-10 col-md-offset-1 user_login_reg'>  
+    
+        <?php //echo $h->lang["user_signin_register_instructions"]; ?>
+        
+        <form role="form" name='register_form' action='<?php echo $h->url(array('page'=>'register')); ?>' method='post'>    
             
-        <form name='register_form' action='<?php echo $h->url(array('page'=>'register')); ?>' method='post'>    
-        <table>
-        <tr><td>
-            <?php echo $h->lang["user_signin_register_username"]; ?>&nbsp; </td><td><input type='text' size=30 name='username' value='<?php echo $username_check; ?>' />
-            <br /><small><?php echo $h->lang["user_signin_register_username_error_short"]; ?></small>
-        </td></tr>
+            <div class="form-group">
+                <label for="registerusername"><?php echo $h->lang["user_signin_register_username"]; ?></label>
+                <input type='text' class="form-control" name='username' value='<?php echo $username_check; ?>' />
+                <div class="help_link"><?php echo $h->lang["user_signin_register_username_error_short"]; ?></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registeremail"><?php echo $h->lang["user_signin_register_email"]; ?></label>
+                <input type='text' class="form-control" name='email' value='<?php echo $email_check; ?>' />
+            </div>
+            
+            <div class="form-group">
+                <label for="registerpwd"><?php echo $h->lang["user_signin_register_password"]; ?></label>
+                <input type='password' class="form-control" name='password' value='<?php echo $password_check; ?>' />
+                <div class="help_link"><?php echo $h->lang["user_signin_register_password_error_short"]; ?></div>
+            </div>
         
-        <tr><td>
-            <?php echo $h->lang["user_signin_register_email"]; ?>&nbsp; </td><td><input type='text' size=30 name='email' value='<?php echo $email_check; ?>' />
-        </td></tr>
+            <div class="form-group">
+                <label for="registerpwd2"><?php echo $h->lang["user_signin_register_password_verify"]; ?></label>
+                <input type='password' class="form-control" name='password2' value='<?php echo $password2_check; ?>' />
+            </div>
         
-        <tr><td>
-            <?php echo $h->lang["user_signin_register_password"]; ?>&nbsp; </td><td><input type='password' size=30 name='password' value='<?php echo $password_check; ?>' />
-            <br /><small><?php echo $h->lang["user_signin_register_password_error_short"]; ?></small>
-        </td></tr>
+            <div class="form-group">
+                <?php $h->pluginHook('user_signin_register_register_form'); ?>
+            </div>
         
-        <tr><td>
-            <?php echo $h->lang["user_signin_register_password_verify"]; ?>&nbsp; </td><td><input type='password' size=30 name='password2' value='<?php echo $password2_check; ?>' />
-        </td></tr>
+            <?php if ($h->vars['useRecaptcha']) { ?>
+                    <div class="form-group">
+                        <?php $h->pluginHook('show_recaptcha'); ?>
+                    </div>
+            <?php  } ?>
         
-        <?php $h->pluginHook('user_signin_register_register_form'); ?>
-        
-        <?php if ($h->vars['useRecaptcha']) { ?>
-                <tr><td colspan=2>
-                <?php $h->pluginHook('show_recaptcha'); ?>
-                </td></tr>
-        <?php  } ?>
-        
-        <input type='hidden' name='users_type' value='register' />
-        <input type='hidden' name='page' value='register'>
-        <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-        <tr><td>&nbsp;</td><td style='text-align:right;'><input type='submit' class='submit' value='<?php echo $h->lang['user_signin_register_form_submit']; ?>' /></td></tr>            
-        </table>
+            <input type='hidden' name='users_type' value='register' />
+            <input type='hidden' name='page' value='register'>
+            <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
+            <button type='submit' class='btn btn-primary'><?php echo $h->lang['user_signin_register_form_submit']; ?></button>            
+
         </form>
     </div>

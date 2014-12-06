@@ -2,11 +2,11 @@
 /**
  * name: Categories
  * description: Enables categories for posts
- * version: 2.0
+ * version: 2.2
  * folder: categories
  * class: Categories
  * type: categories
- * hooks: theme_index_top, install_plugin, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, show_post_author_date, header_end, breadcrumbs, header_meta, post_rss_feed, admin_plugin_settings, admin_sidebar_plugin_settings
+ * hooks: theme_index_top, install_plugin, header_include, pagehandling_getpagename, bookmarking_functions_preparelist, show_post_author_date, categories_post_show, header_end, breadcrumbs, header_meta, post_rss_feed, admin_plugin_settings, admin_sidebar_plugin_settings
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -60,6 +60,7 @@ class Categories
         
         if ($h->cage->get->keyExists('category'))
         { 
+            //print 'category: ' .$h->cage->get->keyExists('category');
             $category = $h->cage->get->noTags('category');
             
             if (is_numeric($category)) {
@@ -75,9 +76,11 @@ class Categories
                 $h->vars['category_parent'] = isset($catInfo->category_parent) ? $catInfo->category_parent : '';
                 $h->vars['category_desc'] = isset($catInfo->category_desc) ? $catInfo->category_desc : '';
                 $h->vars['category_keywords'] = isset($catInfo->category_keywords) ? $catInfo->category_keywords : '';
+            } else {
+                return false;
             }
             
-            $h->pageTitle = $h->vars['category_name'];
+            $h->pageTitle = isset($h->vars['category_name']) ? $h->vars['category_name'] : null;
             if (!$h->pageName) { $h->pageName = 'popular'; }
             if ($h->pageName == $h->home) { $h->pageTitle .=  '[delimiter]' . SITE_NAME; }
             $h->subPage = 'category';
@@ -176,10 +179,7 @@ class Categories
      */
     public function header_meta($h)
     {    
-        if ($h->subPage == 'category')
-        { 
-            //$cat_meta = $h->getCatMeta($h->vars['category_id']);
-            
+        if ($h->subPage == 'category') { 
             if (isset($h->vars['category_desc'])) {
                 echo '<meta name="description" content="' . urldecode($h->vars['category_desc']) . '" />' . "\n";
             } else {
@@ -203,12 +203,7 @@ class Categories
     public function post_read_post_1()
     {
         //categories
-        if (($this->getSetting('submit_categories') == 'checked') 
-            && ($this->isActive())) { 
-            $h->post->vars['useCategories'] = true; 
-        } else { 
-            $h->post->vars['useCategories'] = false; 
-        }
+        $h->post->vars['useCategories'] = $this->getSetting('submit_categories') == 'checked' && $this->isActive() ? true : false; 
     }
 
      /* ******************************************************************** 
@@ -224,13 +219,13 @@ class Categories
      */
     public function bookmarking_functions_preparelist($h)
     {
-        if ($h->subPage == 'category') 
-        {
+        if ($h->subPage == 'category') {
             // When a user clicks a parent category, we need to show posts from all child categories, too.
             // This only works for one level of sub-categories.
             $filter_string = '(post_category = %d';
             $values = array($h->vars['category_id']);
             $parent = $h->getCatParent($h->vars['category_id']);
+            
             if ($parent == 1) {
                 $children = $h->getCatChildren($h->vars['category_id']);
                 if ($children) {
@@ -240,6 +235,7 @@ class Categories
                     }
                 }
             }
+            
             $filter_string .= ')';
             $h->vars['filter'][$filter_string] = $values; 
             $h->vars['filter']['post_archived = %s'] = 'N'; // don't include archived posts
@@ -254,9 +250,10 @@ class Categories
     { 
         $crumbs = '';
                 
-        if ($h->subPage == 'category' && isset($h->vars['category_parent'])) // the pageType is "list"
-        {
+        if ($h->subPage == 'category' && isset($h->vars['category_parent'])) {
+            // the pageType is "list"
             $parent_id = $h->vars['category_parent'];
+            
             if ($parent_id > 1) {
                 $parent_name = $h->getCatName($parent_id);
                 $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
@@ -266,29 +263,25 @@ class Categories
     
             $crumbs .= "<a href='" . $h->url(array('category'=>$h->vars['category_id'])) . "'>\n";
             $crumbs .= $h->vars['category_name'] . "</a>\n ";
-
             $crumbs .= $h->rssBreadcrumbsLink('', array('category'=>$h->vars['category_id']));
-        }
-        elseif ($h->pageType == 'post') // the pageName is the post slug (post_url)
-        {
-
-			if (isset($h->vars['category_parent'])) {
-				$parent_id = $h->vars['category_parent']; // assigned to $h->vars in header_end function
-			} else {
-				$parent_id = $h->getCatParent($h->post->category);
-			}
-
-			$parent_id = $h->getCatParent($h->post->category);
-            if ($parent_id > 1) {
+        } elseif ($h->pageType == 'post') {
+            // the pageName is the post slug (post_url)
+            $parent_id = isset($h->vars['category_parent']) ? $h->vars['category_parent'] : $h->getCatParent($h->post->category);
+            
+            if ($parent_id > 1 && $h->post->category) {
                 $parent_name = $h->getCatName($parent_id);
                 $parent_name = stripslashes(htmlentities($parent_name, ENT_QUOTES, 'UTF-8'));
                 $crumbs .= "<a href='" . $h->url(array('category'=>$parent_id)) . "'>";
                 $crumbs .= $parent_name . "</a> &raquo; \n";
             }
     
-            $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
-            $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
-            $crumbs .= "<a href='" . $h->url(array('page'=>$h->post->id)) . "'>" . $h->post->title . "</a>\n";
+            if ($h->post->category) {
+                $crumbs .= "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>\n";
+                $crumbs .= $h->getCatName($h->post->category) . "</a> &raquo; \n";
+            }
+            $origTitle = $h->post->title;
+            $shortTitle = $h->lang('bookmarking_breadcrumb_this_post');
+            $crumbs .= "<a href='" . $h->url(array('page'=>$h->post->id)) . "' title='" . $origTitle . "' >" . $shortTitle . "</a>\n";
         }
         
         if ($crumbs) { return $crumbs; } else { return false; }
@@ -296,19 +289,49 @@ class Categories
     
     
     /**
-     * Shows category in each post
+     * Shows category in each post if selected separately
+     */
+    public function categories_post_show($h)
+    {
+        if ($h->post->category && $h->post->category != 1) {
+            $this->set_category_into_post($h);
+            // We are adding this multiple times so we need to use the false flag
+            $h->template('category_post_show', 'categories', false);
+        }   
+    }
+    
+    
+    /**
+     * Shows category in each post as part of show_post_author_date hook
      */
     public function show_post_author_date($h)
     { 
+        if ($h->post->category && $h->post->category != 1) {
+            $this->set_category_into_post($h);
+            // We are adding this multiple times so we need to use the false flag
+            $h->template('category_post_author_date', 'categories', false);
+        }        
+    }
+    
+    /**
+     * Shows category in each post as part of show_post_author_date hook
+     */
+    private function set_category_into_post($h)
+    { 
         if ($h->post->category != 1) { 
 
-            // if we are on a category page then do we need to get the category name each time?
-            $cat_name = $h->getCatName($h->post->category);
-            $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
+            // Since old versions dont have joins on their queries they cant pull in categoryname in the readPost
+            // We make it here instead
+            if ($h->version <= '1.6.6') {
+                $cat_name = $h->getCatName($h->post->category);
+                $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
+                $h->post->categoryName = $cat_name;
+            }
             
-            echo " " . $h->lang("categories_post_in") . " ";
-            echo "<a href='" . $h->url(array('category'=>$h->post->category)) . "'>" . $cat_name . "</a>\n";
-        }        
+            return true;
+        }   
+        
+        return false;
     }
 
 
@@ -326,31 +349,36 @@ class Categories
     public function header_end($h)
     {
         if ($h->vars['categories_settings_nav_show'] == 'checked') {
-            $output = '';     
-
-            $categories = $h->getCatFullData();
-
-            // set the initial level Id as 1 for the top - as long as that never changes to be ALL
-            // TODO
-            // newly installed category plugin should always have cat1 = all but could it get changed for some reason?
-            // should we look up 'all' and return its id to be safe?
-            $topLevelId = 1;
-            $parentCats = array();
-
-            // if there are no categories set up yet (watch for the default all category in db as well)
-            if (!$categories || count($categories) == 1) { echo '<br/>'; return false; }
             
-            // loop through the results and populate an array with the current top cats
-            foreach ($categories as $category) {
-                    if (strtolower($category->category_id) != 1) {
-                        $parentCats['p_' . $category->category_parent][] = $category;                                    
-                    }
+            if (!isset($h->categoriesDisplay)) {
+            
+                $categories = $h->getCatFullData();
+
+                // set the initial level Id as 1 for the top - as long as that never changes to be ALL
+                // TODO
+                // newly installed category plugin should always have cat1 = all but could it get changed for some reason?
+                // should we look up 'all' and return its id to be safe?
+                $topLevelId = 1;
+                $parentCats = array();
+
+                // if there are no categories set up yet (watch for the default all category in db as well)
+                if (!$categories || count($categories) == 1) { echo '<br/>'; return false; }
+
+                // loop through the results and populate an array with the current top cats
+                foreach ($categories as $category) {
+                        if (strtolower($category->category_id) != 1) {
+                            $parentCats['p_' . $category->category_parent][] = $category;                                    
+                        }
+                }
+
+                // TODO
+                // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
+                $h->categoriesDisplay = $this->loopCats($h, $parentCats, $topLevelId, '');
             }
-
-            // TODO
-            // If we are caching the db query, then why not also cache off this foreach loop result and save the processing power ?        
+            
+            // only required for older themes
             $h->vars['output'] = $this->loopCats($h, $parentCats, $topLevelId, '');
-
+            
             if ($h->vars['categories_settings_nav_style'] == 'style2') {
                 $h->template('category_bar_2');
             } else {
@@ -361,13 +389,17 @@ class Categories
         }
     }
     
-    function loopCats($h, $parentCats, $topLevelId, $output = '') {
-
-        if (!$parentCats) return $output;
+    function loopCats($h, $parentCats, $topLevelId, $output = '')
+    {
+        if (!$parentCats) {
+            return $output;
+        }
         
         $thisLevel =  $parentCats['p_' . $topLevelId];
 
-        if (!$thisLevel) return false;
+        if (!$thisLevel) {
+            return false;
+        }
         
         // loop through based on the top level and populate menus below it                        
         foreach ($thisLevel as $category) {
@@ -384,6 +416,41 @@ class Categories
                 $output .= "</ul>";
             }
             $output .= "</li>";
+        }
+        return $output;
+    }
+    
+    function loopCatsMega($h, $parentCats, $topLevelId, $output = '') {
+
+        if (!$parentCats) {
+            return $output;
+        }
+        
+        $thisLevel =  $parentCats['p_' . $topLevelId];
+
+        if (!$thisLevel) {
+            return false;
+        }
+        
+        // loop through based on the top level and populate menus below it                        
+        foreach ($thisLevel as $category) {
+
+            if (isset($parentCats['p_' . $category->category_id])) $children = count($parentCats['p_' . $category->category_id]); else $children = 0;
+            
+            // echo li with this function
+            $output .= '<li class="col-sm-3"> <ul> <li class="dropdown-header">';
+            $output .= $category->category_name . '</li>';                                   
+
+            if ($children) {
+                // only go 1 deep for this menu
+                foreach ($parentCats['p_' . $category->category_id] as $child) {
+                    $output .= '<li><a href="#">';
+                    $output .= $child->category_name;
+                    $output .= "</a></li>";
+                }
+            }
+            $output .= "</ul></li>";
+            
         }
         return $output;
     }
@@ -412,9 +479,8 @@ class Categories
             // is this already a parent catgeory? Make the tab active:
             if (($h->vars['category_id'] == $category->category_id) && ($category->category_parent == 1)) {
                 $active = " class='active_cat active'";
-            } 
-            // is this a child category? If so, make the parent tab active:
-            elseif (isset($h->vars['category_parent']) &&($h->vars['category_parent'] == $category->category_id)) {
+            } elseif (isset($h->vars['category_parent']) &&($h->vars['category_parent'] == $category->category_id)) {
+                // is this a child category? If so, make the parent tab active:
                 $active = " class='active_cat active'";
             }
         }
@@ -454,6 +520,7 @@ class Categories
         $filter_string = '(post_category = %d';
         $values = array($cat_id);
         $parent = $h->getCatParent($cat_id);
+        
         if ($parent == 1) {
             $children = $h->getCatChildren($cat_id);
             if ($children) {
@@ -463,6 +530,7 @@ class Categories
                 }
             }
         }
+        
         $filter_string .= ')';
         $h->vars['postRssFilter'][$filter_string] = $values; 
 
@@ -470,5 +538,3 @@ class Categories
         $h->vars['postRssFeed']['description'] = $h->lang("post_rss_in_category") . " " . $h->getCatName($cat_id); 
     }
 }
-
-?>

@@ -101,7 +101,7 @@ class PostManagerSettings
             $h->clearCache('db_cache', false); 
         }
         
-        $p = new Post();
+        $p = new \Libs\Post();
         
         // if search
         $search_term = '';
@@ -228,8 +228,12 @@ class PostManagerSettings
             $alt++;
             
             $username = $h->getUserNameFromId($post->post_author);
-            $category = $h->getCatName($post->post_category); // shows cat name
-
+            if ($h->version <= '1.6.6') {
+                $cat_name = $h->getCatName($h->post->category);
+                $cat_name = htmlentities($cat_name, ENT_QUOTES,'UTF-8');
+                $h->post->categoryName = $cat_name;
+            }
+            
             // need to read the post into the Post object and store it in Hotaru (the url function needs it for friendly urls).
             $p->readPost($h, 0, $post);
             $h->post = $p;
@@ -254,7 +258,7 @@ class PostManagerSettings
             $output .= "<td class='pm_edit'>";
             if (!in_array($post->post_type, $restricted)) {
             	$output .= "<a href='" . $edit_link . "'>\n";
-            	$output .= "<img src='" . BASEURL . "content/admin_themes/" . ADMIN_THEME . "images/edit.png'>" . "</a>";
+            	$output .= "<i class='fa fa-pencil'></i></a>";
         	}
         	$output .= "</td>\n";
         	
@@ -271,15 +275,22 @@ class PostManagerSettings
 			if ($h->isActive('user_manager')) {
 				$output .="<div class='post_man_user_icons'>";
 				$output .= "&nbsp;<a href='" . $h->url(array('page'=>'account', 'user'=>$username)) . "'>";
-				$output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_account.png' title='User Account'></a>";
+				$output .= "<i class='fa fa-wrench' title='Account'></i></a>";
 				
 				$output .= "&nbsp;<a href='" . BASEURL . "admin_index.php?search_value=" . $username . "&plugin=user_manager&page=plugin_settings&type=search'>";
-				$output .= "<img src='" . BASEURL . "content/plugins/user_manager/images/user_manager.png' title='User Manager'></a>";
+				$output .= "<i class='fa fa-user' title='User Manager'></i></a>";
 				$output .= "</div><br />\n";
 			}
 
             $output .= "<p><i>" . $h->lang["post_man_content"] ."</i> " . stripslashes(urldecode($post->post_content)) . "</p> \n";
-            $output .= "<i>" . $h->lang["post_man_category"] ."</i> " . $category . "<br /> \n";   // we got $category above
+            
+            //category
+            $output .= "<i>" . $h->lang["post_man_category"] ."</i> ";
+            if ($h->post->category) {
+                $output .= $h->post->categoryName . "<br /> \n";
+            } else {
+                $output .= "none<br /> \n";
+            }
             
             //tags:
             if (!in_array($post->post_type, $restricted)) {

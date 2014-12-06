@@ -43,15 +43,3 @@
  
 /* Used in submit plugin - button width + padding: */
 .vote_button_space { margin-left: 58px; }
-
-
-/* ***********************************
- * ******** FLAGGED MESSAGE **********
- * ********************************* */
- 
- .alert_link { padding-left: 1.5em; background-image: url(../../../content/themes/default/images/alert.png); }
- 
- .alert_choices li {
-	display:inline; 
-	padding-right: 0.8em;	
- }

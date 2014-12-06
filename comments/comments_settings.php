@@ -42,7 +42,7 @@ class CommentsSettings
         
         // Create a new global object called "comment".
         require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment();
+        $h->comment = new \Libs\Comment();
         
         // Assign settings to class member
         $h->comment->allForms = $comments_settings['comment_all_forms'];
@@ -222,7 +222,7 @@ class CommentsSettings
     {
         // Create a new global object called "comment".
         require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment();
+        $h->comment = new \Libs\Comment();
         
         // enable/disable comment form globally
         if ($h->cage->post->keyExists('comment_form')) { 
@@ -346,9 +346,9 @@ class CommentsSettings
         }
         
         // admins to receive above email notification
+        $email_mods = array();
         if ($h->cage->post->keyExists('emailmod')) 
         {
-            $email_mods = array();
             foreach ($h->cage->post->keyExists('emailmod') as $id => $array) {
                 $email_mods[$id]['id'] = $id;
                 $email_mods[$id]['email'] = key($array);

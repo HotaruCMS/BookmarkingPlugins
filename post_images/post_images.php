@@ -2,11 +2,11 @@
 /**
 * name: Post Images
 * description: Add images to your posts
-* version: 1.5
+* version: 1.7
 * folder: post_images
 * class: PostImages
 * type: post_images
-* hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, submit_2_fields, header_include_raw, post_read_post, submit_functions_process_submitted, post_add_post, post_update_post, pre_show_post, header_include, theme_index_top, footer, show_post_pre_title
+* hooks: install_plugin, admin_sidebar_plugin_settings, admin_plugin_settings, submit_2_fields, header_include_raw, post_read_post, submit_functions_process_submitted, post_add_post, post_update_post, header_include, theme_index_top, footer, show_post_pre_title
 * author: Matthis de Wit
 * authorurl: http://fourtydegrees.nl/ties
 *
@@ -42,7 +42,7 @@ class PostImages
 	{
 		$exists = $h->db->column_exists('posts', 'post_img');
 		if (!$exists) {
-				$h->db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_img TEXT NOT NULL DEFAULT '' AFTER post_comments");
+                    $h->db->query("ALTER TABLE " . TABLE_POSTS . " ADD post_img vchar(255) NULL '' AFTER post_comments");
 		}
 		$post_images_settings = $h->getSerializedSettings();
 
@@ -60,6 +60,7 @@ class PostImages
                 
                 $h->updateSetting('post_images_settings', serialize($post_images_settings));
 
+                // from Hotaru CMS v.1.7 this folder is now standard
 		$folder = BASE . '/content/images/post_images/';
 		if(!is_dir($folder)){
 			if(mkdir($folder,0777,true)) $h->messages['Image folder created'] = 'green';
@@ -68,11 +69,9 @@ class PostImages
 		else if(!is_writable($folder)){
 			if(chmod("/somedir/somefile", 777)) $h->messages["Image folder found and made writable"] = "green";
 			else $h->messages["Image folder permissions could not be set, please manually make it writable."] = 'red';
-		}
-		else {
-			//
 		}		
 	}
+        
 	/**
 	* Include CSS and JavaScript files for this plugin
 	*/
@@ -86,7 +85,7 @@ class PostImages
         public function footer($h)
         {
                 if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }
-                $h->displayTemplate('image_script');
+                //$h->displayTemplate('image_script');
                 echo "<script type='text/javascript' src='".SITEURL."content/plugins/post_images/javascript/jquery.Jcrop.min.js'></script>";
         }
         
@@ -94,36 +93,38 @@ class PostImages
 	/**
 	* Read post media if post_id exists.
 	*/
-	public function post_read_post($h){
-		if (!isset($h->post->vars['post_row']->post_img)) { return false; }
-		$h->post->vars['img'] = $h->post->vars['post_row']->post_img;
+	public function post_read_post($h)
+        {
+           $h->post->vars['img'] = isset($h->post->post_img) ? $h->post->post_img: null;
 	}
+        
+        
 	/**
 	* Add a media field to submit form 2 and edit post page
 	*/
 	public function submit_2_fields($h)
 	{
 		if (!isset($h->post->vars['img'])) { 
-				if (isset($h->vars['submitted_data']['submit_img'])) { 
-					$h->post->vars['img'] = urldecode($h->vars['submitted_data']['submit_img']);
-				} else {
-				switch ($h->vars['post_images_settings']['default']){
-					case 'sitethumbshot' :
-						$h->post->vars['img'] = 'http://images.sitethumbshot.com/?size='.$h->vars['post_images_settings']['sitethumbshot_size'].'&key='.$h->vars['post_images_settings']['sitethumbshot_key'].'&url='.$h->vars['submitted_data']['submit_orig_url'];
-						break;
-					case 'url' :
-						$h->post->vars['img'] = $h->vars['post_images_settings']['default_url'];
-						break;
-					default :
-						$h->post->vars['img'] = '';
-				}
-				}
-			if (isset($h->vars['submitted_data']['submit_img_coords'])) { 
-					$h->post->vars['img_coords'] = $h->vars['submitted_data']['submit_img_coords'];
-				} else {
-					$h->post->vars['img_coords'] = '';
-				}
-		}
+                    if (isset($h->vars['submitted_data']['submit_img'])) { 
+                            $h->post->vars['img'] = urldecode($h->vars['submitted_data']['submit_img']);
+                    } else {
+                        switch ($h->vars['post_images_settings']['default']){
+                                case 'sitethumbshot' :
+                                        $h->post->vars['img'] = 'http://images.sitethumbshot.com/?size='.$h->vars['post_images_settings']['sitethumbshot_size'].'&key='.$h->vars['post_images_settings']['sitethumbshot_key'].'&url='.$h->vars['submitted_data']['submit_orig_url'];
+                                        break;
+                                case 'url' :
+                                        $h->post->vars['img'] = $h->vars['post_images_settings']['default_url'];
+                                        break;
+                                default :
+                                        $h->post->vars['img'] = '';
+                        }
+                    }
+                    if (isset($h->vars['submitted_data']['submit_img_coords'])) { 
+                                $h->post->vars['img_coords'] = $h->vars['submitted_data']['submit_img_coords'];
+                    } else {
+                            $h->post->vars['img_coords'] = '';
+                    }
+                }
 		$h->displayTemplate('form_field');
 	}
 	/**
@@ -133,7 +134,7 @@ class PostImages
 	{
 		if (($h->pageName != 'submit2') && ($h->pageName != 'edit_post')) { return false; }		
 		echo "<link rel='stylesheet' href='".SITEURL."content/plugins/post_images/css/jquery.Jcrop.css' type='text/css' />";
-		$h->displayTemplate('image_script');
+		//$h->displayTemplate('image_script');
 	}                        
         
 	/**
@@ -179,8 +180,12 @@ class PostImages
 
 		$h->post->vars['img'] = $h->vars['submitted_data']['submit_img'];
 		
-		$sql = "UPDATE " . TABLE_POSTS . " SET post_img = %s WHERE post_id = %d";
-		$h->db->query($h->db->prepare($sql, urlencode($h->post->vars['img']), $h->post->vars['last_insert_id']));
+                $postId = $h->post->vars['last_insert_id'];
+                $img = urlencode($h->post->vars['img']);
+                $h->postImageUpdate($postId, $img);
+                
+		//$sql = "UPDATE " . TABLE_POSTS . " SET post_img = %s WHERE post_id = %d";
+		//$h->db->query($h->db->prepare($sql, urlencode($h->post->vars['img']), $h->post->vars['last_insert_id']));
 	}
 
 
@@ -193,18 +198,14 @@ class PostImages
 
 		$h->post->vars['img'] = $h->vars['submitted_data']['submit_img'];
 		
-		$sql = "UPDATE " . TABLE_POSTS . " SET post_img = %s WHERE post_id = %d";
-		$h->db->query($h->db->prepare($sql, urlencode($h->post->vars['img']), $h->post->id));
+                $img = urlencode($h->post->vars['img']);
+                $h->postImageUpdate($h->post->id, $img);
+                
+		//$sql = "UPDATE " . TABLE_POSTS . " SET post_img = %s WHERE post_id = %d";
+		//$h->db->query($h->db->prepare($sql, urlencode($h->post->vars['img']), $h->post->id));
 	}
 
-
-	/**
-	* Add to list view
-	*/
-	public function pre_show_post($h){
-		//$h->displayTemplate('display_image','',false);
-	}
-
+        
         /**
 	* Add to list view
 	*/
@@ -304,16 +305,18 @@ class PostImages
 				$h->vars['post_images_settings']['w'] = 200;
 			}
 		}
-		if($h->cage->post->getAlpha('type') == 'postImages' && $h->cage->post->testUri('url')){
+		if($h->cage->post->getAlpha('type') == 'postImages' && $h->cage->post->testUri('url')){                  
 			$html =  file_get_contents($h->cage->post->getHtmLawed('url'));
 			$parseUrl = parse_url(trim($h->cage->post->getHtmLawed('url')));
 			$hostname = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
 			$html = str_replace('src="/','src="'.$parseUrl['scheme'].'://'.$hostname.'/',$html);
 			$html = str_replace("src='/","src='".$parseUrl['scheme']."://".$hostname.'/',$html);
-			preg_match_all('/( src=["\']{1}(?!http)\w{1})/',$html,$matches, PREG_OFFSET_CAPTURE);
+			preg_match_all('/( src=["\']{1}(?!http)\w{1})/',$html,$result, PREG_OFFSET_CAPTURE);
 			echo '<pre>';
-			$matches = array_unique($matches);
-			print_r($matches);
+			//$matches =  is_array($result) ? array_unique($result) : array($result);
+                        //error when trying to get unique items on array
+                        $matches = $result;
+			//print_r($matches);
 			$rel_dir = (substr($parseUrl['path'],-1) == '/' || strlen($parseUrl['path']) == 0 ? $parseUrl['path'] : dirname($parseUrl['path']).'/');
 			$rel_path = $parseUrl['scheme']."://".$hostname.$rel_dir;
 			$rel_div_l = strlen($rel_path);

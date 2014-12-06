@@ -24,7 +24,7 @@
  * @link      http://www.hotarucms.org/
  */
 ?>
-<div id="users_permissions" class="users_content">
+<div id="users_permissions" class="col-md-9">
 
     <h2><?php echo $h->lang["users_permissions"]; ?>: <?php echo $h->vars['user']->name; ?></h2>
     
@@ -40,6 +40,6 @@
     <input type='hidden' name='permissions' value='updated' />
     <input type='hidden' name='userid' value='<?php echo $h->vars['user']->id; ?>' />
     <input type='hidden' name='csrf' value='<?php echo $h->csrfToken; ?>' />
-    <div style='text-align: right'><input class='submit' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
+    <div style='text-align: right'><input class='btn btn-primary' type='submit' value='<?php echo  $h->lang['users_permissions_update']; ?>' /></div>
     </form>
 </div>

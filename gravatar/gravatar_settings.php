@@ -42,51 +42,59 @@ class GravatarSettings
         $gravatar_settings = $h->getSerializedSettings();
         
         $default_avatar = $gravatar_settings['default_avatar'];
-        
+        //$gravatar_ssl = $gravatar_settings['gravatar_ssl'];
+
         //...otherwise set to blank: 
         if (!$default_avatar) { $default_avatar = ''; }   
 
-		echo "<p>" . $h->lang["gravatar_settings_default_avatar"] . "</p>";
-        
-        echo "<form name='gravatar_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=gravatar' method='post'>\n";
+            echo "<p>" . $h->lang["gravatar_settings_default_avatar"] . "</p>";
 
-		$custom_exists = false;
-		echo "<p>";
-		
-		$gravatars = array('mm', 'identicon', 'monsterid', 'wavatar', 'retro', 'blank');
-		foreach ($gravatars as $gravatar) 
-		{
-			$style = ($gravatar === $default_avatar) ? " style='border: 2px solid #ff0000'" : "";
-			if (($gravatar === 'blank') && ($gravatar !== $default_avatar)) { $style = " style='border: 1px solid #e6e6e6'"; }
-			echo "<img src='http://www.gravatar.com/avatar/00000000000000000000000000000000?d=" . $gravatar . "&f=y' title='" . $gravatar . "' " . $style . " /> &nbsp; ";
-		}
-		
-		if (file_exists(THEMES . THEME . "images/default_80.png"))
-		{
-			$style =  ($default_avatar === 'custom') ? " style='border: 2px solid #ff0000'" : "";
-			echo "<img src='" . SITEURL . "content/themes/" . THEME . "images/default_80.png' title='custom' " . $style . " />";
-			$custom_exists = true;
-		}
-		echo "</p><br />";
+            echo "<form role='form' name='gravatar_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=gravatar' method='post'>\n";
 
-		echo "<p><select name='default_avatar'>";
-		
-		$avatars = array('mm', 'identicon', 'monsterid', 'wavatar', 'retro', 'blank', 'custom');
-		foreach ($avatars as $avatar) {
-		    echo "<option ";
-		    if ($avatar === $default_avatar) { echo "selected='yes' "; }
-		    echo "value='" . $avatar . "'>" . $avatar . "</option>";
-		}
-		
-		echo "</select> ";
-		echo "</p>";
-		
-		if (!$custom_exists) { echo "<p>" . $h->lang["gravatar_settings_custom_note"] . "</p><br />\n"; }
+            $custom_exists = false;
+            echo "<p>";
 
-        echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' class='btn btn-primary' value='" . $h->lang["main_form_save"] . "' />\n";
-        echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
-        echo "</form>\n";
+            $gravatars = array('mm', 'identicon', 'monsterid', 'wavatar', 'retro', 'blank');
+            foreach ($gravatars as $gravatar) 
+            {
+                    $style = ($gravatar === $default_avatar) ? " style='border: 2px solid #ff0000'" : "";
+                    if (($gravatar === 'blank') && ($gravatar !== $default_avatar)) { $style = " style='border: 1px solid #e6e6e6'"; }
+                    echo "<img src='http://www.gravatar.com/avatar/00000000000000000000000000000000?d=" . $gravatar . "&f=y' title='" . $gravatar . "' " . $style . " /> &nbsp; ";
+            }
+		
+            if (file_exists(THEMES . THEME . "images/default_80.png"))
+            {
+                    $style =  ($default_avatar === 'custom') ? " style='border: 2px solid #ff0000'" : "";
+                    echo "<img src='" . SITEURL . "content/themes/" . THEME . "images/default_80.png' title='custom' " . $style . " />";
+                    $custom_exists = true;
+            }
+            echo "</p><br />";
+
+            echo "<p><select name='default_avatar'>";
+
+            $avatars = array('mm', 'identicon', 'monsterid', 'wavatar', 'retro', 'blank', 'custom');
+            foreach ($avatars as $avatar) {
+                echo "<option ";
+                if ($avatar === $default_avatar) { echo "selected='yes' "; }
+                echo "value='" . $avatar . "'>" . $avatar . "</option>";
+            }
+
+            echo "</select> ";
+            echo "</p>";
+
+            if (!$custom_exists) { echo "<p>" . $h->lang["gravatar_settings_custom_note"] . "</p><br />\n"; }
+
+//            echo '<div class="checkbox">';
+//                echo '<label>';
+//                    echo '<input type="checkbox" name="gravatar_ssl" value="gravatar_ssl" ' . $gravatar_ssl . '>';
+//                    echo 'Use SSL (htpps://)';
+//                echo '</label>';
+//            echo '</div>';
+            
+            echo "<input type='hidden' name='submitted' value='true' />\n";
+            echo "<button type='submit' class='btn btn-primary'>" . $h->lang["main_form_save"] . "</button>\n";
+            echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
+            echo "</form>\n";
     }
     
     
@@ -98,13 +106,16 @@ class GravatarSettings
         // Get current settings 
         $gravatar_settings = $h->getSerializedSettings();
         
-		// default page
-		if ($h->cage->post->keyExists('default_avatar')) {
+        // default page
+        if ($h->cage->post->keyExists('default_avatar')) {
             $default_avatar = $h->cage->post->testAlpha('default_avatar');
         } else {
             $default_avatar = 'identicon';
         }
 
+        // use ssl
+        //$gravatar_settings['gravatar_ssl'] = $h->cage->post->keyExists('gravatar_ssl') ? 'checked' : '';
+       
         $gravatar_settings['default_avatar'] = $default_avatar;  
     
         $h->updateSetting('gravatar_settings', serialize($gravatar_settings));

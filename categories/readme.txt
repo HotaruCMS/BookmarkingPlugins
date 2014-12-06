@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.2.2 2014/10/19 - shibuya246 - Separate out template for post data
 v.2.1 2014/04/26 - shibuya246 - Update for Bootstrap3 CSS
 v.2.0 2013/05/31 - shibuya246 - Add style choice and display ON/OFF switch to admin settings. Add new template
 v.1.9 2010/07/30 - Nick - Parent category tab gets active status when viewing sub category or post.  

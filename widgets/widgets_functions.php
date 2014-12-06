@@ -47,8 +47,8 @@ if ($h->cage->post->testAlpha('plugin') == 'widgets' ) {
     $this_widget_name = ltrim($this_widget_name, '_'); // strip the underscore off the front
     
     // get the name of the supporting plugin
-	$this_plugin_name = $h->getPluginFromFunction($this_widget_function);
-	if ($h->cage->post->testAlpha('action') == 'enable') {                  
+	$this_plugin_name = $h->getPluginFromFunction($this_widget_name);
+	if ($h->cage->post->testAlpha('action') == 'enable') {  
 		// enable a widget if plugin is active
 		if ($h->isActive($this_plugin_name)) {
   			$widgets_settings['widgets'][$this_widget_name]['enabled'] = true;

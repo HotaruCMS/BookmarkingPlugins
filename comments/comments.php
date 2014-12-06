@@ -2,7 +2,7 @@
 /**
  * name: Comments
  * description: Enables logged-in users to comment on posts
- * version: 2.7
+ * version: 2.8
  * folder: comments
  * class: Comments
  * type: comments
@@ -83,7 +83,6 @@ class Comments
             $h->updateDefaultPermissions($perms);
         }
 
-
         // ************
         // SETTINGS 
         // ************
@@ -92,23 +91,30 @@ class Comments
         $comments_settings = $h->getSerializedSettings();
         
         // Default settings 
-        if (!isset($comments_settings['comment_all_forms'])) { $comments_settings['comment_all_forms'] = "checked"; }
-        if (!isset($comments_settings['comment_voting'])) { $comments_settings['comment_voting'] = ""; }
-        if (!isset($comments_settings['comment_levels'])) { $comments_settings['comment_levels'] = 5; }
-        if (!isset($comments_settings['comment_email'])) { $comments_settings['comment_email'] = SITE_EMAIL; }
-        if (!isset($comments_settings['comment_allowable_tags'])) { $comments_settings['comment_allowable_tags'] = "<b><i><u><a><blockquote><del>"; }
-        if (!isset($comments_settings['comment_set_pending'])) { $comments_settings['comment_set_pending'] = ""; }
-        if (!isset($comments_settings['comment_order'])) { $comments_settings['comment_order'] = 'asc'; }
-        if (!isset($comments_settings['comment_pagination'])) { $comments_settings['comment_pagination'] = ''; }
-        if (!isset($comments_settings['comment_items_per_page'])) { $comments_settings['comment_items_per_page'] = 20; }
-        if (!isset($comments_settings['comment_x_comments'])) { $comments_settings['comment_x_comments'] = 1; }
-        if (!isset($comments_settings['comment_email_notify'])) { $comments_settings['comment_email_notify'] = ""; }
-        if (!isset($comments_settings['comment_email_notify_mods'])) { $comments_settings['comment_email_notify_mods'] = array(); }
-        if (!isset($comments_settings['comment_url_limit'])) { $comments_settings['comment_url_limit'] = 0; }
-        if (!isset($comments_settings['comment_daily_limit'])) { $comments_settings['comment_daily_limit'] = 0; }
-        if (!isset($comments_settings['comment_avatar_size'])) { $comments_settings['comment_avatar_size'] = "16"; }
-        if (!isset($comments_settings['comment_hide'])) { $comments_settings['comment_hide'] = "3"; }
-        if (!isset($comments_settings['comment_bury'])) { $comments_settings['comment_bury'] = "10"; }
+        $defaults = array(
+            'comment_all_forms' => "checked",
+            'comment_voting' => "",
+            'comment_levels' => 5,
+            'comment_email' => SITE_EMAIL,
+            'comment_allowable_tags' => "<b><i><u><a><blockquote><del>",
+            'comment_set_pending' => "",
+            'comment_order' => "asc",
+            'comment_pagination' => "",
+            'comment_items_per_page' => 20,
+            'comment_x_comments' => 1,
+            'comment_email_notify' => "",
+            'comment_email_notify_mods' => array(),
+            'comment_url_limit' => 0,
+            'comment_daily_limit' => 0,
+            'comment_avatar_size' => 16,
+            'comment_hide' => 3, 
+            'comment_bury' => 10
+        );
+        
+        foreach ($defaults as $key => $value)
+        {
+            if (!isset($comments_settings[$key])) { $comments_settings[$key] = $value; }
+        }
         
         if ($h->isActive('avatar')) {
             if (!isset($comments_settings['comment_avatars'])) { $comments_settings['comment_avatars'] = "checked"; }
@@ -117,6 +123,12 @@ class Comments
         }
         
         $h->updateSetting('comments_settings', serialize($comments_settings));
+        
+        if (version_compare($h->version, '1.6.6') > 0)
+        {
+            // make sure the comments counts on post table are kept up-to-date just in case they have had a problem
+            $h->updateCommentCountBulk();
+        }
     }
     
     
@@ -125,9 +137,16 @@ class Comments
      */
     public function theme_index_top($h)
     {
-        // Create a new global object called "comment".
-        require_once(LIBS . 'Comment.php');
-        $h->comment = new Comment();
+        // stop here if list of posts
+        if ($h->pageType == 'list') { return false; }
+        
+        // in newer versions we are instatiated $h->comment on the hotaru init phase
+        if (version_compare($h->version, '1.6.6') < 0)
+        {
+            // Create a new global object called "comment".
+            require_once(LIBS . 'Comment.php');
+            $h->comment = new Comment();
+        }
         
         // Get settings from database if they exist...
         $comments_settings = $h->getSerializedSettings();
@@ -143,7 +162,6 @@ class Comments
         $h->comment->allForms = $comments_settings['comment_all_forms'];
         $h->vars['comment_hide'] = $comments_settings['comment_hide'];
         
-        
         if ($h->pageName == 'rss_comments') {
             $this->rssFeed($h);
             return true;
@@ -155,7 +173,8 @@ class Comments
             if ($h->cage->get->getAlpha('action') == 'setpending') { 
             
                 // before setting pending, we need to be certain this user has permission:
-                if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_set_comments_pending') == 'yes') {
+                if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_set_comments_pending') == 'yes')
+                {
                     $cid = $h->cage->get->testInt('cid'); // comment id
                     $comment = $h->comment->getComment($h, $cid);
                     $h->comment->readComment($h, $comment); // read comment
@@ -174,7 +193,8 @@ class Comments
             }
             
             // delete current comment and responses:
-            if ($h->cage->get->getAlpha('action') == 'delete') { 
+            if ($h->cage->get->getAlpha('action') == 'delete') 
+            { 
             
                 // before deleting a comment, we need to be certain this user has permission:
                 if ($h->currentUser->loggedIn && $h->currentUser->getPermission('can_delete_comments') == 'yes') {
@@ -229,20 +249,22 @@ class Comments
             $h->comment->author = $h->cage->post->testInt('comment_user_id');
         }
     
-        if ($h->cage->post->keyExists('comment_parent')) {
+        if ($h->cage->post->keyExists('comment_parent'))
+        {
             $h->comment->parent = $h->cage->post->testInt('comment_parent');
             if ($h->cage->post->getAlpha('comment_process') == 'editcomment') {
                 $h->comment->id = $h->cage->post->testInt('comment_parent');
             }
         }
         
-        if ($h->cage->post->keyExists('comment_subscribe')) {
+        if ($h->cage->post->keyExists('comment_subscribe'))
+        {
             $h->comment->subscribe = 1;
         } else {
             $h->comment->subscribe = 0;
             $h->comment->unsubscribe($h, $h->comment->postId);
         }
-        
+
         if ($h->cage->post->getAlpha('comment_process') == 'newcomment')
         {
             // before posting, we need to be certain this user has permission:
@@ -259,13 +281,13 @@ class Comments
                 if ($h->comment->content != '')
                 {
                     // if Hotaru is older than 1.4.1, don't use preAddComment because it's part of AddComment
-					if (version_compare($h->version, '1.4.1') < 0)
-					{
-						$result = $h->comment->addComment($h);
-					} else {
-						$result = $this->preAddComment($h); // used for setting comment status
-                                                $h->comment->addComment($h);
-					}
+                    if (version_compare($h->version, '1.4.1') < 0)
+                    {
+                            $result = $h->comment->addComment($h);
+                    } else {
+                            $result = $this->preAddComment($h); // used for setting comment status
+                            $h->comment->addComment($h);
+                    }
 
                     // notify chosen mods of new comment by email if enabled and UserFunctions file exists
                     if (($comments_settings['comment_email_notify']) && (file_exists(PLUGINS . 'users/libs/UserFunctions.php')))
@@ -320,68 +342,67 @@ class Comments
      */
     public function preAddComment($h)
     { 
-		$result = array(); // this will be sent back containing various info
-		
-		// setup
-		$result['set_pending'] = '';
-		$result['comments_approved'] = 0;
-		$result['comments_needed'] = 0;
-		$result['exceeded_daily_limit'] = false;
-		$result['exceeded_url_limit'] = false;
-		$result['under_moderation'] = false;
-		$result['not_enough_comments'] = false;
-		
-		$h->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
-		
-		$can_comment = $h->currentUser->getPermission('can_comment'); // This was already checked, but Akismet sometimes reverts the status, so we do it again.
-		
-		if ($can_comment == 'mod') { // forces all to 'pending' if user's comments are moderated
-			$h->comment->status = 'pending'; 
-			$result['under_moderation'] = true;
-		} 
-		
-		// Get settings from database...
-		$comments_settings = $h->getSerializedSettings('comments');
-		
-		$set_pending = $comments_settings['comment_set_pending'];
-		$daily_limit = $comments_settings['comment_daily_limit'];
-		$url_limit = $comments_settings['comment_url_limit'];
-		
-		$result['set_pending'] = $set_pending;
-		
-		if ($h->currentUser->role == 'member')
-		{
-			if ($daily_limit && ($daily_limit < $h->comment->countDailyComments($h)))
-			{
-				 // exceeded daily limit, set to pending
-				$h->comment->status = 'pending';
-				$result['exceeded_daily_limit'] = true;
-			}
-			
-			if ($url_limit && ($url_limit < $h->comment->countUrls()))
-			{ 
-				// exceeded url limit, set to pending
-				$h->comment->status = 'pending';
-				$result['exceeded_url_limit'] = true;
-			}
-			
-		}
+            $result = array(); // this will be sent back containing various info
 
-		if ($set_pending == 'some_pending') {
-			$comments_approved = $h->comment->commentsApproved($h, $h->currentUser->id);
-			$x_comments_needed = $comments_settings['comment_x_comments'];
-			if ($comments_approved < $x_comments_needed) {
-				$result['not_enough_comments'] = true;
-				$h->comment->status = 'pending'; 
-			}
-		}
-		
-		if ($set_pending == 'all_pending') {
-			$h->comment->status = 'pending';
-		}
+            // setup
+            $result['set_pending'] = '';
+            $result['comments_approved'] = 0;
+            $result['comments_needed'] = 0;
+            $result['exceeded_daily_limit'] = false;
+            $result['exceeded_url_limit'] = false;
+            $result['under_moderation'] = false;
+            $result['not_enough_comments'] = false;
 
-		return $result;
-	}
+            $h->pluginHook('comment_pre_add_comment');  // Akismet uses this to change the status
+
+            $can_comment = $h->currentUser->getPermission('can_comment'); // This was already checked, but Akismet sometimes reverts the status, so we do it again.
+
+            if ($can_comment == 'mod') { // forces all to 'pending' if user's comments are moderated
+                    $h->comment->status = 'pending'; 
+                    $result['under_moderation'] = true;
+            } 
+
+            // Get settings from database...
+            $comments_settings = $h->getSerializedSettings('comments');
+
+            $set_pending = $comments_settings['comment_set_pending'];
+            $daily_limit = $comments_settings['comment_daily_limit'];
+            $url_limit = $comments_settings['comment_url_limit'];
+
+            $result['set_pending'] = $set_pending;
+
+            if ($h->currentUser->role == 'member')
+            {
+                    if ($daily_limit && ($daily_limit < $h->comment->countDailyComments($h)))
+                    {
+                             // exceeded daily limit, set to pending
+                            $h->comment->status = 'pending';
+                            $result['exceeded_daily_limit'] = true;
+                    }
+
+                    if ($url_limit && ($url_limit < $h->comment->countUrls()))
+                    { 
+                            // exceeded url limit, set to pending
+                            $h->comment->status = 'pending';
+                            $result['exceeded_url_limit'] = true;
+                    }
+            }
+
+            if ($set_pending == 'some_pending') {
+                    $comments_approved = $h->comment->commentsApproved($h, $h->currentUser->id);
+                    $x_comments_needed = $comments_settings['comment_x_comments'];
+                    if ($comments_approved < $x_comments_needed) {
+                            $result['not_enough_comments'] = true;
+                            $h->comment->status = 'pending'; 
+                    }
+            }
+
+            if ($set_pending == 'all_pending') {
+                    $h->comment->status = 'pending';
+            }
+
+            return $result;
+    }
 
 
     /**
@@ -389,9 +410,9 @@ class Comments
      */
     public function header_include($h)
     { 
-        $h->includeCss('comments', 'comments');
-        $h->includeJs('comments', 'urldecode');
-        $h->includeJs('comments', 'comments');
+            $h->includeCss('comments', 'comments');
+            $h->includeJs('comments', 'urldecode');
+            $h->includeJs('comments', 'comments');
     }
     
     
@@ -400,15 +421,15 @@ class Comments
      */
     public function admin_header_include_raw($h)
     {
-        if ($h->isSettingsPage('comments')) {
-            echo "<script type='text/javascript'>\n";
-            echo "$(document).ready(function(){\n";
-                echo "$('#email_notify').click(function () {\n";
-                echo "$('#email_notify_options').slideToggle();\n";
+            if ($h->isSettingsPage('comments')) {
+                echo "<script type='text/javascript'>\n";
+                echo "$(document).ready(function(){\n";
+                    echo "$('#email_notify').click(function () {\n";
+                    echo "$('#email_notify_options').slideToggle();\n";
+                    echo "});\n";
                 echo "});\n";
-            echo "});\n";
-            echo "</script>\n";
-        }
+                echo "</script>\n";
+            }
     }
     
     
@@ -417,21 +438,23 @@ class Comments
      */
     public function show_post_extra_fields($h)
     {
-            echo '<li><a class="comment_link" href="' . $h->url(array('page'=>$h->post->id)) . '">' . $h->countComments(false, $h->lang['comments_none_link']) . '</a></li>' . "\n";
+            echo '<li>';
+            $h->template('comment_link', 'comments', false);
+            echo '</li>';
     }
 	
-	
+    
     /**
      * Profile navigation link
      */
     public function profile_navigation($h)
     {
-        if (isset($h->vars['theme_settings']['userProfile_tabs']) && $h->vars['theme_settings']['userProfile_tabs']) {
-            $ahref = "<a href = '#comments' data-toggle='tab'>";
-        } else {
-            $ahref = "<a href = '" . $h->url(array('page'=>'comments', 'user'=>$h->vars['user']->name)) . "'>";
-        }
-        echo "<li>" . $ahref . $h->lang['users_all_comments']  . "&nbsp;<span class='badge'>" . $h->countUserComments($h->vars['user']->id) . "</span></a></li>\n";        
+            if (isset($h->vars['theme_settings']['userProfile_tabs']) && $h->vars['theme_settings']['userProfile_tabs']) {
+                $ahref = "<a href = '#comments' data-toggle='tab'>";
+            } else {
+                $ahref = "<a href = '" . $h->url(array('page'=>'comments', 'user'=>$h->displayUser->name)) . "'>";
+            }
+            echo "<li>" . $ahref . $h->lang['users_all_comments']  . "<span class='label label-warning pull-right'>" . $h->countUserComments($h->displayUser->id) . "</span></a></li>\n"; 
     }
     
     
@@ -455,11 +478,13 @@ class Comments
             $h->comment->itemsPerPage = $comments_settings['comment_items_per_page'];
 
             if ($userid) {
-                $comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
-                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);	   
+                //$comments_count = $h->comment->getAllCommentsCount($h, '', $userid);
+                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC', $userid);
+                $comments_count = count($comments_query);
             } else {
-                $comments_count = $h->comment->getAllCommentsCount($h);
-                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');	    
+                //$comments_count = $h->comment->getAllCommentsCount($h);
+                $comments_query = $h->comment->getAllCommentsQuery($h, 'DESC');	 
+                $comments_count = count($comments_query);
             }
 
             if (!$comments_count) {
@@ -505,17 +530,17 @@ class Comments
 
             if ($h->currentUser->getPermission('can_access_admin') == 'yes')
             {
-                    echo "<ul id='post_comments_admin'>";
+                echo "<ul id='post_comments_admin'>";
 
-                    // Show "Access Comment Manager" link if not submit3 and permissions allow
-                    if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes')
-                    {
-                            echo "<li id='comment_manager_link'><a class='btn btn-info' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>&nbsp;" . $h->lang['comments_access_comment_manager'] . " </a></li>";
-                    }
+                // Show "Access Comment Manager" link if not submit3 and permissions allow
+                if ($h->currentUser->getPermission('can_comment_manager_settings') == 'yes')
+                {
+                        echo "<li id='comment_manager_link'><a class='btn btn-info' href='" . $h->url(array('page'=>'plugin_settings', 'plugin'=>'comment_manager'), 'admin') . "'>&nbsp;" . $h->lang['comments_access_comment_manager'] . " </a></li>";
+                }
 
-                    $h->pluginHook('comments_post_last_form');
+                $h->pluginHook('comments_post_last_form');
 
-                    echo "</ul>";
+                echo "</ul>";
             }
     }
 	
@@ -536,6 +561,8 @@ class Comments
                 } 
             } 
 
+            // TODO does this need to be count ?
+            // cant we bundle all of these up into 1 for the posts being shown?
             // Check if the user subscribed to comments as a commenter
             $sql = "SELECT COUNT(comment_subscribe) FROM " . TABLE_COMMENTS . " WHERE comment_post_id = %d AND comment_user_id = %d AND comment_subscribe = %d";
             $subscribe_result = $h->db->get_var($h->db->prepare($sql, $h->post->id, $h->currentUser->id, 1));
@@ -555,7 +582,7 @@ class Comments
         $parents = $h->comment->readAllParents($h, $h->post->id, $h->comment->order);
                 
         echo "<!--  START COMMENTS_WRAPPER -->\n";
-        echo "<div class='comments_wrapper'>\n";
+        echo "<div id='comments_wrapper'>\n";
         echo "<h3>" . $h->countComments(false, $h->lang['comments_leave_comment']) . "</h3>\n";
             
         // IF PAGINATING COMMENTS:
@@ -787,7 +814,7 @@ class Comments
         } else {
             $crumbs = $h->lang ['comments'] . "<a href='" . $h->url(array('page'=>'rss_comments')) . "'> ";
         }
-        $crumbs .= " <img src='" . BASEURL . "content/themes/" . THEME . "images/rss_10.png' alt='" . $h->pageTitle . " RSS' /></a>\n ";
+        $crumbs .= ' <i class="fa fa-rss-square rss-icon"></i></a>';
         
         return $crumbs;
     }
@@ -799,8 +826,9 @@ class Comments
     public function submit_2_fields($h)
     {
         if ($h->post->subscribe) { $subscribe = 'checked'; } else { $subscribe = ''; } 
+
         echo "<div class='well'>\n";
-        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . "> " . $h->lang('submit_subscribe'); 
+        echo "<input id='post_subscribe' name='post_subscribe' type='checkbox' " . $subscribe . ">  " . $h->lang('submit_subscribe'); 
         echo "</div>";
     }
     
@@ -813,7 +841,7 @@ class Comments
         if ($h->post->comments == 'open') { $form_open = 'checked'; } else { $form_open = ''; }
 
         echo "<div class='well'>\n";
-        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . "> " . $h->lang('submit_form_enable_comments'); 
+        echo "<input id='enable_comments' name='enable_comments' type='checkbox' " . $form_open . ">  " . $h->lang('submit_form_enable_comments'); 
         echo "</div>";
     }
     
@@ -888,46 +916,47 @@ class Comments
      * Publish content as an RSS feed
      * Uses the 3rd party RSS Writer class.
      */    
-	public function rssFeed($h) {
-		require_once(EXTENSIONS.'RSSWriterClass/rsswriter.php');
-        
-        $select = '*';
+    public function rssFeed($h)
+    {
+            require_once(EXTENSIONS.'RSSWriterClass/rsswriter.php');
 
-        $limit = $h->cage->get->getInt('limit');
-        $user = $h->cage->get->testUsername('user');
+            $select = '*';
 
-		if (!$limit) {
-			$limit = 10;
-        }
-		$userid = ($user) ? $h->getUserIdFromName($user) : 0;
-        
-        $h->pluginHook('comments_rss_feed');
-        
-		$title = SITE_NAME;
-		$link = SITEURL;
-		$description = ($user) ? $h->lang["comment_rss_comments_from_user"]." ".$user : $h->lang["comment_rss_latest_comments"].SITE_NAME;
-        
-        // fetch comments from the database        
-        $comments = $h->comment->getAllComments($h, 0, "desc", $limit, $userid);
+            $limit = $h->cage->get->getInt('limit');
+            $user = $h->cage->get->testUsername('user');
 
-		$items = array();
-        
-        if ($comments) {
-			foreach ($comments as $comment) {
-                                //$h->readPost($comment->comment_post_id);
-                
-				$data = array();
-				$data['title'] = ($user) ? $h->lang["comment_rss_comment_on"].$h->post->title : $h->getUserNameFromId($comment->comment_user_id).$h->lang["comment_rss_commented_on"].$h->comment->postTitle;
-				$data['link'] = $h->url(array('page' => $comment->comment_post_id))."#c".$comment->comment_id;
-				$data['date'] = $comment->comment_date;
-				$data['description'] = $comment->comment_content;
-                
-				array_push($items, $data);
+            if (!$limit) {
+                    $limit = 10;
             }
-        }
+            $userid = ($user) ? $h->getUserIdFromName($user) : 0;
 
-		$h->rss($title, $link, $description, $items);
-        exit;
+            $h->pluginHook('comments_rss_feed');
+
+            $title = SITE_NAME;
+            $link = SITEURL;
+            $description = ($user) ? $h->lang["comment_rss_comments_from_user"]." ".$user : $h->lang["comment_rss_latest_comments"].SITE_NAME;
+
+            // fetch comments from the database        
+            $comments = $h->comment->getAllComments($h, 0, "desc", $limit, $userid);
+
+            $items = array();
+
+            if ($comments) {
+                    foreach ($comments as $comment) {
+                            //$h->readPost($comment->comment_post_id);
+
+                            $data = array();
+                            $data['title'] = ($user) ? $h->lang["comment_rss_comment_on"].$h->post->title : $h->getUserNameFromId($comment->comment_user_id).$h->lang["comment_rss_commented_on"].$h->comment->postTitle;
+                            $data['link'] = $h->url(array('page' => $comment->comment_post_id))."#c".$comment->comment_id;
+                            $data['date'] = $comment->comment_date;
+                            $data['description'] = $comment->comment_content;
+
+                            array_push($items, $data);
+                }
+            }
+
+            $h->rss($title, $link, $description, $items);
+            exit;
     }
     
     
@@ -965,8 +994,16 @@ class Comments
      * Show stats on Admin home page
      */
     public function admin_theme_main_stats($h, $vars)
-    {
-	    $c = new Comment();
+    {            
+            if (version_compare($h->version, '1.6.6') > 0)
+            {
+                // make sure the comments counts on post table are kept up-to-date just in case they have had a problem
+                $h->updateCommentCountBulk();
+                $c = \Libs\Comment::instance();
+            } else {
+                $c = new Comment();
+            }        
+	    
 	    $stats = $c->stats($h);
 	    $stats_archived = $c->stats($h, 'archived');
 	    
@@ -980,7 +1017,7 @@ class Comments
 	    if (isset($vars) && (!empty($vars))) {
 		foreach ($vars as $key => $value) {
 			$key_lang = 'comments_admin_stats_' . $key;
-			echo "<li class='title'>" . $h->lang[$key_lang] . "</li>";
+			echo "<li class='title'>" . $h->lang($key_lang) . "</li>";
 			foreach ($value as $stat_type) {
 				if (isset($value) && !empty($value)) {
 
@@ -1009,7 +1046,7 @@ class Comments
 					$lang_name = 'comments_admin_stats_' . $stat_type;
 					echo "<li>";
 					if ($link) { echo "<a href='" . $link . "'>"; }
-					echo $h->lang[$lang_name] . ": " . $comment_count;
+					echo $h->lang($lang_name) . ": " . $comment_count;
 					if ($link) { echo "</a>"; }
 					echo "</li>";
 				}
@@ -1100,6 +1137,6 @@ class Comments
             $h->email($recipients, $subject, $message, $headers);
         }
     }
+    
 }
-
 ?>

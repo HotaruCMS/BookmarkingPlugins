@@ -12,6 +12,7 @@ Instructions
 
 Changelog
 ---------
+v.3.6 2014/09/26 - shibuya246 - css updates
 v.3.5 2013/06/03 - shibuya246 - Add id for form name
 v.3.4 2013/05/29 - shibuya246 - Added daily limit in addition to 24 hr period limit
 v.3.3 2013/05/18 - Nick - Prevent default pages title being used in post title

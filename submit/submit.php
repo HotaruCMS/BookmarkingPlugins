@@ -2,7 +2,7 @@
 /**
  * name: Submit
  * description: Social Bookmarking submit - Enables post submission
- * version: 3.5
+ * version: 3.6
  * folder: submit
  * class: Submit
  * type: post
@@ -570,7 +570,7 @@ class Submit
                 $h->vars['submit_tags'] = sanitize($h->vars['submitted_data']['submit_tags'], 'all');
                 
                 // strip htmlentities before showing in the form:
-				$h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
+                $h->vars['submit_title'] = html_entity_decode($h->vars['submit_title']);
                 $h->vars['submit_content'] = html_entity_decode($h->vars['submit_content']);
                 $h->vars['submit_tags'] = html_entity_decode($h->vars['submit_tags']);
                 
@@ -675,16 +675,17 @@ class Submit
     {
         $output = '';
         
-        $sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
-        $result = $h->db->get_row($h->db->prepare($sql, $h->vars['submit_category']));
+        //$sql = "SELECT category_name, category_safe_name FROM " . TABLE_CATEGORIES . " WHERE category_id = %d";
+        //$result = $h->db->get_row($h->db->prepare($sql, $h->vars['submit_category']));
         
-        if($result) { 
-            $category_safe_name = stripslashes(htmlentities(urldecode($result->category_safe_name), ENT_QUOTES,'UTF-8'));
+        if($h->vars['submit_category']) { 
+            $category = $h->categoriesById[$h->vars['submit_category']];
+            $category_safe_name = stripslashes(htmlentities(urldecode($category->category_safe_name), ENT_QUOTES,'UTF-8'));
             
             if ($category_safe_name == 'all') { 
                 $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
             } else {
-                $output .= "<option value=" . $h->vars['submit_category'] . " selected>" . urldecode($result->category_name) . "</option>\n";
+                $output .= "<option value=" . $h->vars['submit_category'] . " selected>" . urldecode($category->category_name) . "</option>\n";
             }
         } else {
             $output .= "<option value='1' selected>" . $h->lang['submit_category_select'] . "</option>\n";
@@ -706,4 +707,3 @@ class Submit
         return $output;
     }
 }
-?>

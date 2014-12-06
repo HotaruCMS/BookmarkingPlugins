@@ -36,7 +36,7 @@ class PostsWidgetSettings
             $this->saveSettings($h); 
         }    
         
-        echo "<h1>" . $h->lang["posts_widget_settings_header"] . "</h1>\n";
+        //echo "<h1>" . $h->lang["posts_widget_settings_header"] . "</h1>\n";
         
         // Get settings from database if they exist...
         $pw_settings = $h->getSerializedSettings();
@@ -60,9 +60,9 @@ class PostsWidgetSettings
 
 		$widget_names = array('top', 'latest', 'upcoming', 'day', 'week', 'month', 'year', 'all-time');
         
-        echo "<form name='posts_widget_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=posts_widget' method='post'>\n";
+        echo "<form role='form' name='posts_widget_settings_form' action='" . BASEURL . "admin_index.php?page=plugin_settings&amp;plugin=posts_widget' method='post'>\n";
         
-        echo "<p><input type='text' name='items' size=4 value='" . $items . "'>&nbsp;&nbsp;" . $h->lang["posts_widget_settings_items"] . "</p><br />\n";
+        echo "<br /><p><input type='text' name='items' size=4 value='" . $items . "'>&nbsp;&nbsp;" . $h->lang["posts_widget_settings_items"] . "</p><br />\n";
         echo "<p><input type='text' name='length' size=4 value='" . $length . "'>&nbsp;&nbsp;" . $h->lang["posts_widget_settings_length"] . "</p><br />\n";
 
 		echo "<p>" . $h->lang["posts_widget_settings_widgets_desc"] . "</p>";
@@ -71,10 +71,10 @@ class PostsWidgetSettings
 		foreach ($widget_names as $name) {
 			echo "<li><input type='checkbox' name='pw_" . $name . "' value='pw_" . $name . "' " . $widgets["posts_widget_$name"] . ">&nbsp;&nbsp;Posts Widget " . make_name($name, '-') . "</li>\n";
 		}
-		echo "</ul><br />";
+		echo "</ul>";
 
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<input type='submit' value='" . $h->lang["main_form_save"] . "' />\n";
+        echo "<br /><button type='submit' class='btn btn-primary'>" . $h->lang["main_form_save"] . "</button>\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form><br />\n";
     }

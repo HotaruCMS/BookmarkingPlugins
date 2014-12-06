@@ -6,7 +6,7 @@
  * folder: comment_manager
  * class: CommentManager
  * requires: comments 1.2
- * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_plugin_settings, user_manager_role, user_manager_details
+ * hooks: install_plugin, admin_header_include, admin_plugin_settings, admin_sidebar_comments, user_manager_role, user_manager_details
  * author: Nick Ramsay
  * authorurl: http://hotarucms.org/member.php?1-Nick
  *
@@ -89,6 +89,17 @@ class CommentManager
             $output = rstrtrim($output, ", ");
             $h->vars['user_manager_details'] = array($output, $user);
         }
+    }
+    
+    /**
+     * Add link to admin sidebar
+     */
+    public function admin_sidebar_comments($h)
+    {
+        $links = array(            
+            'List Comments' => array('admin_index.php?page=plugin_settings&plugin=comment_manager')
+        );
+        return $links;
     }
 }
 
