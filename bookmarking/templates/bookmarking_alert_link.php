@@ -27,7 +27,7 @@
 
 <li>  
     <a class='alert_link' href='#'>
-        <i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert"]; ?>&nbsp;
+        <i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert"); ?>&nbsp;
     </a>
 </li>  
    

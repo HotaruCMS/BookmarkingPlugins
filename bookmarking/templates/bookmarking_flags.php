@@ -31,18 +31,16 @@
 
 // note $id gets replaced by js values later
 $id = $h->post->id ? $h->post->id : '#';
-
 ?>
 
 <li class='alert_choices' style='display:none;'>
     <ul>
-        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>3)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_3"]; ?></a></li>
-        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>4)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_4"]; ?></a></li>
-        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>5)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_5"]; ?></a></li>
-        <li><a class='btn btn-xs btn-default' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>6)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_6"]; ?></a></li>
-        <li><a class='btn btn-xs btn-warning' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>2)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_2"]; ?></a></li>
-        <li><a class='btn btn-xs btn-danger' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>1)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang["bookmarking_alert_reason_1"]; ?></a></li>
+        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>3)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_3"); ?></a></li>
+        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>4)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_4"); ?></a></li>
+        <li><a class='btn btn-xs btn-primary' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>5)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_5"); ?></a></li>
+        <li><a class='btn btn-xs btn-default' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>6)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_6"); ?></a></li>
+        <li><a class='btn btn-xs btn-warning' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>2)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_2"); ?></a></li>
+        <li><a class='btn btn-xs btn-danger' rel='nofollow' href='<?php echo $h->url(array('page'=>$id, 'alert'=>1)); ?>'><i class="fa fa-flag"></i>&nbsp;<?php echo $h->lang("bookmarking_alert_reason_1"); ?></a></li>
     
     </ul>
 </li>
-

@@ -100,7 +100,7 @@ class ActivitySettings
                         
         echo "<br /><br />\n";    
         echo "<input type='hidden' name='submitted' value='true' />\n";
-        echo "<button class='btn btn-primary' type='submit'>" .$h->lang("main_form_save") . "'></button>\n";
+        echo "<button class='btn btn-primary' type='submit'>" .$h->lang("main_form_save") . "</button>\n";
         echo "<input type='hidden' name='csrf' value='" . $h->csrfToken . "' />\n";
         echo "</form>\n";
     }
