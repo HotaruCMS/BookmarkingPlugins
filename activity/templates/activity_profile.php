@@ -47,7 +47,7 @@ $act = new ActivityFunctions();
                         $url = $result[1];
                     }
 
-                    if (!$title) { continue; } // skip if postis buried or pending, postSafe returns title if safe
+                    if (!isset($title) || !$title) { continue; } // skip if postis buried or pending, postSafe returns title if safe
                     $action->title = $title;
                     $action->url = $url;
                     
